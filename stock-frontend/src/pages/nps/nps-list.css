@@ -1,0 +1,432 @@
+/* =========================
+   Layout
+========================= */
+.nps-list {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* =========================
+   Search
+========================= */
+.nps-search {
+  max-width: 720px;
+  margin: 0 auto 2rem;
+}
+
+/* input + button row */
+.nps-search-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* input wrapper */
+.nps-search-input-wrap {
+  position: relative;
+  flex: 1;
+}
+
+/* input */
+.nps-search-input-wrap input {
+  width: 100%;
+  height: 44px;
+  padding: 0 2.75rem 0 1rem; /* ✕ 버튼 공간 */
+  border-radius: 14px;
+  border: 2px solid #111;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.nps-search-input-wrap input:focus {
+  outline: none;
+  border-color: #5a33ff;
+}
+
+/* input 내부 ✕ 버튼 */
+.nps-reset-inside {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.nps-reset-inside:hover {
+  background: #e5e7eb;
+  color: #111;
+}
+
+/* 검색 버튼 */
+.nps-search-btn {
+  height: 44px;
+  padding: 0 1.5rem;
+  border-radius: 14px;
+  border: none;
+
+  background: #5a33ff;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.nps-search-btn:hover {
+  background: #4324d6;
+}
+
+.nps-search-btn:active {
+  transform: translateY(1px);
+}
+
+/* =========================
+   Table
+========================= */
+.nps-table {
+  border-top: 1px solid #e5e7eb;
+}
+
+/* header / row 공통 */
+.nps-table-head,
+.nps-table-row {
+  display: grid;
+  grid-template-columns: 80px 1.5fr 1fr 1fr 1fr;
+  padding: 0.75rem;
+  align-items: center;
+}
+
+/* header */
+.nps-table-head {
+  font-weight: 600;
+  background: #f9fafb;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* row */
+.nps-table-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.15s ease;
+}
+
+.nps-table-row:hover {
+  background: #fafafa;
+}
+
+/* =========================
+   Alignment
+========================= */
+/* 숫자 컬럼 가운데 정렬 */
+.nps-table-head .center,
+.nps-table-row .center {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 종목명 */
+.nps-table-row .name {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* 링크 */
+.nps-table-row a {
+  color: #5a33ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nps-table-row a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   Empty
+========================= */
+.nps-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+/* =========================
+   Layout
+========================= */
+.nps-list {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+/* =========================
+   Search
+========================= */
+.nps-search {
+  max-width: 720px;
+  margin: 0 auto 2rem;
+}
+
+/* input + button row */
+.nps-search-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* input wrapper */
+.nps-search-input-wrap {
+  position: relative;
+  flex: 1;
+}
+
+/* input */
+.nps-search-input-wrap input {
+  width: 100%;
+  height: 44px;
+  padding: 0 2.75rem 0 1rem; /* ✕ 버튼 공간 */
+  border-radius: 14px;
+  border: 2px solid #111;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.nps-search-input-wrap input:focus {
+  outline: none;
+  border-color: #5a33ff;
+}
+
+/* input 내부 ✕ 버튼 */
+.nps-reset-inside {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.nps-reset-inside:hover {
+  background: #e5e7eb;
+  color: #111;
+}
+
+/* 검색 버튼 */
+.nps-search-btn {
+  height: 44px;
+  padding: 0 1.5rem;
+  border-radius: 14px;
+  border: none;
+
+  background: #5a33ff;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.nps-search-btn:hover {
+  background: #4324d6;
+}
+
+.nps-search-btn:active {
+  transform: translateY(1px);
+}
+
+/* =========================
+   Table
+========================= */
+.nps-table {
+  border-top: 1px solid #e5e7eb;
+}
+
+/* header / row 공통 */
+.nps-table-head,
+.nps-table-row {
+  display: grid;
+  grid-template-columns: 80px 1.5fr 1fr 1fr 1fr;
+  padding: 0.75rem;
+  align-items: center;
+}
+
+/* header */
+.nps-table-head {
+  font-weight: 600;
+  background: #f9fafb;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* row */
+.nps-table-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.15s ease;
+}
+
+.nps-table-row:hover {
+  background: #fafafa;
+}
+
+/* =========================
+   Alignment
+========================= */
+/* 숫자 컬럼 가운데 정렬 */
+.nps-table-head .center,
+.nps-table-row .center {
+  text-align: center;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 종목명 */
+.nps-table-row .name {
+  text-align: left;
+  font-weight: 600;
+}
+
+/* 링크 */
+.nps-table-row a {
+  color: #5a33ff;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.nps-table-row a:hover {
+  text-decoration: underline;
+}
+
+/* =========================
+   Empty
+========================= */
+.nps-empty {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+/* =========================
+   Summary Header
+========================= */
+.nps-summary {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem 1.5rem 0; /* 아래는 테이블이 이어받음 */
+}
+
+.nps-summary-header {
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.nps-summary-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111;
+}
+
+/* =========================
+   Search (NPS Style)
+========================= */
+.stock-search-box {
+  max-width: 900px;
+  margin: 0 auto 2rem;
+}
+
+.stock-search-row {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* input wrapper */
+.stock-search-input-wrap {
+  position: relative;
+  flex: 1;
+}
+
+/* input */
+.stock-search-input-wrap input {
+  width: 100%;
+  height: 44px;
+  padding: 0 2.75rem 0 1rem; /* ✕ 버튼 공간 */
+  border-radius: 14px;
+  border: 2px solid #111;
+  font-size: 1rem;
+  box-sizing: border-box;
+}
+
+.stock-search-input-wrap input:focus {
+  outline: none;
+  border-color: #5a33ff;
+}
+
+/* input 내부 ✕ 버튼 */
+.stock-search-reset {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+
+  border: none;
+  background: #f3f4f6;
+  color: #6b7280;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.stock-search-reset:hover {
+  background: #e5e7eb;
+  color: #111;
+}
+
+/* 검색 버튼 */
+.stock-search-btn {
+  height: 44px;
+  padding: 0 1.5rem;
+  border-radius: 14px;
+  border: none;
+
+  background: #5a33ff;
+  color: #fff;
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+
+.stock-search-btn:hover {
+  background: #4324d6;
+}
+
+.stock-search-btn:active {
+  transform: translateY(1px);
+}

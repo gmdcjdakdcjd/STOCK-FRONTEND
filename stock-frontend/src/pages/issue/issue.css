@@ -1,0 +1,88 @@
+/* ===============================
+   Dashboard Card
+=============================== */
+
+.dashboard-card {
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  padding: 1.2rem;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  margin-bottom: 2rem;
+}
+
+/* ===============================
+   Scroll Container
+=============================== */
+
+.content-box {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* ===============================
+   Table Base
+=============================== */
+
+table {
+  width: 100%;
+  font-size: 0.9rem;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 6px;
+  vertical-align: middle; /* ✅ 세로 중앙 정렬 */
+}
+
+/* Header */
+th {
+  font-weight: bold;
+  border-bottom: 1px solid #ddd;
+}
+
+/* Body */
+td {
+  border-bottom: 1px solid #f1f1f1;
+}
+
+/* ===============================
+   Column Alignment
+=============================== */
+
+/* 종목 (코드 + 이름) */
+.col-code {
+  text-align: left;
+  white-space: nowrap;
+}
+
+/* 숫자 컬럼 */
+.col-price,
+.col-prev,
+.col-diff,
+.col-volume {
+  text-align: right;
+  white-space: nowrap;
+}
+
+/* 날짜 */
+.col-date {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ===============================
+   Up / Down Color
+=============================== */
+
+.up {
+  color: #d93025; /* 🔴 상승 */
+  font-weight: 600;
+}
+
+.down {
+  color: #1a73e8; /* 🔵 하락 */
+  font-weight: 600;
+}

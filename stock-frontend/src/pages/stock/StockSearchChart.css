@@ -1,0 +1,119 @@
+/* =========================
+   Range Selector
+========================= */
+.range-selector {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.range-selector button {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #5a33ff;
+  background: #ffffff;
+  color: #5a33ff;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.range-selector button:hover {
+  background: rgba(90, 51, 255, 0.08);
+}
+
+.range-selector button.active {
+  background: #5a33ff;
+  color: #ffffff;
+}
+
+/* =========================
+   Chart Expand Button
+========================= */
+.chart-expand-btn {
+  margin-left: 6px;
+  padding: 4px 8px;
+  font-size: 14px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+  transition: background 0.15s ease-in-out;
+}
+
+.chart-expand-btn:hover {
+  background: #eef2ff;
+}
+
+/* =========================
+   Modal Chart Fix
+========================= */
+.chart-modal-body > div {
+  height: 100%;
+}
+/* ===== Range Selector ===== */
+.range-selector {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+/* 버튼 기본 */
+.range-selector button {
+  padding: 4px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+  border: 1px solid #5a33ff;
+  background: #fff;
+  color: #5a33ff;
+  cursor: pointer;
+
+  /* ⭐ 체감 부드러움 핵심 */
+  transition:
+    background-color 0.25s ease,
+    color 0.25s ease,
+    transform 0.12s ease,
+    box-shadow 0.12s ease;
+}
+
+/* hover */
+.range-selector button:hover {
+  background: rgba(90, 51, 255, 0.08);
+}
+
+/* active */
+.range-selector button.active {
+  background: #5a33ff;
+  color: #fff;
+  box-shadow: 0 2px 6px rgba(90, 51, 255, 0.35);
+}
+
+/* 클릭 순간 */
+.range-selector button:active {
+  transform: scale(0.96);
+}
+
+/* ===== Expand Button ===== */
+.chart-expand-btn {
+  margin-left: 6px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  cursor: pointer;
+  font-size: 14px;
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.12s ease;
+}
+
+.chart-expand-btn:hover {
+  background: #eef2ff;
+}
+
+.chart-expand-btn:active {
+  transform: scale(0.95);
+}

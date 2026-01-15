@@ -1,0 +1,100 @@
+.nps-summary {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.nps-summary-header {
+  margin-bottom: 2rem;
+}
+
+.nps-summary-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 0.3rem;
+}
+
+.nps-summary-desc {
+  font-size: 0.85rem;
+  color: #6b7280;
+}
+
+/* ===== Grid ===== */
+.nps-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ===== Card ===== */
+.nps-card {
+  border-radius: 18px;
+  border: 1px solid #e5e7eb;
+  padding: 1.5rem;
+  min-height: 420px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  transition: transform .15s ease, box-shadow .15s ease;
+  background: #fff;
+}
+
+.nps-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 10px 28px rgba(0,0,0,.10);
+}
+
+/* ===== Card content ===== */
+.nps-card-center {
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+}
+
+.nps-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.nps-count {
+  font-size: 3rem;
+  font-weight: 800;
+  margin-bottom: 0.3rem;
+}
+
+.nps-sub {
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* ===== Button ===== */
+.nps-card-button {
+  display: block;
+  margin-top: 1rem;
+  padding: 0.75rem;
+  text-align: center;
+  border-radius: 12px;
+  border: 1px solid #5a33ff;
+  color: #5a33ff;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background .15s ease, color .15s ease;
+}
+
+.nps-card-button:hover {
+  background: #5a33ff;
+  color: #fff;
+}
+
+/* ===== Loading ===== */
+.nps-loading {
+  padding: 3rem;
+  text-align: center;
+  color: #6b7280;
+}

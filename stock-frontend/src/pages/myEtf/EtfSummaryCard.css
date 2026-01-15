@@ -1,0 +1,50 @@
+.etf-summary-card {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+
+  padding: 20px 24px;
+  margin-bottom: 24px;
+
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+}
+
+/* 개별 지표 */
+.summary-item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+/* 라벨 */
+.summary-item .label {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+/* 값 (핵심) */
+.summary-item .value {
+  font-size: 18px;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* 수익 */
+.summary-item.profit .value {
+  color: #dc2626; /* 빨강 */
+}
+
+/* 손실 */
+.summary-item.loss .value {
+  color: #2563eb; /* 파랑 */
+}
+
+/* 반응형 */
+@media (max-width: 900px) {
+  .etf-summary-card {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 20px;
+  }
+}

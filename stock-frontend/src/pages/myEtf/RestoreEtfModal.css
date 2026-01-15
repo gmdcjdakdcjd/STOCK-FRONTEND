@@ -1,0 +1,63 @@
+/* ================================
+   Restore Modal Only
+================================ */
+.restore-modal {
+  max-width: 720px;
+}
+
+/* ================================
+   Content
+================================ */
+.restore-content {
+  padding: 1rem 1.25rem;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* Empty */
+.restore-empty {
+  padding: 2rem 0;
+  text-align: center;
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+/* ================================
+   Row
+================================ */
+.restore-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.65rem 0;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.85rem;
+}
+
+.restore-row:last-child {
+  border-bottom: none;
+}
+
+.restore-row .name {
+  flex: 1;
+  margin-right: 1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ================================
+   Ghost button (header)
+================================ */
+.ghost-btn {
+  padding: 0.4rem 0.8rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+  font-size: 0.75rem;
+  cursor: pointer;
+}
+
+.ghost-btn:hover {
+  background: #f9fafb;
+}

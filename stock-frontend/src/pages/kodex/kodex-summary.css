@@ -1,0 +1,115 @@
+/* ================================
+   KODEX Table Layout
+================================ */
+.kodex-table {
+  border-top: 1px solid #e5e7eb;
+}
+
+/* header / row 공통 */
+.kodex-table-header,
+.kodex-table-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 160px;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+/* ================================
+   Header
+================================ */
+.kodex-table-header {
+  font-weight: 700;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+/* ================================
+   Row
+================================ */
+.kodex-table-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.15s ease;
+}
+
+.kodex-table-row:hover {
+  background: #fafafa;
+}
+
+/* ================================
+   Columns
+================================ */
+
+/* ETF 명 */
+.etf-name {
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 구성 종목 수 (헤더 + 값 공통) */
+.count-col {
+  text-align: center;
+  font-weight: 600;
+  color: #374151;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================
+   IRP Badge
+================================ */
+.irp-badge {
+  padding: 2px 8px;
+  font-size: 0.75rem;
+  border-radius: 999px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ================================
+   Action Link
+================================ */
+/* ================================
+   View Holdings Button (개선판)
+================================ */
+.view-link {
+  justify-self: end;
+
+  padding: 6px 14px;
+  border-radius: 999px;          /* pill */
+
+  border: 1px solid #e0e7ff;
+  background: #f5f7ff;
+
+  color: #4338ca;
+  font-size: 0.85rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-link:hover {
+  background: #4338ca;
+  border-color: #4338ca;
+  color: #fff;
+}
+
+.view-link:active {
+  transform: translateY(1px);
+}
+
+
+/* ================================
+   State
+================================ */
+.loading,
+.empty {
+  padding: 2rem;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+}

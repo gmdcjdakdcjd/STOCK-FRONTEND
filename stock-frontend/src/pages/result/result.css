@@ -1,0 +1,256 @@
+/* ================================
+   Result Container
+================================ */
+.result-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+/* 카드 헤더 */
+.result-card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  color: #111827;
+  background: #fafafa;
+}
+
+/* ================================
+   Result Table (Grid)
+================================ */
+
+/* Header */
+.result-table-header {
+  display: grid;
+  grid-template-columns: 2fr 200px 200px;
+  padding: 10px 16px;
+  font-weight: 600;
+  color: #111827;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+  text-align: center;
+}
+
+/* Row */
+.result-table-row {
+  display: grid;
+  grid-template-columns: 2fr 200px 200px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  align-items: center;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #111827;
+  transition: background 0.15s ease;
+}
+
+.result-table-row:hover {
+  background: #f8fafc;
+  cursor: pointer;
+}
+
+/* 전략명만 좌측 정렬 */
+.result-col-strategy {
+  text-align: left;
+  padding-left: 8px;
+  font-weight: 600;
+}
+
+/* ================================
+   Pagination
+================================ */
+.result-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0;
+}
+
+.result-pagination .page-link {
+  border-radius: 6px;
+  padding: 6px 12px;
+  font-size: 0.85rem;
+  color: #2563eb;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.result-pagination .page-link:hover {
+  background: #eff6ff;
+}
+
+.result-pagination .page-link.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  font-weight: 600;
+}
+
+/* ================================
+   Empty
+================================ */
+.result-empty {
+  padding: 40px 0;
+  text-align: center;
+  color: #6b7280;
+  font-size: 0.95rem;
+}
+/* ================================
+   Search Action Buttons
+================================ */
+.search-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* 검색 버튼 (Primary) */
+.btn-search-primary {
+  padding: 8px 18px;
+  border-radius: 999px;
+
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  border: none;
+
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-search-primary:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-search-primary:active {
+  transform: translateY(0);
+}
+
+/* 초기화 버튼 (Secondary) */
+.btn-search-reset {
+  padding: 8px 18px;
+  border-radius: 999px;
+
+  background: #fff;
+  border: 1px solid #e5e7eb;
+
+  color: #374151;
+  font-size: 0.9rem;
+  font-weight: 500;
+
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-search-reset:hover {
+  background: #f3f4f6;
+  border-color: #d1d5db;
+}
+
+.btn-search-reset:active {
+  transform: translateY(1px);
+}
+/* ================================
+   Filter Card
+================================ */
+.result-filter {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+
+/* filter row */
+.result-filter-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+/* label + input 묶음 */
+.result-filter-group {
+  display: flex;
+  align-items: center;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f9fafb;
+}
+
+/* label */
+.result-filter-label {
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  background: #f3f4f6;
+  border-right: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+/* select / input */
+.result-filter-select,
+.result-filter-input {
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.9rem;
+  background: transparent;
+  min-width: 180px;
+}
+
+.result-filter-select:focus,
+.result-filter-input:focus {
+  outline: none;
+}
+
+/* ================================
+   Filter Actions
+================================ */
+.result-filter-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+/* Search button (ETF 톤) */
+.btn-search {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+  background: #5b3df5;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-search:hover {
+  background: #4a2ee0;
+}
+
+/* Reset button */
+.btn-reset {
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #6b7280;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-reset:hover {
+  background: #f9fafb;
+  color: #374151;
+}

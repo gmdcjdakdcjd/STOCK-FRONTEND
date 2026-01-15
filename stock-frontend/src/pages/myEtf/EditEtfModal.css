@@ -1,0 +1,383 @@
+/* ================================
+   Overlay
+================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* ================================
+   Modal Body
+================================ */
+.modal-body {
+  width: 90%;
+  max-width: 980px;
+  max-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ================================
+   Header
+================================ */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 16px;
+
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+/* ⭐ 안내 문구 (최종 톤) */
+.header-notice {
+  font-size: 0.72rem;          /* 살짝 작게 */
+  line-height: 1.45;
+
+  color: #ea580c;              /* 🔥 주황 포인트 */
+  font-weight: 500;
+}
+
+/* 닫기 버튼 */
+.close-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+  color: #6b7280;
+}
+
+.close-btn:hover {
+  color: #111827;
+}
+
+/* ================================
+   Content
+================================ */
+.modal-content {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* ================================
+   Form Section
+================================ */
+.form-section {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-section label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.form-section input,
+.form-section textarea {
+  padding: 0.5rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  font-size: 0.9rem;
+}
+
+.form-section input:focus,
+.form-section textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+}
+
+/* ================================
+   Divider
+================================ */
+.divider {
+  margin: 0.75rem 0;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ================================
+   ETF Builder
+================================ */
+.etf-builder {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.25rem;
+  padding: 0.75rem 1.25rem 1.25rem;
+  height: 360px;
+}
+
+/* ================================
+   Panels
+================================ */
+.search-panel,
+.selected-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.search-panel h4,
+.selected-panel h4 {
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #374151;
+  padding-bottom: 0.35rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ================================
+   Search
+================================ */
+.search-bar {
+  margin-top: 0.5rem;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid #d1d5db;
+  font-size: 0.85rem;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #6366f1;
+}
+
+.search-list {
+  margin-top: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  border-top: 1px solid #e5e7eb;
+}
+
+.search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.55rem 0.25rem;
+  font-size: 0.85rem;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+}
+
+.search-item:hover {
+  background: #f9fafb;
+}
+
+.search-item.disabled {
+  cursor: default;
+  background: #f3f4f6;
+}
+
+.search-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.search-info .code {
+  font-size: 0.7rem;
+  color: #9ca3af;
+}
+
+.add-hint {
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  border: 1px solid #bbf7d0;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+.added {
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  background: #e5e7eb;
+  color: #6b7280;
+  font-size: 0.7rem;
+  font-weight: 600;
+}
+
+/* ================================
+   Selected Header / Row
+================================ */
+.selected-header,
+.selected-row {
+  display: grid;
+  grid-template-columns: 1fr 96px 32px;
+  align-items: center;
+  gap: 8px;
+}
+
+.selected-header {
+  font-size: 0.7rem;
+  color: #6b7280;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.col-name {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ================================
+   Quantity Column
+================================ */
+.col-qty {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  min-width: 96px;
+}
+
+.qty-control {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 24px;
+  min-width: 72px;
+  padding: 0 6px;
+
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+}
+
+.qty-btn {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  border: none;
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.qty-btn.minus {
+  background: #f3f4f6;
+  color: #6b7280;
+}
+
+.qty-btn.plus {
+  background: #eef2ff;
+  color: #4f46e5;
+}
+
+.qty-value {
+  min-width: 16px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* ================================
+   Remove Button
+================================ */
+.remove-btn.icon {
+  width: 22px;
+  height: 22px;
+  border: none;
+  background: none;
+  color: #ef4444;
+  cursor: pointer;
+}
+
+.remove-btn.icon:hover {
+  background: #fee2e2;
+  border-radius: 50%;
+}
+
+/* ================================
+   Footer
+================================ */
+.modal-footer {
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+/* ================================
+   Fixed Quantity Badge
+================================ */
+.fixed-qty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  height: 24px;
+  min-width: 48px;
+  padding: 0 10px;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  color: #065f46;
+  background: #d1fae5;
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+}
+
+/* ================================
+   Ghost Button
+================================ */
+.ghost-btn {
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+
+  border: 1px solid #d1d5db;
+  background: #ffffff;
+
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #374151;
+
+  cursor: pointer;
+}
+
+.ghost-btn:hover {
+  background: #f9fafb;
+  border-color: #9ca3af;
+}
+.modal-header .header-notice {
+  margin-top: 4px;
+
+  font-size: 0.72rem;
+  line-height: 1.45;
+  font-weight: 500;
+
+  color: #ea580c;   /* 🔥 주황 포인트 */
+}

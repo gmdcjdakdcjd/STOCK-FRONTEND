@@ -1,0 +1,160 @@
+/* ================================
+   Overlay
+================================ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* ================================
+   Modal Body
+================================ */
+.modal-body {
+  width: 90%;
+  max-width: 980px;
+  max-height: 85vh;
+
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+
+/* ================================
+   Header
+================================ */
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  font-size: 1.2rem;
+  color: #6b7280;
+}
+
+.close-btn:hover {
+  color: #111;
+}
+
+/* ================================
+   Content
+================================ */
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ================================
+   Loading / Empty
+================================ */
+.loading,
+.empty {
+  padding: 2rem;
+  text-align: center;
+  font-size: 0.95rem;
+  color: #6b7280;
+}
+
+/* ================================
+   Holdings Table
+================================ */
+
+/* header */
+.holdings-header-row {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+
+  display: grid;
+  grid-template-columns: 140px 1.5fr 1fr 1fr 1.2fr;
+  align-items: center;
+
+  padding: 0.75rem 1rem;
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+/* row */
+.holdings-row {
+  display: grid;
+  grid-template-columns: 140px 1.5fr 1fr 1fr 1.2fr;
+  align-items: center;
+
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid #e5e7eb;
+
+  font-size: 0.9rem;
+}
+
+.holdings-row:hover {
+  background: #f9fafb;
+}
+
+/* ================================
+   Cell Alignment (⭐ 핵심 수정)
+================================ */
+
+/* 코드 */
+.holdings-row .code {
+  font-family: monospace;
+}
+
+/* 종목명 */
+.holdings-row .name {
+  font-weight: 500;
+}
+
+/* 숫자 컬럼 (헤더 + row 동일 기준) */
+.holdings-header-row .num,
+.holdings-row .num {
+  display: flex;
+  justify-content: center;   /* ← 헤더 기준선 아래 정확히 */
+  align-items: center;
+
+  font-variant-numeric: tabular-nums;
+}
+
+/* ================================
+   Scrollbar (optional)
+================================ */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}

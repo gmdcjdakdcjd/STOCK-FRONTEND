@@ -1,0 +1,165 @@
+/* ================================
+   Header Card
+================================ */
+.detail-header-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 20px 24px;
+  margin-bottom: 20px;
+
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #ffffff;
+}
+
+.detail-header-left h4 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.detail-header-sub {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+.detail-header-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* ================================
+   Buttons
+================================ */
+.btn-primary-pill {
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: none;
+
+  background: linear-gradient(135deg, #4f46e5, #6366f1);
+  color: #fff;
+
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-primary-pill:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+.btn-outline-pill {
+  padding: 8px 18px;
+  border-radius: 999px;
+
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  color: #374151;
+
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-outline-pill:hover {
+  background: #f9fafb;
+}
+
+/* ================================
+   Result Card
+================================ */
+.result-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+  background: #fff;
+  overflow: hidden;
+}
+
+.result-card-header {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e5e7eb;
+  font-weight: 600;
+  background: #fafafa;
+}
+
+/* ================================
+   Detail Table
+================================ */
+.detail-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* 헤더 / 바디 padding 완전 통일 */
+.detail-table thead th {
+  padding: 12px 10px;
+  height: 44px;
+  background: #f9fafb;
+  font-size: 0.9rem;
+  font-weight: 600;
+  vertical-align: middle;
+  font-variant-numeric: tabular-nums;
+}
+
+.detail-table tbody td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.detail-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* ================================
+   Alignment (기준선 맞춤)
+================================ */
+
+/* 기본 헤더 중앙 */
+.align-table thead th {
+  text-align: center;
+}
+
+/* 체크박스 */
+.col-check {
+  width: 48px;
+  text-align: center;
+}
+
+/* 종목코드 */
+.align-table thead th.col-code,
+.col-code {
+  text-align: left;
+  padding-left: 12px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 종목명 */
+.align-table thead th.col-name,
+.col-name {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 500;
+}
+
+/* 숫자 컬럼 (헤더 + 바디 오른쪽 정렬 통일) */
+.align-table thead th.col-num,
+.col-num {
+  text-align: right;
+  padding-right: 14px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 날짜 */
+.align-table thead th.col-date,
+.col-date {
+  text-align: center;
+  white-space: nowrap;
+}

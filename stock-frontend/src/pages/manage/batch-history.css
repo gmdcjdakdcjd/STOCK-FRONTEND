@@ -1,0 +1,221 @@
+/* ===============================
+   Batch History Page (KODEX Style)
+=============================== */
+.batch-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0;
+
+  font-family: -apple-system, BlinkMacSystemFont,
+               "Apple SD Gothic Neo",
+               "Noto Sans KR",
+               "Segoe UI",
+               Roboto,
+               Helvetica,
+               Arial,
+               sans-serif;
+
+  color: #111827; /* slate-900 */
+}
+
+/* ===============================
+   Title
+=============================== */
+
+.batch-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+/* ===============================
+   Card
+=============================== */
+
+.batch-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.batch-card-header {
+  padding: 14px 18px;
+  font-weight: 700;
+  background: #fafafa;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ===============================
+   List (KODEX Style)
+=============================== */
+
+.batch-list-header,
+.batch-list-row {
+  display: grid;
+  grid-template-columns: 1fr 140px 140px;
+  align-items: center;
+  padding: 14px 16px;
+}
+
+.batch-list-header {
+  background: #f9fafb;
+  font-weight: 700;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.batch-list-row {
+  border-bottom: 1px solid #e5e7eb;
+  transition: background 0.15s ease;
+}
+
+.batch-list-row:hover {
+  background: #fafafa;
+}
+
+/* ===============================
+   List Column Alignment (의도 명시)
+=============================== */
+
+/* 날짜 */
+.batch-list-header span:first-child,
+.batch-list-row .batch-date {
+  text-align: left;
+  font-family: monospace;
+}
+
+/* 건수 */
+.batch-list-header .count-col,
+.batch-list-row .batch-count {
+  text-align: center;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #111827;
+}
+
+/* 버튼 영역 */
+.batch-list-header span:last-child {
+  text-align: right;
+}
+
+/* ===============================
+   View Button (KODEX 동일)
+=============================== */
+
+.view-link {
+  justify-self: end;
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e0e7ff;
+  background: #f5f7ff;
+  color: #4338ca;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.view-link:hover {
+  background: #4338ca;
+  border-color: #4338ca;
+  color: #ffffff;
+}
+
+/* ===============================
+   Detail Panel
+=============================== */
+
+.batch-detail-panel {
+  padding: 12px 16px;
+  background: #fafafa;
+}
+
+.batch-detail-title {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #374151;
+}
+
+/* ===============================
+   Detail Table (Grid)
+=============================== */
+
+.batch-detail-header,
+.batch-detail-row {
+  display: grid;
+  grid-template-columns:
+    60px        /* 유형 */
+    2fr         /* Job명 */
+    1.2fr       /* 시작 */
+    1.2fr       /* 종료 */
+    100px       /* Status */
+    90px;       /* Duration */
+  gap: 8px;
+  padding: 8px 0;
+  font-size: 0.8rem;
+}
+
+/* 헤더 */
+.batch-detail-header {
+  font-weight: 700;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* 로우 */
+.batch-detail-row {
+  border-bottom: 1px solid #eef2f7;
+}
+
+/* 세로 기준선 안정화 */
+.batch-detail-header span,
+.batch-detail-row span {
+  align-self: center;
+}
+
+/* ===============================
+   Status
+=============================== */
+
+.status-success {
+  color: #16a34a;
+  font-weight: 700;
+}
+
+.status-fail {
+  color: #dc2626;
+  font-weight: 700;
+}
+
+/* ===============================
+   Pagination (KODEX / MyStock 통일)
+=============================== */
+
+.batch-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px;
+}
+
+.page-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+  font-size: 0.85rem;
+  color: #2563eb;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.page-btn:hover {
+  background: #eff6ff;
+}
+
+.page-btn.active {
+  background: #2563eb;
+  color: #ffffff;
+  border-color: #2563eb;
+}

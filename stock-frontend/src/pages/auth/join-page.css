@@ -1,0 +1,87 @@
+.join-page {
+  min-height: calc(100vh - 120px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.join-card {
+  width: 420px;
+  background: #fff;
+  border-radius: 10px;
+  padding: 2rem;
+  border: 1px solid #e5e7eb;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+}
+
+.join-title {
+  text-align: center;
+  font-size: 1.4rem;
+  font-weight: 700;
+  margin-bottom: 1.5rem;
+}
+
+.join-error {
+  background: #fee2e2;
+  color: #b91c1c;
+  padding: 0.6rem;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1rem;
+}
+
+.form-group label {
+  display: block;
+  font-size: 0.85rem;
+  margin-bottom: 0.3rem;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 0.55rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+}
+
+.input-inline {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.input-inline button {
+  padding: 0 0.75rem;
+  border-radius: 6px;
+  border: 1px solid #d1d5db;
+  background: #f9fafb;
+  cursor: pointer;
+}
+
+.msg {
+  font-size: 0.8rem;
+  margin-top: 0.25rem;
+}
+
+.msg.success {
+  color: #047857;
+}
+
+.msg.error {
+  color: #b91c1c;
+}
+
+.join-btn {
+  width: 100%;
+  margin-top: 1.2rem;
+  padding: 0.65rem;
+  border-radius: 6px;
+  border: none;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -1,0 +1,191 @@
+/* =========================
+   Grid
+========================= */
+
+.bond-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+/* =========================
+   Card
+========================= */
+
+.card {
+  border-radius: 14px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+
+  /* 카드별 대표 색상 (JS에서 주입) */
+  --bond-primary: #6366f1;
+}
+
+/* =========================
+   Header (Base)
+========================= */
+
+.card-header {
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  padding: 0.75rem 1rem;
+}
+
+/* =========================
+   Header Layout (Grid)
+========================= */
+
+.bond-header {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 12px;
+}
+
+/* 제목 */
+.bond-header .fw-bold {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #111827;
+  white-space: nowrap;
+}
+
+/* =========================
+   Center Summary
+========================= */
+
+.latest-info {
+  display: flex;
+  justify-content: center;      /* ✅ 정확히 중앙 */
+  align-items: center;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 0.8rem;
+}
+
+.rate-item {
+  white-space: nowrap;
+}
+
+/* =========================
+   Right Area
+========================= */
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  white-space: nowrap;
+}
+
+/* 기준일 */
+.base-date {
+  font-size: 0.75rem;
+  color: #666;
+}
+
+/* =========================
+   Range Buttons
+========================= */
+
+.bond-range-btn {
+  border: 1px solid var(--bond-primary);
+  color: var(--bond-primary);
+  background: transparent;
+
+  border-radius: 8px;
+  font-size: 0.75rem;
+  padding: 0.25rem 0.6rem;
+  line-height: 1.2;
+
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
+}
+
+.bond-range-btn:hover {
+  background: color-mix(in srgb, var(--bond-primary) 12%, transparent);
+}
+
+.bond-range-btn.active {
+  background: var(--bond-primary);
+  border-color: var(--bond-primary);
+  color: #ffffff;
+
+  box-shadow: 0 4px 10px
+    color-mix(in srgb, var(--bond-primary) 45%, transparent);
+}
+
+.bond-range-btn:active {
+  transform: scale(0.96);
+}
+
+/* =========================
+   Up / Down
+========================= */
+
+.up {
+  color: #d93025;   /* 🔴 상승 */
+  font-weight: 600;
+}
+
+.down {
+  color: #1a73e8;   /* 🔵 하락 */
+  font-weight: 600;
+}
+
+/* =========================
+   Legend
+========================= */
+
+.bond-legend {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 18px;
+
+  padding: 6px 0 2px;
+  font-size: 0.75rem;
+  color: #374151;
+}
+
+.bond-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.legend-box {
+  width: 22px;
+  height: 10px;
+  border: 2px solid;
+  border-radius: 3px;
+  background: transparent;
+}
+
+.legend-label {
+  font-weight: 500;
+}
+
+/* =========================
+   Body
+========================= */
+
+.card-body {
+  padding: 0.75rem 1rem 1rem;
+}
+
+/* =========================
+   Responsive
+========================= */
+
+@media (max-width: 1200px) {
+  .bond-grid {
+    grid-template-columns: 1fr;
+  }
+}

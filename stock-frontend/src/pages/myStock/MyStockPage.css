@@ -1,0 +1,306 @@
+/* =====================================================
+   MyStock Page Layout
+===================================================== */
+.mystock-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 24px 16px;
+}
+
+/* =====================================================
+   Header
+===================================================== */
+.mystock-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 18px;
+}
+
+.mystock-header h3 {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #111827;
+}
+
+.btn-deleted {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #374151;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-deleted:hover {
+  background: #f9fafb;
+}
+
+/* =====================================================
+   Card
+===================================================== */
+.mystock-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+.mystock-card-title {
+  padding: 14px 18px;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #111827;
+}
+
+/* =====================================================
+   Table
+===================================================== */
+.mystock-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mystock-table th,
+.mystock-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  font-size: 0.9rem;
+  vertical-align: middle;
+}
+
+.mystock-table thead {
+  background: #f9fafb;
+}
+
+/* 헤더 기본 */
+.mystock-table thead th {
+  font-weight: 600;
+  color: #374151;
+  white-space: nowrap;
+}
+
+/* 기본 hover */
+.mystock-table tbody tr:hover {
+  background: #f8fafc;
+}
+
+/* =====================================================
+   Column Alignment (헤더 + 바디 통일)
+===================================================== */
+
+/* No */
+.col-no {
+  width: 60px;
+  text-align: center;
+}
+
+/* 종목코드 */
+.col-code {
+  text-align: left;
+  padding-left: 12px;
+  font-family: monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 종목명 */
+.col-name {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 500;
+}
+
+/* 숫자 컬럼 */
+.col-num {
+  text-align: right;
+  padding-right: 12px;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+
+/* 전략 */
+.col-strategy {
+  text-align: left;
+  padding-left: 12px;
+  font-weight: 600;
+}
+
+/* 날짜 */
+.col-date {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* 삭제 */
+.col-action {
+  text-align: center;
+}
+
+/* =====================================================
+   Price State (KR 증권 UX 기준)
+===================================================== */
+
+/* 상승 */
+.row-profit {
+  background: #fff5f5;
+}
+
+/* 하락 */
+.row-loss {
+  background: #f5f9ff;
+}
+
+/* hover */
+.mystock-table tbody tr.row-profit:hover {
+  background: #ffecec;
+}
+
+.mystock-table tbody tr.row-loss:hover {
+  background: #eaf2ff;
+}
+
+/* 숫자 색상 */
+.price-up {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.price-down {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.price-same {
+  color: #374151;
+}
+
+/* =====================================================
+   Buttons
+===================================================== */
+.btn-delete {
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #fca5a5;
+  background: #fff;
+  color: #dc2626;
+  font-size: 0.75rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-delete:hover {
+  background: #fee2e2;
+}
+
+/* =====================================================
+   Empty State
+===================================================== */
+.mystock-empty {
+  padding: 24px 0;
+  text-align: center;
+  font-size: 0.9rem;
+  color: #6b7280;
+}
+
+/* =====================================================
+   Pagination
+===================================================== */
+.mystock-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px 0;
+}
+
+.mystock-pagination .page-btn {
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 0.85rem;
+  color: #2563eb;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.mystock-pagination .page-btn:hover {
+  background: #eff6ff;
+}
+
+.mystock-pagination .page-btn.active {
+  background: #2563eb;
+  color: #fff;
+  border-color: #2563eb;
+  font-weight: 600;
+}
+
+/* =====================================================
+   Modal
+===================================================== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 2000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+.modal-body {
+  width: 90%;
+  max-width: 1000px;
+  max-height: 85vh;
+  background: #fff;
+  border-radius: 14px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 14px 18px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-content {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.close-btn {
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* =====================================================
+   Strategy Badge
+===================================================== */
+.col-strategy a {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.col-strategy a:hover {
+  background: #d1fae5;
+}

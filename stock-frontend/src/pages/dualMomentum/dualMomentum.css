@@ -1,0 +1,130 @@
+/* ===============================
+   Dashboard Card
+=============================== */
+
+.dashboard-card {
+  border: 1px solid #d1d5db;
+  border-radius: 12px;
+  padding: 1.2rem 1.4rem;
+  background: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
+  margin-bottom: 2rem;
+}
+
+/* 카드 제목 */
+.dashboard-card h5 {
+  margin-bottom: 0.8rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+/* ===============================
+   Scroll Container
+=============================== */
+
+.content-box {
+  max-height: 420px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+/* 스크롤바 살짝 정리 (선택) */
+.content-box::-webkit-scrollbar {
+  width: 6px;
+}
+
+.content-box::-webkit-scrollbar-thumb {
+  background: #d1d5db;
+  border-radius: 4px;
+}
+
+/* ===============================
+   Table Base
+=============================== */
+
+table {
+  width: 100%;
+  font-size: 0.9rem;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 6px 8px;
+  vertical-align: middle; /* ✅ 세로 중앙 정렬 */
+}
+
+/* Header */
+th {
+  font-weight: 600;
+  border-bottom: 1px solid #e5e7eb;
+  color: #374151;
+}
+
+/* Body */
+td {
+  border-bottom: 1px solid #f1f5f9;
+  color: #111827;
+}
+
+/* Hover */
+tbody tr:hover {
+  background-color: #f9fafb;
+}
+
+/* ===============================
+   Column Alignment
+=============================== */
+
+/* 종목 (코드 + 이름) */
+.col-code {
+  text-align: left;
+  white-space: nowrap;
+  font-weight: 500;
+}
+
+/* 숫자 컬럼 */
+.col-price,
+.col-prev,
+.col-diff,
+.col-volume {
+  text-align: right;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+/* 날짜 */
+.col-date {
+  text-align: center;
+  white-space: nowrap;
+  color: #6b7280;
+}
+
+/* ===============================
+   Up / Down Color
+=============================== */
+
+.up {
+  color: #d93025; /* 🔴 상승 */
+  font-weight: 600;
+}
+
+.down {
+  color: #1a73e8; /* 🔵 하락 */
+  font-weight: 600;
+}
+
+/* ===============================
+   Responsive
+=============================== */
+
+@media (max-width: 768px) {
+  table {
+    font-size: 0.85rem;
+  }
+
+  .content-box {
+    max-height: 300px;
+  }
+}
