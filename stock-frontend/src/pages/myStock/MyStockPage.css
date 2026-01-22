@@ -304,3 +304,35 @@
 .col-strategy a:hover {
   background: #d1fae5;
 }
+/* =====================================================
+   Header Actions
+===================================================== */
+.mystock-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-etf {
+  padding: 6px 14px;
+  border-radius: 999px;
+  border: 1px solid #e5e7eb;
+  background: #fff;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #2563eb;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-etf:hover {
+  background: #eff6ff;
+}
+.btn-etf-primary {
+  border-color: #2563eb;
+  background: #2563eb;
+  color: #fff;
+}
+
+.btn-etf-primary:hover {
+  background: #1e40af;
+}

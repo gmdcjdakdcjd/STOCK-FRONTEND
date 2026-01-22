@@ -9,6 +9,8 @@ import {
 import BasicLayout from "../../layouts/BasicLayout";
 
 import type { MyStockDTO, PageResponseDTO } from "../../api/myStockApi";
+import CreateEtfModal from "./CreateEtfModal";
+import EditEtfModal from "./EditEtfModal";
 
 import DeletedMyStockModal from "./DeletedMyStockModal";
 import "./MyStockPage.css";
@@ -29,6 +31,10 @@ export default function MyStockPage() {
         useState<PageResponseDTO<MyStockDTO> | null>(null);
 
     const [showDeleted, setShowDeleted] = useState(false);
+    const [showCreateEtf, setShowCreateEtf] = useState(false);
+
+    const [showAddToEtf, setShowAddToEtf] = useState(false);
+
 
     /* =========================
        Load
@@ -196,16 +202,40 @@ export default function MyStockPage() {
             <div className="mystock-container">
                 <div className="mystock-header">
                     <h3>내 관심 종목</h3>
-                    <button
-                        className="btn-deleted"
-                        onClick={() => {
-                            loadDeleted(1);
-                            setShowDeleted(true);
-                        }}
-                    >
-                        삭제된 종목 보기
-                    </button>
+
+                    <div className="mystock-header-actions">
+                        <button
+                            className="btn-etf"
+                            onClick={() => setShowAddToEtf(true)}
+                        >
+                            기존 ETF 추가
+                        </button>
+
+
+                        <button
+                            className="btn-etf btn-etf-primary"
+                            onClick={() => {
+                                setShowCreateEtf(true);
+                            }}
+                        >
+                            신규 ETF 생성
+                        </button>
+
+
+
+                        <button
+                            className="btn-deleted"
+                            onClick={() => {
+                                loadDeleted(1);
+                                setShowDeleted(true);
+                            }}
+                        >
+                            삭제된 종목 보기
+                        </button>
+                    </div>
                 </div>
+
+
 
                 {/* KR */}
                 <div className="mystock-card">
@@ -263,6 +293,46 @@ export default function MyStockPage() {
                         onPage={loadDeleted}
                     />
                 )}
+
+                {showCreateEtf && (
+                    <CreateEtfModal
+                        open={showCreateEtf}
+                        myStocks={[
+                            ...(krResult?.dtoList ?? []),
+                            ...(usResult?.dtoList ?? []),
+                        ].map(s => ({
+                            code: s.code,
+                            name: s.name,
+                        }))}
+                        onClose={() => setShowCreateEtf(false)}
+                        onCreated={() => {
+                            // ETF 생성 후 (지금은 모달 닫기만)
+                            setShowCreateEtf(false);
+                        }}
+                    />
+                )}
+
+                {showAddToEtf && (
+                    <EditEtfModal
+                        open={showAddToEtf}
+                        myStocks={[
+                            ...(krResult?.dtoList ?? []),
+                            ...(usResult?.dtoList ?? []),
+                        ].map(s => ({
+                            code: s.code,
+                            name: s.name,
+                        }))}
+                        onClose={() => setShowAddToEtf(false)}
+                        onSaved={() => {
+                            setShowAddToEtf(false);
+                            // 필요하면 ETF 목록 reload 같은 거 여기서
+                        }}
+                    />
+                )}
+
+
+
+
             </div>
         </BasicLayout>
     );

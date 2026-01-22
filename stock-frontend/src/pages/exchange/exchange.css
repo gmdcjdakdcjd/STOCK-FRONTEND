@@ -1,0 +1,214 @@
+/* =========================
+   Indicator Grid
+========================= */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.25rem;
+}
+
+/* =========================
+   Indicator Card Box
+========================= */
+.card {
+  margin-bottom: 0;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   Card Header (🔑 안정화 완료)
+========================= */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  height: 52px;              /* 🔑 고정 기준 */
+  padding: 0 14px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  white-space: nowrap;       /* 🔑 PC에서 줄바꿈 차단 */
+  overflow: hidden;          /* 🔑 높이 흔들림 방지 */
+}
+
+/* 제목 */
+.card-header .fw-bold {
+  margin-right: 6px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* =========================
+   Latest Info
+========================= */
+.latest-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.85rem;
+  color: #333;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.latest-info.up {
+  color: #d93025;
+  font-weight: 600;
+}
+
+.latest-info.down {
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+/* =========================
+   Range Buttons
+========================= */
+.btn-group.btn-group-sm {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+
+  --indicator-color: #6d5dfc;
+  flex-shrink: 0;
+}
+
+.btn-group.btn-group-sm .btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+
+  border: 1px solid var(--indicator-color);
+  background: #ffffff;
+  color: var(--indicator-color);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
+}
+
+.btn-group.btn-group-sm .btn:hover {
+  background: color-mix(
+    in srgb,
+    var(--indicator-color) 10%,
+    transparent
+  );
+}
+
+.btn-group.btn-group-sm .btn.active {
+  background: var(--indicator-color) !important;
+  border-color: var(--indicator-color) !important;
+  color: #ffffff !important;
+
+  box-shadow: 0 3px 8px
+    color-mix(in srgb, var(--indicator-color) 45%, transparent);
+}
+
+.btn-group.btn-group-sm .btn:active {
+  transform: scale(0.96);
+}
+
+/* =========================
+   Card Body / Chart
+========================= */
+.card-body {
+  padding: 12px;
+  height: 360px;
+}
+
+/* =========================
+   Responsive (모바일만 wrap 허용)
+========================= */
+@media (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
+    flex-wrap: wrap;     /* 모바일에서만 줄바꿈 */
+    height: auto;
+    min-height: 52px;    /* 🔑 기준 유지 */
+    gap: 8px;
+
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .btn-group.btn-group-sm {
+    margin-left: 0;
+  }
+}
+.indicator-page {
+  width: 100%;
+}
+
+body {
+  overflow-y: scroll;
+}
+
+/* =========================
+   Index Side Navigation (우측 세로 네비)
+========================= */
+.index-side-nav {
+  position: fixed;
+  right: 36px;              /* 살짝 더 안쪽 */
+  top: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;                /* 버튼 간격 증가 */
+  z-index: 100;
+}
+
+/* 네비 버튼 */
+.index-nav-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;      /* 카드랑 통일 */
+
+  padding: 12px 18px;       /* 🔑 핵심: 상자 크기 확장 */
+  font-size: 0.95rem;       /* 기존 0.9 → 0.95 */
+  font-weight: 600;
+
+  min-width: 96px;          /* 🔑 가로 크기 확장 */
+  text-align: center;
+
+  color: #333;
+  cursor: pointer;
+  white-space: nowrap;
+
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.06),
+    0 6px 14px rgba(0, 0, 0, 0.10);
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.12s ease,
+    box-shadow 0.15s ease;
+}
+
+.index-nav-item:hover {
+  background: #f5f7fa;
+  box-shadow:
+    0 4px 8px rgba(0, 0, 0, 0.08),
+    0 8px 18px rgba(0, 0, 0, 0.12);
+}
+
+.index-nav-item:active {
+  transform: scale(0.97);
+}

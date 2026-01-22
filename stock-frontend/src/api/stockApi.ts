@@ -7,7 +7,7 @@ export async function fetchStockSearch(
     ...(stockCode ? { stockCode } : {})
   });
 
-  const res = await fetch(`/stock/api/searchStock?${params.toString()}`);
+  const res = await fetch(`/api/stock/searchStock?${params.toString()}`);
 
   if (!res.ok) {
     throw new Error("Stock search fetch failed");

@@ -13,7 +13,7 @@ export async function fetchMyEtfList(
   size: number
 ): Promise<PageResponseDTO<MyEtfSummaryDTO>> {
   const res = await fetch(
-    `/myetf/api/list?page=${page}&size=${size}`,
+    `/api/myetf/list?page=${page}&size=${size}`,
     { credentials: "include" }
   );
   if (!res.ok) throw new Error("MYETF_LIST_ERROR");
@@ -26,7 +26,7 @@ export async function fetchMyEtfList(
 export async function createMyEtf(
   body: MyEtfCreateRequestDTO
 ): Promise<void> {
-  const res = await fetch("/myetf/api/create", {
+  const res = await fetch("/api/myetf/create", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -45,7 +45,7 @@ export async function createMyEtf(
    ETF 삭제
 ========================= */
 export async function deleteMyEtf(etfName: string): Promise<void> {
-  const res = await fetch("/myetf/api/delete", {
+  const res = await fetch("/api/myetf/delete", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -62,7 +62,7 @@ export async function fetchMyEtfDetail(
   etfName: string
 ): Promise<MyEtfDetailResponseDTO> {
   const res = await fetch(
-    `/myetf/api/detail?etfName=${encodeURIComponent(etfName)}`,
+    `/api/myetf/detail?etfName=${encodeURIComponent(etfName)}`,
     {
       credentials: "include", // ⭐ 이거 없어서 Loading 걸렸던 거
     }

@@ -15,6 +15,8 @@ export default function MyEtfListPage() {
   const [page, setPage] = useState(1);
   const size = 10;
 
+  const list = result?.dtoList ?? [];
+
   /* =========================
      데이터 로딩
      ========================= */
@@ -56,7 +58,7 @@ export default function MyEtfListPage() {
         {/* List */}
         {!result ? (
           <div className="myetf-loading">Loading...</div>
-        ) : result.dtoList.length === 0 ? (
+        ) : list.length === 0 ? (
           <div className="myetf-empty">생성된 ETF가 없습니다.</div>
         ) : (
           <div className="myetf-list">
@@ -69,7 +71,7 @@ export default function MyEtfListPage() {
             </div>
 
             {/* ===== Rows ===== */}
-            {result.dtoList.map((etf, idx) => (
+            {list.map((etf, idx) => (
               <div
                 key={etf.etfName}
                 className="myetf-row"
@@ -96,8 +98,8 @@ export default function MyEtfListPage() {
               </div>
             ))}
           </div>
-
         )}
+
 
         {/* Pagination */}
         {result && result.total > 0 && (

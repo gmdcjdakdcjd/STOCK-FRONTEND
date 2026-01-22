@@ -20,7 +20,7 @@ export async function fetchKodexSummary(q?: string) {
   const params = new URLSearchParams();
   if (q) params.append("q", q);
 
-  const res = await fetch(`/kodex/api/summary?${params.toString()}`);
+  const res = await fetch(`/api/kodex/summary?${params.toString()}`);
   if (!res.ok) throw new Error("KODEX summary fetch failed");
 
   return res.json() as Promise<KodexEtfSummary[]>;
@@ -28,7 +28,7 @@ export async function fetchKodexSummary(q?: string) {
 
 // kodexApi.ts
 export async function fetchKodexHoldings(etfId: string) {
-  const res = await fetch(`/kodex/api/holdings?etfId=${etfId}`);
+  const res = await fetch(`/api/kodex/holdings?etfId=${etfId}`);
   if (!res.ok) throw new Error("KODEX holdings fetch failed");
   return res.json() as Promise<KodexEtfHolding[]>;
 }

@@ -9,7 +9,7 @@ export function useDualMomentumData() {
   useEffect(() => {
     async function fetchData() {
       try {
-        const res = await fetch("/dual-momentum/api");
+        const res = await fetch("/api/dual-momentum");
 
         if (!res.ok) {
           throw new Error(`API error: ${res.status}`);

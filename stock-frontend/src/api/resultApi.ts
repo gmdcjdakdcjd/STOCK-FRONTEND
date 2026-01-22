@@ -48,7 +48,7 @@ export async function fetchKrResultList(
 ): Promise<StrategyListResponse> {
 
   const res = await fetch(
-    `/result/api/kr?${params.toString()}`,
+    `/api/result/kr?${params.toString()}`,
     { credentials: "include" }
   );
 
@@ -68,7 +68,7 @@ export async function fetchUsResultList(
 ): Promise<StrategyListResponse> {
 
   const res = await fetch(
-    `/result/api/us?${params.toString()}`,
+    `/api/result/us?${params.toString()}`,
     { credentials: "include" }
   );
 
@@ -88,7 +88,7 @@ export async function fetchKrResultDetail(
   date: string
 ) {
   const res = await fetch(
-    `/result/api/kr/detail?strategy=${encodeURIComponent(strategy)}&date=${date}`,
+    `/api/result/kr/detail?strategy=${encodeURIComponent(strategy)}&date=${date}`,
     { credentials: "include" }
   );
 
@@ -108,7 +108,7 @@ export async function fetchUsResultDetail(
   date: string
 ) {
   const res = await fetch(
-    `/result/api/us/detail?strategy=${encodeURIComponent(strategy)}&date=${date}`,
+    `/api/result/us/detail?strategy=${encodeURIComponent(strategy)}&date=${date}`,
     { credentials: "include" }
   );
 

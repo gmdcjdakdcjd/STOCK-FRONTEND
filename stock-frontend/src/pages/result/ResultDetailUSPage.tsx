@@ -30,7 +30,7 @@ export default function ResultDetailUSPage() {
        데이터 조회 (US)
        ========================= */
     useEffect(() => {
-        fetch(`/result/api/us/detail?strategy=${strategy}&date=${date}`)
+        fetch(`/api/result/us/detail?strategy=${strategy}&date=${date}`)
             .then(res => res.json())
             .then(data => {
                 setCaptureName(data.captureName);
@@ -88,14 +88,14 @@ export default function ResultDetailUSPage() {
                 name: r.name,
                 strategyName: strategy,
                 priceAtAdd: r.price,
-                memo: date
+                memo: date,
             }));
 
-        fetch("/mystock/api/add", {
+        fetch("/api/mystock/add", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             credentials: "include",
-            body: JSON.stringify(payload)
+            body: JSON.stringify(payload),
         })
             .then(res => {
                 if (!res.ok) throw new Error();
@@ -106,10 +106,10 @@ export default function ResultDetailUSPage() {
 
     return (
         <BasicLayout>
-            <div className="container mt-4" style={{ maxWidth: 1400 }}>
-
+            {/* 🔑 content-inner 기준 안에서만 작업 */}
+            <div className="result-detail-page">
                 {/* =========================
-           Header (KR UI와 동일)
+           Header Card
            ========================= */}
                 <div className="detail-header-card">
                     <div className="detail-header-left">
@@ -120,14 +120,7 @@ export default function ResultDetailUSPage() {
                     </div>
 
                     <div className="detail-header-actions">
-                        {/* <button
-                            className="btn-outline-pill"
-                            onClick={() => navigate(-1)}
-                        >
-                            ← 목록
-                        </button> */}
-
-                        {authenticated && (
+                        {authenticated ? (
                             <>
                                 <button
                                     className="btn-outline-pill"
@@ -143,9 +136,7 @@ export default function ResultDetailUSPage() {
                                     📌 선택 종목 추가
                                 </button>
                             </>
-                        )}
-
-                        {!authenticated && (
+                        ) : (
                             <button
                                 className="btn-outline-pill"
                                 onClick={() => navigate("/login")}
@@ -154,7 +145,6 @@ export default function ResultDetailUSPage() {
                             </button>
                         )}
                     </div>
-
                 </div>
 
                 {/* =========================
@@ -167,15 +157,15 @@ export default function ResultDetailUSPage() {
 
                     <table className="detail-table align-table">
                         <colgroup>
-                            <col style={{ width: "48px" }} />
+                            <col style={{ width: "48px" }} />   {/* 체크 */}
+                            <col style={{ width: "120px" }} />  {/* 종목코드 */}
+                            <col />                             {/* 종목명 (flex) */}
                             <col style={{ width: "120px" }} />
-                            <col style={{ width: "220px" }} />
-                            <col style={{ width: "140px" }} />
-                            <col style={{ width: "140px" }} />
                             <col style={{ width: "120px" }} />
-                            <col style={{ width: "160px" }} />
+                            <col style={{ width: "100px" }} />
                             <col style={{ width: "140px" }} />
                         </colgroup>
+
 
                         <thead>
                             <tr>
@@ -183,8 +173,13 @@ export default function ResultDetailUSPage() {
                                     {authenticated && (
                                         <input
                                             type="checkbox"
-                                            checked={checked.length === rows.length && rows.length > 0}
-                                            onChange={e => toggleAll(e.target.checked)}
+                                            checked={
+                                                checked.length === rows.length &&
+                                                rows.length > 0
+                                            }
+                                            onChange={e =>
+                                                toggleAll(e.target.checked)
+                                            }
                                         />
                                     )}
                                 </th>
@@ -194,7 +189,6 @@ export default function ResultDetailUSPage() {
                                 <th className="col-num">{priceLabel}</th>
                                 <th className="col-num">등락률</th>
                                 <th className="col-num">거래량</th>
-                                <th className="col-date">포착시간</th>
                             </tr>
                         </thead>
 
@@ -230,7 +224,7 @@ export default function ResultDetailUSPage() {
                                                     ? "#dc2626"
                                                     : r.diff < 0
                                                         ? "#2563eb"
-                                                        : "#6b7280"
+                                                        : "#6b7280",
                                         }}
                                     >
                                         {r.diff}%
@@ -239,16 +233,11 @@ export default function ResultDetailUSPage() {
                                     <td className="col-num">
                                         {r.volume.toLocaleString()}
                                     </td>
-
-                                    <td className="col-date">
-                                        {r.createdAt}
-                                    </td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </BasicLayout>
     );

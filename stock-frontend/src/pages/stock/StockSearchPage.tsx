@@ -106,7 +106,7 @@ function StockSearchPage() {
     if (stockName) params.append("stockName", stockName);
     if (stockCode) params.append("stockCode", stockCode);
 
-    const res = await fetch(`/stock/api/searchStock?${params.toString()}`);
+    const res = await fetch(`/api/stock/searchStock?${params.toString()}`);
     const data = await res.json();
 
     if (data.error) {
@@ -135,7 +135,7 @@ function StockSearchPage() {
     }
 
     const res = await fetch(
-      `/common/api/autocomplete/stock?q=${encodeURIComponent(q)}`
+      `/api/common/autocomplete/stock?q=${encodeURIComponent(q)}`
     );
     const list = await res.json();
 
@@ -153,7 +153,7 @@ function StockSearchPage() {
     }
 
     const res = await fetch(
-      `/common/api/autocomplete/code?q=${encodeURIComponent(q)}`
+      `/api/common/autocomplete/code?q=${encodeURIComponent(q)}`
     );
     const list = await res.json();
 

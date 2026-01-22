@@ -53,7 +53,7 @@ export type PageResponseDTO<T> = {
 // API Base
 // ============================
 
-const BASE_URL = "/mystock/api";
+const BASE_URL = "/api/mystock";
 
 // ============================
 // API Functions

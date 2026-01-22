@@ -14,7 +14,9 @@
   overflow-y: auto;
 }
 
-/* Empty */
+/* ================================
+   Empty
+================================ */
 .restore-empty {
   padding: 2rem 0;
   text-align: center;
@@ -38,16 +40,60 @@
   border-bottom: none;
 }
 
-.restore-row .name {
-  flex: 1;
-  margin-right: 1rem;
+.restore-row.disabled {
+  opacity: 0.55;
+}
+
+/* ================================
+   Info (Name + Meta)
+================================ */
+.restore-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.restore-info .name {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 
+.restore-info .meta {
+  font-size: 0.7rem;
+  color: #6b7280;
+}
+
 /* ================================
-   Ghost button (header)
+   Restore Reason / Warning
+================================ */
+.restore-reason {
+  font-size: 0.7rem;
+  color: #ef4444;
+}
+
+
+.restore-warning {
+  font-size: 0.7rem;
+  color: #ef4444;
+}
+
+/* ================================
+   Buttons
+================================ */
+.primary-btn.disabled {
+  background: #e5e7eb;
+  border-color: #e5e7eb;
+  color: #9ca3af;
+  cursor: not-allowed;
+}
+
+.primary-btn.disabled:hover {
+  background: #e5e7eb;
+}
+
+/* ================================
+   Ghost button (header trigger)
 ================================ */
 .ghost-btn {
   padding: 0.4rem 0.8rem;
@@ -60,4 +106,13 @@
 
 .ghost-btn:hover {
   background: #f9fafb;
+}
+.restore-info .meta.primary {
+  font-size: 1.2rem;
+  color: #374151;      /* 조금 진하게 */
+}
+
+.restore-info .meta.secondary {
+  font-size: 0.7rem;
+  color: #9ca3af;      /* 흐리게 */
 }

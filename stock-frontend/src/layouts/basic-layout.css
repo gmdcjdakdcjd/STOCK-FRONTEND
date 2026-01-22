@@ -25,13 +25,45 @@ html {
 }
 
 /* ===============================
+   Top Auth Bar
+================================ */
+.top-bar {
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+
+  padding: 0 1.5rem;
+
+  font-size: 0.8rem;
+  color: #374151;
+
+  background: #f9fafb;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.top-link {
+  color: #374151;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.top-link:hover {
+  text-decoration: underline;
+}
+
+.top-user {
+  font-weight: 600;
+}
+
+/* ===============================
    Header (고정 기준)
 ================================ */
 .header {
   background: #ffffff;
   border-bottom: 1px solid #e5e7eb;
 
-  /* 🔑 헤더 높이 기준 고정 */
   min-height: 64px;
   display: flex;
   align-items: center;
@@ -46,7 +78,6 @@ html {
   width: 100%;
   margin: 0 auto;
 
-  /* 🔑 상하 흔들림 제거 */
   height: 64px;
   padding: 0 1.5rem;
 }
@@ -69,6 +100,9 @@ html {
   display: flex;
   align-items: center;
   gap: 14px;
+
+  flex: 1;        /* 남은 영역만 차지 */
+  min-width: 0;
   white-space: nowrap;
 }
 
@@ -94,7 +128,7 @@ html {
   content: "";
   position: absolute;
   left: 0;
-  bottom: -6px;          /* 🔑 기준선 안정 */
+  bottom: -6px;
   width: 0%;
   height: 2px;
   background: #5a33ff;
@@ -117,50 +151,6 @@ html {
   margin-left: 6px;
   font-size: 1.05rem;
   line-height: 1;
-}
-
-/* ===============================
-   Auth
-================================ */
-.auth {
-  margin-left: 1rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  white-space: nowrap;
-}
-
-.btn-link {
-  background: none;
-  border: none;
-  cursor: pointer;
-}
-
-/* ===============================
-   Content
-================================ */
-.content {
-  flex: 1;
-  width: 100%;
-}
-
-/* 실제 페이지 내용용 wrapper */
-.content-inner {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.25rem 1.5rem;
-}
-
-/* ===============================
-   Footer
-================================ */
-.footer {
-  border-top: 1px solid #e5e7eb;
-  padding: 0.75rem;
-  text-align: center;
-
-  font-size: 0.8rem;
-  color: #6b7280;
 }
 
 /* ===============================
@@ -211,7 +201,83 @@ html {
 .nav-dd-mark {
   width: 14px;
   text-align: center;
-
   color: #9ca3af;
   font-weight: 700;
+}
+
+/* ===============================
+   MyPage (Login Required)
+================================ */
+.mypage-btn.login-required {
+  color: #111827;        /* 일반 nav와 동일 */
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.mypage-btn.login-required::after {
+  display: none;         /* 밑줄 제거 */
+}
+
+/* ===============================
+   Content
+================================ */
+.content {
+  flex: 1;
+  width: 100%;
+}
+
+.content-inner {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem;
+}
+
+/* ===============================
+   Footer
+================================ */
+.footer {
+  border-top: 1px solid #e5e7eb;
+  padding: 0.75rem;
+  text-align: center;
+
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+/* ===============================
+   Tooltip (Login Required)
+================================ */
+.mypage-btn.login-required {
+  position: relative;
+}
+
+.mypage-btn.login-required:hover::before {
+  content: attr(data-tooltip);
+
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+
+  color: #ffffff;
+  background: #111827;
+  border-radius: 6px;
+
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 4000;
+}
+
+.mypage-btn.login-required:hover::after {
+  content: "";
+  position: absolute;
+  top: calc(100% + 2px);
+  left: 50%;
+  transform: translateX(-50%);
+
+  border-width: 6px;
+  border-style: solid;
+  border-color: #111827 transparent transparent transparent;
 }

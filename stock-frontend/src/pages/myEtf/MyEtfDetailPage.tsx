@@ -65,10 +65,12 @@ export default function MyEtfDetailPage() {
             />
             <RestoreEtfModal
               etfName={data.etfName}
+              activeCodes={data.itemList.map(i => i.code)}   // ⭐ 이 줄 추가
               onRestored={() =>
                 fetchMyEtfDetail(data.etfName).then(setData)
               }
             />
+
           </div>
         </div>
 

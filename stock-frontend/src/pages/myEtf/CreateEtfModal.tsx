@@ -46,7 +46,7 @@ function CreateEtfModal({ onCreated }: Props) {
     }
 
     fetch(
-      `/common/api/autocomplete/code?q=${encodeURIComponent(keyword)}`
+      `/api/common/autocomplete/code?q=${encodeURIComponent(keyword)}`
     )
       .then(res => res.json())
       .then(setSearchResult);
@@ -183,7 +183,7 @@ function CreateEtfModal({ onCreated }: Props) {
 
                     {/* <button className="search-btn">
                       검색
-                    </button>
+                    </button> */}
 
                     <button
                       className="reset-btn ghost"
@@ -192,8 +192,8 @@ function CreateEtfModal({ onCreated }: Props) {
                         setSearchResult([]);
                       }}
                     >
-                      초기화
-                    </button> */}
+                      X
+                    </button>
                   </div>
 
                   <div className="search-list">
@@ -211,9 +211,8 @@ function CreateEtfModal({ onCreated }: Props) {
                       return (
                         <div
                           key={r.code}
-                          className={`search-item ${
-                            isSelected ? "disabled" : ""
-                          }`}
+                          className={`search-item ${isSelected ? "disabled" : ""
+                            }`}
                           onClick={() =>
                             !isSelected && addItem(r.code, r.name)
                           }
@@ -237,76 +236,76 @@ function CreateEtfModal({ onCreated }: Props) {
                 {/* 우측: 구성 종목 */}
                 <div className="selected-panel">
                   <h4>구성 종목</h4>
-
-                  <div className="selected-header">
-                    <span>종목</span>
-                    <span>수량</span>
-                    <span></span>
-                  </div>
-
-                  {tempItems.length === 0 && (
-                    <div className="empty">
-                      왼쪽에서 종목을 검색해 추가하세요
+                  <div className="selected-list">
+                    <div className="selected-header">
+                      <span>종목</span>
+                      <span>수량</span>
+                      <span></span>
                     </div>
-                  )}
 
-                  {tempItems.map((i, idx) => (
-                    <div key={idx} className="selected-row">
-                      <span>
-                        {i.name} ({i.code})
-                      </span>
+                    {tempItems.length === 0 && (
+                      <div className="empty">
+                        왼쪽에서 종목을 검색해 추가하세요
+                      </div>
+                    )}
 
-                      {/* 수량 컨트롤 */}
-                      <div className="qty-control">
-                        <button
-                          className="qty-btn minus"
-                          onClick={() =>
-                            setTempItems(prev =>
-                              prev.map((p, pIdx) =>
-                                pIdx === idx && p.quantity > 1
-                                  ? { ...p, quantity: p.quantity - 1 }
-                                  : p
-                              )
-                            )
-                          }
-                        >
-                          −
-                        </button>
-
-                        <span className="qty-value">
-                          {i.quantity}
+                    {tempItems.map((i, idx) => (
+                      <div key={idx} className="selected-row">
+                        <span>
+                          {i.name} ({i.code})
                         </span>
 
-                        <button
-                          className="qty-btn plus"
-                          onClick={() =>
-                            setTempItems(prev =>
-                              prev.map((p, pIdx) =>
-                                pIdx === idx
-                                  ? { ...p, quantity: p.quantity + 1 }
-                                  : p
+                        {/* 수량 컨트롤 */}
+                        <div className="qty-control">
+                          <button
+                            className="qty-btn minus"
+                            onClick={() =>
+                              setTempItems(prev =>
+                                prev.map((p, pIdx) =>
+                                  pIdx === idx && p.quantity > 1
+                                    ? { ...p, quantity: p.quantity - 1 }
+                                    : p
+                                )
                               )
-                            )
-                          }
+                            }
+                          >
+                            −
+                          </button>
+
+                          <span className="qty-value">
+                            {i.quantity}
+                          </span>
+
+                          <button
+                            className="qty-btn plus"
+                            onClick={() =>
+                              setTempItems(prev =>
+                                prev.map((p, pIdx) =>
+                                  pIdx === idx
+                                    ? { ...p, quantity: p.quantity + 1 }
+                                    : p
+                                )
+                              )
+                            }
+                          >
+                            +
+                          </button>
+                        </div>
+
+                        {/* 삭제 */}
+                        <button
+                          className="remove-btn icon"
+                          onClick={() => removeItem(idx)}
+                          title="종목 제거"
                         >
-                          +
+                          ✕
                         </button>
                       </div>
-
-                      {/* 삭제 */}
-                      <button
-                        className="remove-btn icon"
-                        onClick={() => removeItem(idx)}
-                        title="종목 제거"
-                      >
-                        ✕
-                      </button>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
-
             {/* Footer */}
             <div className="modal-footer">
               <button

@@ -1,5 +1,5 @@
 export async function fetchNpsSummary() {
-  const res = await fetch("/nps/api/summary");
+  const res = await fetch("/api/nps/summary");
   if (!res.ok) throw new Error("NPS summary fetch failed");
   return res.json();
 }
@@ -15,7 +15,7 @@ export async function fetchNpsList(
     ...(q ? { q } : {})
   });
 
-  const res = await fetch(`/nps/api/list?${params.toString()}`);
+  const res = await fetch(`/api/nps/list?${params.toString()}`);
   if (!res.ok) throw new Error("NPS list fetch failed");
   return res.json();
 }

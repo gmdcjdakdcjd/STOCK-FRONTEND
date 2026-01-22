@@ -381,3 +381,14 @@
 
   color: #ea580c;   /* 🔥 주황 포인트 */
 }
+
+.selected-list {
+  overflow-y: auto;
+  overflow-x: hidden;   /* ⭐ 이 줄 */
+}
+.delete-warning {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  color: #ea580c;        /* 빨강 */
+  text-align: right;
+}

@@ -14,12 +14,12 @@ type User = {
   }[];
 };
 
+type MenuKey = "indicator" | "market" | "search" | "mypage";
+
 function BasicLayout({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
-  const [openMenu, setOpenMenu] = useState<
-    "market" | "search" | "mypage" | null
-  >(null);
+  const [openMenu, setOpenMenu] = useState<MenuKey | null>(null);
 
   const navigate = useNavigate();
 
@@ -32,26 +32,47 @@ function BasicLayout({ children }: { children: ReactNode }) {
      로그인 상태 확인
      ========================= */
   useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
-      .then(res => (res.ok ? res.json() : null))
-      .then(data => setUser(data))
-      .catch(() => setUser(null))
-      .finally(() => setLoading(false));
+    const checkAuth = async () => {
+      try {
+        const res = await fetch("/api/auth/me", {
+          credentials: "include",
+          headers: { Accept: "application/json" },
+        });
+
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
+
+        const data = await res.json();
+        setUser(data);
+      } catch {
+        setUser(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
   }, []);
 
   /* =========================
      로그아웃
      ========================= */
   const logout = async () => {
-    await fetch("/api/auth/logout", {
-      method: "POST",
-      credentials: "include",
-    });
-    setUser(null);
-    navigate("/");
+    try {
+      await fetch("/api/auth/logout", {
+        method: "POST",
+        credentials: "include",
+        headers: { Accept: "application/json" },
+      });
+    } finally {
+      setUser(null);
+      navigate("/");
+    }
   };
 
-  const toggleMenu = (key: "market" | "search" | "mypage") => {
+  const toggleMenu = (key: MenuKey) => {
     setOpenMenu(prev => (prev === key ? null : key));
   };
 
@@ -59,22 +80,68 @@ function BasicLayout({ children }: { children: ReactNode }) {
 
   return (
     <>
-      {/* ================= HEADER ================= */}
+      {/* ================= TOP AUTH BAR ================= */}
+      <div className="top-bar">
+        {!loading &&
+          (user ? (
+            <>
+              <span className="top-user">{user.mid}</span>
+              <button
+                type="button"
+                className="top-link"
+                onClick={logout}
+              >
+                로그아웃
+              </button>
+            </>
+          ) : (
+            <>
+              <NavLink to="/join" className="top-link">
+                회원가입
+              </NavLink>
+              <NavLink to="/login" className="top-link">
+                로그인
+              </NavLink>
+            </>
+          ))}
+      </div>
+
+      {/* ================= MAIN HEADER ================= */}
       <header className="header">
         <div className="header-inner">
           <NavLink to="/" className="logo" onClick={closeMenu}>
             STOCK PROJECT
           </NavLink>
 
-          {/* ================= MAIN NAV ================= */}
           <nav className="nav">
-            <NavLink to="/indicator" className="nav-ani" onClick={closeMenu}>
-              📉 주요 지수
-            </NavLink>
+            {/* ===== 지수 ===== */}
+            <div className="nav-dropdown">
+              <button
+                type="button"
+                className={`nav-ani ${openMenu === "indicator" ? "active" : ""}`}
+                onClick={() => toggleMenu("indicator")}
+              >
+                📉 지수
+                <span className="nav-caret">▾</span>
+              </button>
 
-            <NavLink to="/bond" className="nav-ani" onClick={closeMenu}>
-              🏦 채권
-            </NavLink>
+              {openMenu === "indicator" && (
+                <div className="nav-dropdown-menu">
+                  <NavLink to="/stockIndex" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    증권 지수
+                  </NavLink>
+                  <NavLink to="/exchange" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    환율 지수
+                  </NavLink>
+                  <NavLink to="/physical" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    원자재 지수
+                  </NavLink>
+                </div>
+              )}
+            </div>
 
             <NavLink to="/issue" className="nav-ani" onClick={closeMenu}>
               🔥 이슈 종목
@@ -88,12 +155,11 @@ function BasicLayout({ children }: { children: ReactNode }) {
               📈 수익률 상위
             </NavLink>
 
-            {/* ================= 📊 시장 성과 ================= */}
+            {/* ===== 시장 성과 ===== */}
             <div className="nav-dropdown">
               <button
                 type="button"
-                className={`nav-ani ${openMenu === "market" ? "active" : ""
-                  }`}
+                className={`nav-ani ${openMenu === "market" ? "active" : ""}`}
                 onClick={() => toggleMenu("market")}
               >
                 📊 시장 성과
@@ -114,12 +180,11 @@ function BasicLayout({ children }: { children: ReactNode }) {
               )}
             </div>
 
-            {/* ================= 🔍 데이터 탐색 ================= */}
+            {/* ===== 데이터 탐색 ===== */}
             <div className="nav-dropdown">
               <button
                 type="button"
-                className={`nav-ani ${openMenu === "search" ? "active" : ""
-                  }`}
+                className={`nav-ani ${openMenu === "search" ? "active" : ""}`}
                 onClick={() => toggleMenu("search")}
               >
                 🔍 데이터 탐색
@@ -144,70 +209,49 @@ function BasicLayout({ children }: { children: ReactNode }) {
               )}
             </div>
 
-            {/* ================= 👤 마이페이지 ================= */}
-            {user && (
-              <div className="nav-dropdown">
-                <button
-                  type="button"
-                  className={`nav-ani ${openMenu === "mypage" ? "active" : ""
-                    }`}
-                  onClick={() => toggleMenu("mypage")}
-                >
-                  👤 마이페이지
-                  <span className="nav-caret">▾</span>
-                </button>
+            {/* ===== 마이페이지 (로그인 시만) ===== */}
+            <div className="nav-dropdown">
+              <button
+                type="button"
+                className={`nav-ani mypage-btn
+    ${!user ? "login-required" : ""}
+    ${openMenu === "mypage" ? "active" : ""}
+  `}
+                onClick={user ? () => toggleMenu("mypage") : undefined}
+                disabled={!user}
+                data-tooltip={!user ? "로그인 후 이용 가능" : undefined}
+              >
+                {user ? "👤 마이페이지" : "👥 게스트"}
+                {user && <span className="nav-caret">▾</span>}
+              </button>
 
-                {openMenu === "mypage" && (
-                  <div className="nav-dropdown-menu">
 
-                    <NavLink to="/myetf/list" onClick={closeMenu}>
+              {user && openMenu === "mypage" && (
+                <div className="nav-dropdown-menu">
+                  <NavLink to="/myetf/list" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    내 ETF
+                  </NavLink>
+
+                  <NavLink to="/stock/myStock" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    내 관심 종목
+                  </NavLink>
+
+                  {isAdmin && (
+                    <NavLink to="/manage/batch/history" onClick={closeMenu}>
                       <span className="nav-dd-mark">–</span>
-                      내 ETF
+                      배치 실행 이력
                     </NavLink>
-                    
-                    <NavLink to="/stock/myStock" onClick={closeMenu}>
-                      <span className="nav-dd-mark">–</span>
-                      내 관심 종목
-                    </NavLink>
+                  )}
+                </div>
+              )}
+            </div>
 
 
-                    {isAdmin && (
-                      <NavLink to="/manage/batch/history" onClick={closeMenu}>
-                        <span className="nav-dd-mark">–</span>
-                        배치 실행 이력
-                      </NavLink>
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
+
+
           </nav>
-
-          {/* ================= AUTH ================= */}
-          <div className="auth">
-            {!loading &&
-              (user ? (
-                <>
-                  <span className="nav-ani">👤 {user.mid}</span>
-                  <button
-                    type="button"
-                    className="nav-ani btn-link"
-                    onClick={logout}
-                  >
-                    로그아웃
-                  </button>
-                </>
-              ) : (
-                <>
-                  <NavLink to="/join" className="nav-ani">
-                    회원가입
-                  </NavLink>
-                  <NavLink to="/login" className="nav-ani">
-                    로그인
-                  </NavLink>
-                </>
-              ))}
-          </div>
         </div>
       </header>
 

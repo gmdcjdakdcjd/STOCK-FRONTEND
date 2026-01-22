@@ -6,7 +6,7 @@ export function useIssueData() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/issue/api")
+    fetch("/api/issue")
       .then(res => {
         if (!res.ok) throw new Error("issue api error");
         return res.json();

@@ -1,3 +1,14 @@
+/* =================================================
+   Result Detail Page (US / KR 공용)
+================================================= */
+
+/* ================================
+   Page Wrapper
+================================ */
+.result-detail-page {
+  margin-top: 1rem;
+}
+
 /* ================================
    Header Card
 ================================ */
@@ -89,18 +100,18 @@
 }
 
 /* ================================
-   Detail Table
+   Detail Table (Base)
 ================================ */
 .detail-table {
   width: 100%;
   border-collapse: collapse;
 }
 
-/* 헤더 / 바디 padding 완전 통일 */
 .detail-table thead th {
   padding: 12px 10px;
   height: 44px;
   background: #f9fafb;
+
   font-size: 0.9rem;
   font-weight: 600;
   vertical-align: middle;
@@ -110,6 +121,7 @@
 .detail-table tbody td {
   padding: 12px 10px;
   border-bottom: 1px solid #e5e7eb;
+
   font-size: 0.9rem;
   vertical-align: middle;
 }
@@ -119,7 +131,7 @@
 }
 
 /* ================================
-   Alignment (기준선 맞춤)
+   Table Alignment
 ================================ */
 
 /* 기본 헤더 중앙 */
@@ -149,7 +161,7 @@
   font-weight: 500;
 }
 
-/* 숫자 컬럼 (헤더 + 바디 오른쪽 정렬 통일) */
+/* 숫자 컬럼 */
 .align-table thead th.col-num,
 .col-num {
   text-align: right;
