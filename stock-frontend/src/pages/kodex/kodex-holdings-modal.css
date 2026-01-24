@@ -19,10 +19,12 @@
 .modal-body {
   width: 90%;
   max-width: 980px;
+  height: 85vh;
   max-height: 85vh;
 
   display: flex;
   flex-direction: column;
+  min-height: 0;
   overflow: hidden;
 
   background: #fff;
@@ -66,6 +68,13 @@
 ================================ */
 .modal-content {
   flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* kodex 전용 스크롤 강제 (전역 .modal-content 충돌 방지) */
+.modal-content.kodex-holdings-content {
+  min-height: 0;
   overflow-y: auto;
 }
 

@@ -27,7 +27,7 @@ function KodexHoldingsModal({
         </header>
 
         {/* ===== Content ===== */}
-        <div className="modal-content">
+        <div className="modal-content kodex-holdings-content">
 
   {/* 헤더 */}
   <div className="holdings-header-row">
