@@ -15,6 +15,14 @@ import EditEtfModal from "./EditEtfModal";
 import DeletedMyStockModal from "./DeletedMyStockModal";
 import "./MyStockPage.css";
 
+/* =========================
+   Utils
+========================= */
+const fmt = (
+    v: number | null | undefined,
+    suffix = ""
+) => (v != null ? `${v.toLocaleString()}${suffix}` : "-");
+
 export default function MyStockPage() {
     /* =========================
        State
@@ -32,9 +40,7 @@ export default function MyStockPage() {
 
     const [showDeleted, setShowDeleted] = useState(false);
     const [showCreateEtf, setShowCreateEtf] = useState(false);
-
     const [showAddToEtf, setShowAddToEtf] = useState(false);
-
 
     /* =========================
        Load
@@ -100,18 +106,22 @@ export default function MyStockPage() {
 
         return result.dtoList.map((s, i) => {
             const rowClass =
-                s.currentPrice > s.priceAtAdd
-                    ? "row-profit"
-                    : s.currentPrice < s.priceAtAdd
-                        ? "row-loss"
-                        : "";
+                s.currentPrice != null && s.priceAtAdd != null
+                    ? s.currentPrice > s.priceAtAdd
+                        ? "row-profit"
+                        : s.currentPrice < s.priceAtAdd
+                            ? "row-loss"
+                            : ""
+                    : "";
 
             const priceClass =
-                s.currentPrice > s.priceAtAdd
-                    ? "price-up"
-                    : s.currentPrice < s.priceAtAdd
-                        ? "price-down"
-                        : "price-same";
+                s.currentPrice != null && s.priceAtAdd != null
+                    ? s.currentPrice > s.priceAtAdd
+                        ? "price-up"
+                        : s.currentPrice < s.priceAtAdd
+                            ? "price-down"
+                            : "price-same"
+                    : "price-same";
 
             const detailUrl = isKR
                 ? `/result/detailKR?strategy=${s.strategyName}&date=${s.memo}`
@@ -119,35 +129,49 @@ export default function MyStockPage() {
 
             return (
                 <tr key={s.id} className={rowClass}>
-                    <td className="col-no">{(result.page - 1) * result.size + i + 1}</td>
+                    <td className="col-no">
+                        {(result.page - 1) * result.size + i + 1}
+                    </td>
                     <td className="col-code">{s.code}</td>
                     <td className="col-name">{s.name}</td>
+
                     <td className={`col-num ${priceClass}`}>
                         {isKR
-                            ? `${s.currentPrice.toLocaleString()} 원`
-                            : `${s.currentPrice} $`}
+                            ? fmt(s.currentPrice, " 원")
+                            : fmt(s.currentPrice, " $")}
                     </td>
+
                     <td className="col-num">
                         {isKR
-                            ? `${s.priceAtAdd.toLocaleString()} 원`
-                            : `${s.priceAtAdd} $`}
+                            ? fmt(s.priceAtAdd, " 원")
+                            : fmt(s.priceAtAdd, " $")}
                     </td>
+
                     <td className="col-num">
                         {isKR
-                            ? `${s.targetPrice5.toLocaleString()} 원`
-                            : `${s.targetPrice5} $`}
+                            ? fmt(s.targetPrice5, " 원")
+                            : fmt(s.targetPrice5, " $")}
                     </td>
+
                     <td className="col-num">
                         {isKR
-                            ? `${s.targetPrice10.toLocaleString()} 원`
-                            : `${s.targetPrice10} $`}
+                            ? fmt(s.targetPrice10, " 원")
+                            : fmt(s.targetPrice10, " $")}
                     </td>
+
                     <td className="col-strategy">
                         <a href={detailUrl}>{s.strategyName}</a>
                     </td>
-                    <td className="col-date">{s.createdAt.substring(0, 10)}</td>
+
+                    <td className="col-date">
+                        {s.createdAt?.substring(0, 10) ?? "-"}
+                    </td>
+
                     <td className="col-action">
-                        <button className="btn-delete" onClick={() => onDelete(s.id)}>
+                        <button
+                            className="btn-delete"
+                            onClick={() => onDelete(s.id)}
+                        >
                             삭제
                         </button>
                     </td>
@@ -211,17 +235,12 @@ export default function MyStockPage() {
                             기존 ETF 추가
                         </button>
 
-
                         <button
                             className="btn-etf btn-etf-primary"
-                            onClick={() => {
-                                setShowCreateEtf(true);
-                            }}
+                            onClick={() => setShowCreateEtf(true)}
                         >
                             신규 ETF 생성
                         </button>
-
-
 
                         <button
                             className="btn-deleted"
@@ -234,8 +253,6 @@ export default function MyStockPage() {
                         </button>
                     </div>
                 </div>
-
-
 
                 {/* KR */}
                 <div className="mystock-card">
@@ -255,7 +272,6 @@ export default function MyStockPage() {
                                 <th className="col-action">삭제</th>
                             </tr>
                         </thead>
-
                         <tbody>{renderRows(krResult, true)}</tbody>
                     </table>
                 </div>
@@ -279,7 +295,6 @@ export default function MyStockPage() {
                                 <th className="col-action">삭제</th>
                             </tr>
                         </thead>
-
                         <tbody>{renderRows(usResult, false)}</tbody>
                     </table>
                 </div>
@@ -305,10 +320,7 @@ export default function MyStockPage() {
                             name: s.name,
                         }))}
                         onClose={() => setShowCreateEtf(false)}
-                        onCreated={() => {
-                            // ETF 생성 후 (지금은 모달 닫기만)
-                            setShowCreateEtf(false);
-                        }}
+                        onCreated={() => setShowCreateEtf(false)}
                     />
                 )}
 
@@ -323,16 +335,9 @@ export default function MyStockPage() {
                             name: s.name,
                         }))}
                         onClose={() => setShowAddToEtf(false)}
-                        onSaved={() => {
-                            setShowAddToEtf(false);
-                            // 필요하면 ETF 목록 reload 같은 거 여기서
-                        }}
+                        onSaved={() => setShowAddToEtf(false)}
                     />
                 )}
-
-
-
-
             </div>
         </BasicLayout>
     );
