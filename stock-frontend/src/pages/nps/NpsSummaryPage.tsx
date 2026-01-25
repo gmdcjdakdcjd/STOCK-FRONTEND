@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { fetchNpsSummary } from "../../api/npsApi";
-import BasicLayout from "../../layouts/BasicLayout";
 import "./nps-summary.css";
 
 interface NpsSummary {
@@ -37,8 +36,7 @@ function NpsSummaryPage() {
   }, []);
 
   return (
-    <BasicLayout>
-      <section className="nps-summary">
+    <section className="nps-summary">
         <h2>국민연금 투자 현황</h2>
         <header className="nps-summary-header">
 
@@ -79,8 +77,7 @@ function NpsSummaryPage() {
           </div>
         )}
 
-      </section>
-    </BasicLayout>
+    </section>
   );
 }
 

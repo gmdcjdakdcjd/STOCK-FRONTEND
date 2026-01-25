@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import BasicLayout from "../layouts/BasicLayout";
 
 /* =========================
    AUTH
@@ -39,7 +40,7 @@ import PhysicalPage from "../pages/physical/physicalPage";
 import MyStockPage from "../pages/myStock/MyStockPage";
 
 /* =========================
-   MY ETF ✅
+   MY ETF 
    ========================= */
 import MyEtfListPage from "../pages/myEtf/MyEtfListPage";
 import MyEtfDetailPage from "../pages/myEtf/MyEtfDetailPage";
@@ -60,44 +61,46 @@ function AppRouter() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/join" element={<JoinPage />} />
 
-            {/* =========================
-           BOARD (전략 결과)
-           ========================= */}
-            <Route path="/result/listKR" element={<BoardListKRPage />} />
-            <Route path="/result/listUS" element={<BoardListUSPage />} />
-            <Route path="/result/detailKR" element={<BoardDetailKRPage />} />
-            <Route path="/result/detailUS" element={<BoardDetailUSPage />} />
+            <Route element={<BasicLayout />}>
+               {/* =========================
+              BOARD (전략 결과)
+              ========================= */}
+               <Route path="/result/listKR" element={<BoardListKRPage />} />
+               <Route path="/result/listUS" element={<BoardListUSPage />} />
+               <Route path="/result/detailKR" element={<BoardDetailKRPage />} />
+               <Route path="/result/detailUS" element={<BoardDetailUSPage />} />
 
-            {/* =========================
-           MANAGE (ADMIN)
-           ========================= */}
-            <Route path="/manage/batch/history" element={<BatchHistoryPage />} />
+               {/* =========================
+              MANAGE (ADMIN)
+              ========================= */}
+               <Route path="/manage/batch/history" element={<BatchHistoryPage />} />
 
-            {/* =========================
-           INDICATOR / ETC
-           ========================= */}
-            {/* <Route path="/indicator" element={<IndicatorPage />} /> */}
-            {/* <Route path="/bond" element={<BondPage />} /> */}
-            <Route path="/issue" element={<IssuePage />} />
-            <Route path="/dualMomentumList" element={<DualMomentumPage />} />
-            <Route path="/exchange" element={<ExchangePage />} />
-            <Route path="/stockIndex" element={<StockIndexPage />} />
-            <Route path="/physical" element={<PhysicalPage />} />
-            {/* =========================
-           STOCK / ETF / NPS
-           ========================= */}
-            <Route path="/stock/searchStock" element={<StockSearchPage />} />
-            <Route path="/stock/myStock" element={<MyStockPage />} />
+               {/* =========================
+              INDICATOR / ETC
+              ========================= */}
+               {/* <Route path="/indicator" element={<IndicatorPage />} /> */}
+               {/* <Route path="/bond" element={<BondPage />} /> */}
+               <Route path="/issue" element={<IssuePage />} />
+               <Route path="/dualMomentumList" element={<DualMomentumPage />} />
+               <Route path="/exchange" element={<ExchangePage />} />
+               <Route path="/stockIndex" element={<StockIndexPage />} />
+               <Route path="/physical" element={<PhysicalPage />} />
+               {/* =========================
+              STOCK / ETF / NPS
+              ========================= */}
+               <Route path="/stock/searchStock" element={<StockSearchPage />} />
+               <Route path="/stock/myStock" element={<MyStockPage />} />
 
-            {/* =========================
-           MY ETF
-           ========================= */}
-            <Route path="/myetf/list" element={<MyEtfListPage />} />
-            <Route path="/myetf/detail" element={<MyEtfDetailPage />} />
+               {/* =========================
+              MY ETF
+              ========================= */}
+               <Route path="/myetf/list" element={<MyEtfListPage />} />
+               <Route path="/myetf/detail" element={<MyEtfDetailPage />} />
 
-            <Route path="/kodex/summary" element={<KodexSummaryPage />} />
-            <Route path="/nps/summary" element={<NpsSummaryPage />} />
-            <Route path="/nps/list" element={<NpsListPage />} />
+               <Route path="/kodex/summary" element={<KodexSummaryPage />} />
+               <Route path="/nps/summary" element={<NpsSummaryPage />} />
+               <Route path="/nps/list" element={<NpsListPage />} />
+            </Route>
 
          </Routes>
       </BrowserRouter>

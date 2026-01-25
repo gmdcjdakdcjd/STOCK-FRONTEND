@@ -1,4 +1,3 @@
-import BasicLayout from "../../layouts/BasicLayout";
 import { useIssueData } from "./useIssueData";
 import IssueTable from "./IssueTable";
 import "./issue.css";
@@ -9,23 +8,18 @@ export default function IssuePage() {
 
   if (loading) {
     return (
-      <BasicLayout>
-        <div className="container mt-4">로딩중...</div>
-      </BasicLayout>
+      <div className="container mt-4">로딩중...</div>
     );
   }
 
   if (!data) {
     return (
-      <BasicLayout>
-        <div className="container mt-4">데이터 없음</div>
-      </BasicLayout>
+      <div className="container mt-4">데이터 없음</div>
     );
   }
 
   return (
-    <BasicLayout>
-      <div className="container mt-4">
+    <div className="container mt-4">
         {/* ================= KR ================= */}
         {/* <h4 className="fw-bold mt-5">🇰🇷 한국 전략</h4> */}
 
@@ -53,7 +47,6 @@ export default function IssuePage() {
               market="US"
             />
           ))}
-      </div>
-    </BasicLayout>
+    </div>
   );
 }

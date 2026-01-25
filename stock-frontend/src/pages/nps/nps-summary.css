@@ -1,7 +1,5 @@
 .nps-summary {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
+  width: 100%;
 }
 
 .nps-summary-header {

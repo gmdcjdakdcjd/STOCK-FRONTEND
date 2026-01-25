@@ -2,9 +2,7 @@
    Batch History Page (KODEX Style)
 =============================== */
 .batch-container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0;
+  width: 100%;
 
   font-family: -apple-system, BlinkMacSystemFont,
                "Apple SD Gothic Neo",

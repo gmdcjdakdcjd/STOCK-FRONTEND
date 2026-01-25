@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { fetchNpsList } from "../../api/npsApi";
-import BasicLayout from "../../layouts/BasicLayout";
 import "./nps-list.css";
 
 interface NpsItem {
@@ -35,8 +34,7 @@ function NpsListPage() {
   }, [asset, market, searchQ]);
 
   return (
-    <BasicLayout>
-      <section className="nps-list">
+    <section className="nps-list">
         <div className="nps-summary">
           <div className="nps-summary-header">
             <div className="nps-summary-title">
@@ -112,8 +110,7 @@ function NpsListPage() {
         ))}
         </div>
 
-      </section>
-    </BasicLayout>
+    </section>
   );
 }
 

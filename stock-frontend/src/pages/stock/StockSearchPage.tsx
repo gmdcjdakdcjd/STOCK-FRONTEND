@@ -1,6 +1,5 @@
 import { useState } from "react";
 import "./StockSearchPage.css";
-import BasicLayout from "../../layouts/BasicLayout";
 import StockSearchChart from "./StockSearchChart";
 import type { RangeType } from "./StockSearchChart";
 
@@ -240,7 +239,6 @@ function StockSearchPage() {
   // Render
   // =====================
   return (
-    <BasicLayout>
       <section className="stock-search">
         <h2>종목검색</h2>
         <div className="stock-search-box">
@@ -422,7 +420,6 @@ function StockSearchPage() {
           </div>
         )}
       </section>
-    </BasicLayout>
   );
 }
 

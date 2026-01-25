@@ -9,7 +9,6 @@ import type {
   KodexEtfHolding
 } from "../../api/kodexApi";
 
-import BasicLayout from "../../layouts/BasicLayout";
 import KodexHoldingsModal from "./KodexHoldingsModal";
 import "./kodex-summary.css";
 
@@ -47,8 +46,7 @@ function KodexSummaryPage() {
   }, [selectedEtf]);
 
   return (
-    <BasicLayout>
-      <section className="kodex-summary">
+    <section className="kodex-summary">
         <h2>KODEX ETF 목록</h2>
 
         {/* ===== Search ===== */}
@@ -151,8 +149,7 @@ function KodexSummaryPage() {
           />
         )}
 
-      </section>
-    </BasicLayout>
+    </section>
   );
 }
 

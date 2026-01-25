@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import BasicLayout from "../../layouts/BasicLayout";
 import "./result-detail.css";
 
 type DetailRow = {
@@ -105,7 +104,7 @@ export default function ResultDetailKRPage() {
   };
 
   return (
-    <BasicLayout>
+    <>
       {/* 🔑 US 페이지와 동일한 기준 */}
       <div className="result-detail-page">
         {/* =========================
@@ -238,6 +237,6 @@ export default function ResultDetailKRPage() {
           </table>
         </div>
       </div>
-    </BasicLayout>
+    </>
   );
 }

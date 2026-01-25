@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import BasicLayout from "../../layouts/BasicLayout";
 import "./login-page.css";
 
 export default function LoginPage() {
@@ -54,7 +53,6 @@ export default function LoginPage() {
   };
 
   return (
-    <BasicLayout>
       <div className="login-page">
         <div className="login-card">
 
@@ -109,6 +107,5 @@ export default function LoginPage() {
           </form>
         </div>
       </div>
-    </BasicLayout>
   );
 }

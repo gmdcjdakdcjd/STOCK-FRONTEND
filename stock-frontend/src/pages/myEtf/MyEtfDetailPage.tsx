@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 
 import { fetchMyEtfDetail } from "../../api/myEtfApi";
 import EtfSummaryCard from "./EtfSummaryCard";
@@ -8,8 +8,6 @@ import EditEtfModal from "./EditEtfModal";
 import RestoreEtfModal from "./RestoreEtfModal";
 
 import type { MyEtfDetailResponseDTO } from "./myEtf.types";
-import BasicLayout from "../../layouts/BasicLayout";
-import { useNavigate } from "react-router-dom";
 
 import "./MyEtfDetailPage.css";
 
@@ -27,15 +25,12 @@ export default function MyEtfDetailPage() {
 
   if (!data) {
     return (
-      <BasicLayout>
-        <div className="myetf-detail-loading">Loading...</div>
-      </BasicLayout>
+      <div className="myetf-detail-loading">Loading...</div>
     );
   }
 
   return (
-    <BasicLayout>
-      <div className="myetf-detail-page">
+    <div className="myetf-detail-page">
         {/* =========================
             Header
            ========================= */}
@@ -83,7 +78,6 @@ export default function MyEtfDetailPage() {
             Items
            ========================= */}
         <EtfItemTable items={data.itemList} />
-      </div>
-    </BasicLayout>
+    </div>
   );
 }

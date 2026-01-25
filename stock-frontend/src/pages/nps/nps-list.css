@@ -2,9 +2,7 @@
    Layout
 ========================= */
 .nps-list {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
+  width: 100%;
 }
 
 /* =========================
@@ -166,9 +164,7 @@
    Layout
 ========================= */
 .nps-list {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
+  width: 100%;
 }
 
 /* =========================
@@ -330,9 +326,7 @@
    Summary Header
 ========================= */
 .nps-summary {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem 1.5rem 0; /* 아래는 테이블이 이어받음 */
+  width: 100%;
 }
 
 .nps-summary-header {

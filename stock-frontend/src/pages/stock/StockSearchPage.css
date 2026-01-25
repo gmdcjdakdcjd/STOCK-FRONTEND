@@ -2,17 +2,16 @@
    Layout
 ========================= */
 .stock-search {
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 1.5rem;
+  width: 100%;
 }
 
 /* =========================
    Search
 ========================= */
 .stock-search-box {
-  max-width: 900px;
-  margin: 0 auto 2rem;
+  width: 100%;
+  max-width: none;
+  margin: 0 0 2rem;
 }
 
 .stock-search-row {
@@ -55,10 +54,16 @@
 ========================= */
 .stock-grid {
   display: grid;
-  grid-template-columns: 2fr 2fr;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
   gap: 1rem;
   align-items: stretch;
   height: 700px;
+  width: 100%;
+}
+
+.stock-table,
+.stock-right {
+  min-width: 0;
 }
 
 /* =========================
@@ -66,7 +71,9 @@
 ========================= */
 .stock-table {
   height: 100%;
-  overflow-y: auto;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
   border-top: 1px solid #e5e7eb;
   background: #fff;
 }
@@ -76,6 +83,9 @@
   font-weight: 600;
   border-bottom: 1px solid #e5e7eb;
   background: #ffffff;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stock-table-head,
@@ -84,6 +94,14 @@
   grid-template-columns: 120px 1fr 1fr 1fr 1fr 1fr;
   padding: 0.7rem;
   align-items: center;
+}
+
+.stock-table-head span,
+.stock-table-row span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .stock-table-head {

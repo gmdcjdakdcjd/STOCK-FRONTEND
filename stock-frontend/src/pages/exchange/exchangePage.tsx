@@ -1,4 +1,3 @@
-import BasicLayout from "../../layouts/BasicLayout";
 import IndicatorCard from "./exchangeCard";
 import { useIndicatorData } from "./useExchangeData";
 import "./exchange.css";
@@ -21,17 +20,13 @@ export default function IndicatorPage() {
 
   if (loading) {
     return (
-      <BasicLayout>
-        <div>로딩중...</div>
-      </BasicLayout>
+      <div>로딩중...</div>
     );
   }
 
   if (!data) {
     return (
-      <BasicLayout>
-        <div>데이터 없음</div>
-      </BasicLayout>
+      <div>데이터 없음</div>
     );
   }
 
@@ -46,7 +41,6 @@ export default function IndicatorPage() {
   ] as const;
 
   return (
-    <BasicLayout>
       <div className="indicator-page">
         {/* =========================
             우측 환율 네비
@@ -124,6 +118,5 @@ export default function IndicatorPage() {
           </div>
         </div>
       </div>
-    </BasicLayout>
   );
 }

@@ -1,15 +1,13 @@
-import BasicLayout from "../../layouts/BasicLayout";
 import { useBondData } from "./useBondData";
 import BondChartCard from "./BondChartCard";
 
 export default function BondPage() {
   const { data, loading } = useBondData();
 
-  if (loading) return <BasicLayout>로딩중...</BasicLayout>;
-  if (!data) return <BasicLayout>데이터 없음</BasicLayout>;
+  if (loading) return <div>로딩중...</div>;
+  if (!data) return <div>데이터 없음</div>;
 
   return (
-    <BasicLayout>
       <div className="container mt-4 bond-grid">
 
         {/* ================= 미국 ================= */}
@@ -125,6 +123,5 @@ export default function BondPage() {
         />
 
       </div>
-    </BasicLayout>
   );
 }

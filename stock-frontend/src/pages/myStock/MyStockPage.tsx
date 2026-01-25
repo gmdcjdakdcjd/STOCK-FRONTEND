@@ -6,7 +6,6 @@ import {
     deleteMyStock,
     restoreMyStock,
 } from "../../api/myStockApi";
-import BasicLayout from "../../layouts/BasicLayout";
 
 import type { MyStockDTO, PageResponseDTO } from "../../api/myStockApi";
 import CreateEtfModal from "./CreateEtfModal";
@@ -222,8 +221,7 @@ export default function MyStockPage() {
        Render
     ========================= */
     return (
-        <BasicLayout>
-            <div className="mystock-container">
+        <div className="mystock-container">
                 <div className="mystock-header">
                     <h3>내 관심 종목</h3>
 
@@ -338,7 +336,6 @@ export default function MyStockPage() {
                         onSaved={() => setShowAddToEtf(false)}
                     />
                 )}
-            </div>
-        </BasicLayout>
+        </div>
     );
 }

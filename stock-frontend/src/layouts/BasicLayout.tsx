@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { NavLink, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import "./basic-layout.css";
 import "./page-header.css";
@@ -16,7 +16,7 @@ type User = {
 
 type MenuKey = "indicator" | "market" | "search" | "mypage";
 
-function BasicLayout({ children }: { children: ReactNode }) {
+function BasicLayout({ children }: { children?: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [openMenu, setOpenMenu] = useState<MenuKey | null>(null);
@@ -257,7 +257,9 @@ function BasicLayout({ children }: { children: ReactNode }) {
 
       {/* ================= CONTENT ================= */}
       <main className="content">
-        <div className="content-inner">{children}</div>
+        <div className="content-inner">
+          {children ?? <Outlet />}
+        </div>
       </main>
 
       {/* ================= FOOTER ================= */}

@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { fetchMyEtfList, deleteMyEtf } from "../../api/myEtfApi";
 import type { MyEtfSummaryDTO, PageResponseDTO } from "./myEtf.types";
 import CreateEtfModal from "./CreateEtfModal";
-import BasicLayout from "../../layouts/BasicLayout";
 
 import "./MyEtfListPage.css";
 
@@ -46,8 +45,7 @@ export default function MyEtfListPage() {
      렌더
      ========================= */
   return (
-    <BasicLayout>
-      <div className="myetf-page">
+    <div className="myetf-page">
         {/* Header */}
         <div className="myetf-header">
           <h2>내가 만든 ETF</h2>
@@ -118,7 +116,6 @@ export default function MyEtfListPage() {
             ))}
           </div>
         )}
-      </div>
-    </BasicLayout>
+    </div>
   );
 }

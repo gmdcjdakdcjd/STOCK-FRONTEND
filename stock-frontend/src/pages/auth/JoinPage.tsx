@@ -1,5 +1,4 @@
 import { useState } from "react";
-import BasicLayout from "../../layouts/BasicLayout";
 import "./join-page.css";
 
 export default function JoinPage() {
@@ -102,7 +101,6 @@ export default function JoinPage() {
   };
 
   return (
-    <BasicLayout>
       <div className="join-page">
         <div className="join-card">
 
@@ -183,6 +181,5 @@ export default function JoinPage() {
           </form>
         </div>
       </div>
-    </BasicLayout>
   );
 }

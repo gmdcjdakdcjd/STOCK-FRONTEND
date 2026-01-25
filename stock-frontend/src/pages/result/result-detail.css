@@ -175,3 +175,40 @@
   text-align: center;
   white-space: nowrap;
 }
+
+/* ================================
+   Detail Link (현재가 앞 상세보기)
+================================ */
+
+/* 현재가 셀 안에서 버튼 + 가격 정렬 */
+.col-num.with-detail {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+}
+
+/* 상세보기 버튼 */
+.detail-link-btn {
+  font-size: 0.75rem;
+  color: #2563eb;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.detail-link-btn:hover {
+  text-decoration: underline;
+}
+
+/* ================================
+   Header - Detail Label
+================================ */
+.detail-header-label {
+  margin-right: 8px;
+  font-size: 0.75rem;
+  color: #6b7280;
+  font-weight: 500;
+}

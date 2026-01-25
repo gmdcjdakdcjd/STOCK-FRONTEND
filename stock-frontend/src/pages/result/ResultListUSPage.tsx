@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import BasicLayout from "../../layouts/BasicLayout";
 import { fetchUsResultList } from "../../api/resultApi";
 import type {
   StrategyCode,
@@ -115,8 +114,7 @@ export default function BoardListUSPage() {
   };
 
   return (
-    <BasicLayout>
-      <div className="container mt-4" style={{ maxWidth: 1400 }}>
+    <div className="container mt-4" style={{ maxWidth: 1400 }}>
         <h3 className="fw-bold mb-4">📈 미국 전략 결과 목록</h3>
 
         {/* =========================
@@ -238,7 +236,6 @@ export default function BoardListUSPage() {
             </div>
           )}
         </div>
-      </div>
-    </BasicLayout>
+    </div>
   );
 }

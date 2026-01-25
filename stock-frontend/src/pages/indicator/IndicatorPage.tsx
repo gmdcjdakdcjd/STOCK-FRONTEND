@@ -1,4 +1,3 @@
-import BasicLayout from "../../layouts/BasicLayout";
 import IndicatorCard from "./IndicatorCard";
 import { useIndicatorData } from "./useIndicatorData";
 import "./indicator.css";
@@ -8,22 +7,18 @@ export default function IndicatorPage() {
 
   if (loading) {
     return (
-      <BasicLayout>
-        <div>로딩중...</div>
-      </BasicLayout>
+      <div>로딩중...</div>
     );
   }
 
   if (!data) {
     return (
-      <BasicLayout>
-        <div>데이터 없음</div>
-      </BasicLayout>
+      <div>데이터 없음</div>
     );
   }
 
   return (
-    <BasicLayout>
+    <>
       {/* ✅ 페이지 전용 wrapper (레이아웃 기준 고정용) */}
       <div className="indicator-page">
         <div className="grid-container">
@@ -84,6 +79,6 @@ export default function IndicatorPage() {
           />
         </div>
       </div>
-    </BasicLayout>
+    </>
   );
 }

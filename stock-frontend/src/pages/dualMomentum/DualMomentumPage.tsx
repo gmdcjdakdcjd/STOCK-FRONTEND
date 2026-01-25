@@ -1,6 +1,5 @@
 import { useDualMomentumData } from "./useDualMomentumData";
 import DualMomentumCard from "./DualMomentumCard";
-import BasicLayout from "../../layouts/BasicLayout";
 import "./dualMomentum.css";
 
 /**
@@ -22,8 +21,7 @@ export default function DualMomentumPage() {
   const { data, loading } = useDualMomentumData();
 
   return (
-    <BasicLayout>
-      <div className="container mt-4">
+    <div className="container mt-4">
         {loading && <div>로딩중...</div>}
 
         {!loading && !data && <div>데이터 없음</div>}
@@ -45,7 +43,6 @@ export default function DualMomentumPage() {
               ))}
           </>
         )}
-      </div>
-    </BasicLayout>
+    </div>
   );
 }

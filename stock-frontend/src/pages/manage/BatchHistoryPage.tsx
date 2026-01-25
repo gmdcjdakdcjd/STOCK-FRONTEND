@@ -1,7 +1,6 @@
 // src/pages/manage/BatchHistoryPage.tsx
 
 import { useEffect, useState } from "react";
-import BasicLayout from "../../layouts/BasicLayout";
 import { getBatchHistory } from "../../api/manageBatchApi";
 import type { PageResponseDTO, BatchDateGroupDTO } from "../../api/manageBatchApi";
 import BatchHistoryList from "./BatchHistoryList";
@@ -27,15 +26,12 @@ export default function BatchHistoryPage() {
 
   if (!result) {
     return (
-      <BasicLayout>
-        <div className="loading">Loading...</div>
-      </BasicLayout>
+      <div className="loading">Loading...</div>
     );
   }
 
   return (
-    <BasicLayout>
-      <div className="batch-container">
+    <div className="batch-container">
         <h3 className="batch-title">배치 실행 이력</h3>
 
         <div className="batch-card">
@@ -59,7 +55,6 @@ export default function BatchHistoryPage() {
             ))}
           </div>
         </div>
-      </div>
-    </BasicLayout>
+    </div>
   );
 }
