@@ -73,9 +73,26 @@ export default function RestoreEtfModal({
                           {item.name} ({item.code})
                         </div>
 
+                        {/* =========================
+                            메타 정보 (KRW + USD 병기)
+                           ========================= */}
                         <div className="meta">
-                          편입일 {item.createdAtDisplay} · 편입가 {item.priceAtAddDisplay}원 · 수량 {item.quantity}
-                          {item.deletedAtDisplay && ` · 삭제일 ${item.deletedAtDisplay}`}
+                          편입일 {item.createdAtDisplay}
+                          {" · "}
+                          편입가 {item.priceAtAddDisplay}원
+
+                          {item.market === "US" && (
+                            <span className="meta secondary">
+                              {" "}
+                              (${Number(item.priceAtAdd).toFixed(2)})
+                            </span>
+                          )}
+
+                          {" · "}
+                          수량 {item.quantity}
+
+                          {item.deletedAtDisplay &&
+                            ` · 삭제일 ${item.deletedAtDisplay}`}
                         </div>
 
                         {alreadyExists && (
@@ -103,7 +120,6 @@ export default function RestoreEtfModal({
                         {alreadyExists ? "복구 불가" : "복구"}
                       </button>
                     </div>
-
                   );
                 })
               )}

@@ -30,17 +30,26 @@ export interface MyEtfItemViewDTO {
   code: string;
   name: string;
   quantity: number;
-  priceAtAdd: number;
-  currentPrice: number;
-  evaluatedAmount: number;
+
+  // 원본 가격
+  priceAtAdd: number;      // KR: KRW / US: USD
+  currentPrice: number;    // KR: KRW / US: USD
+
+  // 계산 결과 (선택)
   profitRate: number;
+
+  // 화면 표시용 (KRW)
   priceAtAddDisplay: string;
   currentPriceDisplay: string;
   evaluatedAmountDisplay: string;
   profitRateDisplay: string;
+
+  // 메타
+  market: "KR" | "US";
   addedDate: string;
   memo?: string;
 }
+
 
 export interface MyEtfDetailResponseDTO {
   etfName: string;

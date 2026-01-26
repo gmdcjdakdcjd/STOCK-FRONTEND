@@ -78,8 +78,12 @@
 ================================ */
 .modal-content {
   flex: 1;
-  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;   /* 스크롤은 여기서 */
+  min-height: 0;      /* ⭐ 중요 */
 }
+
 
 /* ================================
    Form Section
@@ -127,7 +131,9 @@
   grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   padding: 0.75rem 1.25rem 1.25rem;
-  height: 360px;
+  /* height: 360px; */
+  flex: 1;          /* 남는 높이 전부 차지 */
+  min-height: 0;    /* 내부 스크롤 정상화 */
 }
 
 /* ================================
@@ -139,6 +145,7 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
+  min-height: 0;
 }
 
 .search-panel h4,
@@ -312,6 +319,8 @@
   background: none;
   color: #ef4444;
   cursor: pointer;
+  position: relative;
+  z-index: 1;
 }
 
 .remove-btn.icon:hover {
@@ -383,8 +392,12 @@
 }
 
 .selected-list {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
   overflow-x: hidden;   /* ⭐ 이 줄 */
+  scrollbar-gutter: stable;
+  padding-right: 8px;
 }
 .delete-warning {
   margin-top: 0.75rem;

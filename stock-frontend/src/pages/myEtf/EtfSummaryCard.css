@@ -1,3 +1,6 @@
+/* =====================================================
+   ETF Summary Card
+===================================================== */
 .etf-summary-card {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
@@ -11,11 +14,16 @@
   border-radius: 12px;
 }
 
-/* 개별 지표 */
+/* =====================================================
+   Summary Item (Base)
+===================================================== */
 .summary-item {
   display: flex;
   flex-direction: column;
   gap: 6px;
+
+  padding: 12px 14px;
+  border-radius: 10px;
 }
 
 /* 라벨 */
@@ -24,24 +32,81 @@
   color: #6b7280;
 }
 
-/* 값 (핵심) */
+/* 값 */
 .summary-item .value {
   font-size: 18px;
   font-weight: 600;
   color: #111827;
 }
 
-/* 수익 */
-.summary-item.profit .value {
-  color: #dc2626; /* 빨강 */
+/* =====================================================
+   Invested (총 편입금액)
+===================================================== */
+.summary-item.invested {
+  background: #f9fafb;
 }
 
-/* 손실 */
-.summary-item.loss .value {
-  color: #2563eb; /* 파랑 */
+.summary-item.invested .value {
+  color: #6b7280;      /* 기준값 → 회색 */
+  font-weight: 500;
 }
 
-/* 반응형 */
+/* =====================================================
+   Evaluated (현재 평가액)
+===================================================== */
+.summary-item.evaluated {
+  background: #ffffff;
+}
+
+/* 상승 */
+.summary-item.evaluated.price-up .value {
+  color: #dc2626;
+}
+
+/* 하락 */
+.summary-item.evaluated.price-down .value {
+  color: #2563eb;
+}
+
+/* 보합 */
+.summary-item.evaluated.price-same .value {
+  color: #111827;
+}
+
+/* =====================================================
+   Profit / Rate Summary (수익금 / 수익률)
+===================================================== */
+
+/* 상승 */
+.summary-item.price-up {
+  background: #fff5f5;
+}
+
+.summary-item.price-up .value {
+  color: #dc2626;
+}
+
+/* 하락 */
+.summary-item.price-down {
+  background: #f5f9ff;
+}
+
+.summary-item.price-down .value {
+  color: #2563eb;
+}
+
+/* 보합 */
+.summary-item.price-same {
+  background: #ffffff;
+}
+
+.summary-item.price-same .value {
+  color: #374151;
+}
+
+/* =====================================================
+   Responsive
+===================================================== */
 @media (max-width: 900px) {
   .etf-summary-card {
     grid-template-columns: repeat(2, 1fr);

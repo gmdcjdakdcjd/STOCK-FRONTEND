@@ -306,3 +306,12 @@
   border-color: #6366f1;
   box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
 }
+.remove-btn.icon.disabled {
+  cursor: not-allowed;
+  color: #9ca3af;
+  opacity: 0.5;
+}
+
+.remove-btn.icon.disabled:hover {
+  background: none;
+}

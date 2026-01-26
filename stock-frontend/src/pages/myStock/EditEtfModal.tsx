@@ -155,7 +155,8 @@ export default function EditEtfModal({
           <div className="header-text">
             <h3>ETF 종목 추가</h3>
             <div className="header-notice">
-              기존 종목의 수량은 변경할 수 없습니다. 삭제 후 재등록하세요.
+              기존 ETF 종목은 삭제할 수 없습니다.
+              신규로 추가한 종목만 삭제 가능합니다.
             </div>
           </div>
 
@@ -293,11 +294,16 @@ export default function EditEtfModal({
                         </div>
 
                         <button
-                          className="remove-btn icon"
-                          onClick={() => removeItem(i.code)}
+                          className={`remove-btn icon ${!isNew ? "disabled" : ""}`}
+                          disabled={!isNew}
+                          onClick={() => {
+                            if (!isNew) return;
+                            removeItem(i.code);
+                          }}
                         >
                           ✕
                         </button>
+
                       </div>
                     );
                   })}

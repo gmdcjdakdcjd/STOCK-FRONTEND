@@ -105,7 +105,6 @@ export default function ResultDetailKRPage() {
 
   return (
     <>
-      {/* 🔑 US 페이지와 동일한 기준 */}
       <div className="result-detail-page">
         {/* =========================
            Header Card
@@ -158,8 +157,9 @@ export default function ResultDetailKRPage() {
             <colgroup>
               <col style={{ width: "48px" }} />
               <col style={{ width: "120px" }} />
-              <col />
-              <col style={{ width: "120px" }} />
+              <col style={{ width: "10%" }} />
+              <col style={{ width: "120px" }} /> {/* 상세 */}
+              <col style={{ width: "120px" }} /> {/* 현재가 */}
               <col style={{ width: "120px" }} />
               <col style={{ width: "100px" }} />
               <col style={{ width: "140px" }} />
@@ -167,22 +167,10 @@ export default function ResultDetailKRPage() {
 
             <thead>
               <tr>
-                <th className="col-check">
-                  {authenticated && (
-                    <input
-                      type="checkbox"
-                      checked={
-                        checked.length === rows.length &&
-                        rows.length > 0
-                      }
-                      onChange={e =>
-                        toggleAll(e.target.checked)
-                      }
-                    />
-                  )}
-                </th>
+                <th className="col-check"></th>
                 <th className="col-code">종목코드</th>
                 <th className="col-name">종목명</th>
+                <th className="col-detail"></th>
                 <th className="col-num">현재가</th>
                 <th className="col-num">{priceLabel}</th>
                 <th className="col-num">등락률</th>
@@ -206,6 +194,22 @@ export default function ResultDetailKRPage() {
                   <td className="col-code">{r.code}</td>
                   <td className="col-name">{r.name}</td>
 
+                  {/* 상세 컬럼 */}
+                  <td className="col-detail">
+                    <button
+                      className="detail-link-btn"
+                      onClick={() => {
+                        navigate(
+                          `/stock/searchStock?code=${encodeURIComponent(r.code)}&name=${encodeURIComponent(r.name)}`
+                        );
+                      }}
+                    >
+                      종목상세
+                    </button>
+                  </td>
+
+
+                  {/* 현재가 컬럼 */}
                   <td className="col-num">
                     {r.price.toLocaleString()} 원
                   </td>
@@ -221,8 +225,8 @@ export default function ResultDetailKRPage() {
                         r.diff > 0
                           ? "#dc2626"
                           : r.diff < 0
-                          ? "#2563eb"
-                          : "#6b7280",
+                            ? "#2563eb"
+                            : "#6b7280",
                     }}
                   >
                     {r.diff}%
@@ -234,6 +238,7 @@ export default function ResultDetailKRPage() {
                 </tr>
               ))}
             </tbody>
+
           </table>
         </div>
       </div>

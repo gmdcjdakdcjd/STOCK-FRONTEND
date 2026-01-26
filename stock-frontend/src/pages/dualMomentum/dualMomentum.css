@@ -128,3 +128,45 @@ tbody tr:hover {
     max-height: 300px;
   }
 }
+/* ===============================
+   Detail Column
+=============================== */
+.col-detail {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ===============================
+   Detail Tag Button
+=============================== */
+.detail-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px 10px;
+  min-height: 22px;
+
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  color: #2563eb;
+  background: #eff6ff;
+
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.detail-link-btn:hover {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.detail-link-btn:active {
+  transform: scale(0.96);
+}

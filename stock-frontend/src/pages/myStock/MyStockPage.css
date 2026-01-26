@@ -334,3 +334,8 @@
 .btn-etf-primary:hover {
   background: #1e40af;
 }
+/* 상세 컬럼 */
+.col-detail {
+  text-align: center;
+  white-space: nowrap;
+}

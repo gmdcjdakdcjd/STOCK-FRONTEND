@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import {
     getMyStockKR,
     getMyStockUS,
@@ -23,6 +24,8 @@ const fmt = (
 ) => (v != null ? `${v.toLocaleString()}${suffix}` : "-");
 
 export default function MyStockPage() {
+    const navigate = useNavigate();
+
     /* =========================
        State
     ========================= */
@@ -122,9 +125,13 @@ export default function MyStockPage() {
                             : "price-same"
                     : "price-same";
 
-            const detailUrl = isKR
+            const strategyUrl = isKR
                 ? `/result/detailKR?strategy=${s.strategyName}&date=${s.memo}`
                 : `/result/detailUS?strategy=${s.strategyName}&date=${s.memo}`;
+
+            const stockSearchUrl =
+                `/stock/searchStock?code=${encodeURIComponent(s.code)}&name=${encodeURIComponent(s.name)}`;
+
 
             return (
                 <tr key={s.id} className={rowClass}>
@@ -133,6 +140,15 @@ export default function MyStockPage() {
                     </td>
                     <td className="col-code">{s.code}</td>
                     <td className="col-name">{s.name}</td>
+
+                    <td className="col-detail">
+                        <button
+                            className="detail-link-btn"
+                            onClick={() => navigate(stockSearchUrl)}
+                        >
+                            종목 상세보기
+                        </button>
+                    </td>
 
                     <td className={`col-num ${priceClass}`}>
                         {isKR
@@ -159,7 +175,7 @@ export default function MyStockPage() {
                     </td>
 
                     <td className="col-strategy">
-                        <a href={detailUrl}>{s.strategyName}</a>
+                        <a href={strategyUrl}>{s.strategyName}</a>
                     </td>
 
                     <td className="col-date">
@@ -222,120 +238,151 @@ export default function MyStockPage() {
     ========================= */
     return (
         <div className="mystock-container">
-                <div className="mystock-header">
-                    <h3>내 관심 종목</h3>
+            <div className="mystock-header">
+                <h3>내 관심 종목</h3>
 
-                    <div className="mystock-header-actions">
-                        <button
-                            className="btn-etf"
-                            onClick={() => setShowAddToEtf(true)}
-                        >
-                            기존 ETF 추가
-                        </button>
+                <div className="mystock-header-actions">
+                    <button
+                        className="btn-etf"
+                        onClick={() => setShowAddToEtf(true)}
+                    >
+                        기존 ETF 추가
+                    </button>
 
-                        <button
-                            className="btn-etf btn-etf-primary"
-                            onClick={() => setShowCreateEtf(true)}
-                        >
-                            신규 ETF 생성
-                        </button>
+                    <button
+                        className="btn-etf btn-etf-primary"
+                        onClick={() => setShowCreateEtf(true)}
+                    >
+                        신규 ETF 생성
+                    </button>
 
-                        <button
-                            className="btn-deleted"
-                            onClick={() => {
-                                loadDeleted(1);
-                                setShowDeleted(true);
-                            }}
-                        >
-                            삭제된 종목 보기
-                        </button>
-                    </div>
+                    <button
+                        className="btn-deleted"
+                        onClick={() => {
+                            loadDeleted(1);
+                            setShowDeleted(true);
+                        }}
+                    >
+                        삭제된 종목 보기
+                    </button>
                 </div>
+            </div>
 
-                {/* KR */}
-                <div className="mystock-card">
-                    <div className="mystock-card-title">한국 관심 종목</div>
-                    <table className="mystock-table">
-                        <thead>
-                            <tr>
-                                <th className="col-no">No</th>
-                                <th className="col-code">종목코드</th>
-                                <th className="col-name">종목명</th>
-                                <th className="col-num">현재가</th>
-                                <th className="col-num">편입가</th>
-                                <th className="col-num">+5%</th>
-                                <th className="col-num">+10%</th>
-                                <th className="col-strategy">전략</th>
-                                <th className="col-date">등록일</th>
-                                <th className="col-action">삭제</th>
-                            </tr>
-                        </thead>
-                        <tbody>{renderRows(krResult, true)}</tbody>
-                    </table>
-                </div>
-                {krResult && renderPaging(krResult, setKrPage)}
+            {/* KR */}
+            <div className="mystock-card">
+                <div className="mystock-card-title">한국 관심 종목</div>
+                <table className="mystock-table">
+                    <colgroup>
+                        <col style={{ width: "48px" }} /> 
+                        <col style={{ width: "100px" }} />  
+                        <col style={{ width: "10px" }} />   
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "110px" }} /> 
+                        <col style={{ width: "110px" }} /> 
+                        <col style={{ width: "90px" }} />  
+                        <col style={{ width: "90px" }} />   
+                        <col style={{ width: "140px" }} />  
+                        <col style={{ width: "110px" }} />  
+                        <col style={{ width: "80px" }} /> 
+                    </colgroup>
 
-                {/* US */}
-                <div className="mystock-card">
-                    <div className="mystock-card-title">미국 관심 종목</div>
-                    <table className="mystock-table">
-                        <thead>
-                            <tr>
-                                <th className="col-no">No</th>
-                                <th className="col-code">종목코드</th>
-                                <th className="col-name">종목명</th>
-                                <th className="col-num">현재가</th>
-                                <th className="col-num">편입가</th>
-                                <th className="col-num">+5%</th>
-                                <th className="col-num">+10%</th>
-                                <th className="col-strategy">전략</th>
-                                <th className="col-date">등록일</th>
-                                <th className="col-action">삭제</th>
-                            </tr>
-                        </thead>
-                        <tbody>{renderRows(usResult, false)}</tbody>
-                    </table>
-                </div>
-                {usResult && renderPaging(usResult, setUsPage)}
+                    <thead>
+                        <tr>
+                            <th className="col-no">No</th>
+                            <th className="col-code">종목코드</th>
+                            <th className="col-name">종목명</th>
+                            <th className="col-detail"></th>
+                            <th className="col-num">현재가</th>
+                            <th className="col-num">편입가</th>
+                            <th className="col-num">+5%</th>
+                            <th className="col-num">+10%</th>
+                            <th className="col-strategy">전략</th>
+                            <th className="col-date">등록일</th>
+                            <th className="col-action">삭제</th>
+                        </tr>
+                    </thead>
 
-                {showDeleted && deletedResult && (
-                    <DeletedMyStockModal
-                        result={deletedResult}
-                        onClose={() => setShowDeleted(false)}
-                        onRestore={onRestore}
-                        onPage={loadDeleted}
-                    />
-                )}
+                    <tbody>{renderRows(krResult, true)}</tbody>
+                </table>
+            </div>
+            {krResult && renderPaging(krResult, setKrPage)}
 
-                {showCreateEtf && (
-                    <CreateEtfModal
-                        open={showCreateEtf}
-                        myStocks={[
-                            ...(krResult?.dtoList ?? []),
-                            ...(usResult?.dtoList ?? []),
-                        ].map(s => ({
-                            code: s.code,
-                            name: s.name,
-                        }))}
-                        onClose={() => setShowCreateEtf(false)}
-                        onCreated={() => setShowCreateEtf(false)}
-                    />
-                )}
+            {/* US */}
+            <div className="mystock-card">
+                <div className="mystock-card-title">미국 관심 종목</div>
+                <table className="mystock-table">
+                    <colgroup>
+                        <col style={{ width: "48px" }} />   
+                        <col style={{ width: "100px" }} />  
+                        <col style={{ width: "10px" }} />   
+                        <col style={{ width: "110px" }} /> 
+                        <col style={{ width: "110px" }} />  
+                        <col style={{ width: "110px" }} /> 
+                        <col style={{ width: "90px" }} />   
+                        <col style={{ width: "90px" }} />  
+                        <col style={{ width: "140px" }} />
+                        <col style={{ width: "110px" }} /> 
+                        <col style={{ width: "80px" }} />   
+                    </colgroup>
 
-                {showAddToEtf && (
-                    <EditEtfModal
-                        open={showAddToEtf}
-                        myStocks={[
-                            ...(krResult?.dtoList ?? []),
-                            ...(usResult?.dtoList ?? []),
-                        ].map(s => ({
-                            code: s.code,
-                            name: s.name,
-                        }))}
-                        onClose={() => setShowAddToEtf(false)}
-                        onSaved={() => setShowAddToEtf(false)}
-                    />
-                )}
+                    <thead>
+                        <tr>
+                            <th className="col-no">No</th>
+                            <th className="col-code">종목코드</th>
+                            <th className="col-name">종목명</th>
+                            <th className="col-detail"></th>
+                            <th className="col-num">현재가</th>
+                            <th className="col-num">편입가</th>
+                            <th className="col-num">+5%</th>
+                            <th className="col-num">+10%</th>
+                            <th className="col-strategy">전략</th>
+                            <th className="col-date">등록일</th>
+                            <th className="col-action">삭제</th>
+                        </tr>
+                    </thead>
+                    <tbody>{renderRows(usResult, false)}</tbody>
+                </table>
+            </div>
+            {usResult && renderPaging(usResult, setUsPage)}
+
+            {showDeleted && deletedResult && (
+                <DeletedMyStockModal
+                    result={deletedResult}
+                    onClose={() => setShowDeleted(false)}
+                    onRestore={onRestore}
+                    onPage={loadDeleted}
+                />
+            )}
+
+            {showCreateEtf && (
+                <CreateEtfModal
+                    open={showCreateEtf}
+                    myStocks={[
+                        ...(krResult?.dtoList ?? []),
+                        ...(usResult?.dtoList ?? []),
+                    ].map(s => ({
+                        code: s.code,
+                        name: s.name,
+                    }))}
+                    onClose={() => setShowCreateEtf(false)}
+                    onCreated={() => setShowCreateEtf(false)}
+                />
+            )}
+
+            {showAddToEtf && (
+                <EditEtfModal
+                    open={showAddToEtf}
+                    myStocks={[
+                        ...(krResult?.dtoList ?? []),
+                        ...(usResult?.dtoList ?? []),
+                    ].map(s => ({
+                        code: s.code,
+                        name: s.name,
+                    }))}
+                    onClose={() => setShowAddToEtf(false)}
+                    onSaved={() => setShowAddToEtf(false)}
+                />
+            )}
         </div>
     );
 }

@@ -76,10 +76,10 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
     });
   };
 
-  const removeItem = (idx: number) => {
+  const removeItem = (code: string) => {
     setItems(prev =>
-      prev.map((i, pIdx) =>
-        pIdx === idx ? { ...i, deleted: true } : i
+      prev.map(i =>
+        i.code === code ? { ...i, deleted: true } : i
       )
     );
   };
@@ -267,11 +267,11 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
 
                     {items
                       .filter(i => !i.deleted)
-                      .map((i, idx) => {
+                      .map(i => {
                         const isNew = i.id === null;
 
                         return (
-                          <div key={idx} className="selected-row">
+                          <div key={i.code} className="selected-row">
                             {/* 종목 */}
                             <span className="col-name">
                               {i.name} ({i.code})
@@ -285,8 +285,8 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
                                     className="qty-btn minus"
                                     onClick={() =>
                                       setItems(prev =>
-                                        prev.map((p, pIdx) =>
-                                          pIdx === idx && p.quantity > 1
+                                        prev.map(p =>
+                                          p.code === i.code && p.quantity > 1
                                             ? { ...p, quantity: p.quantity - 1 }
                                             : p
                                         )
@@ -304,8 +304,8 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
                                     className="qty-btn plus"
                                     onClick={() =>
                                       setItems(prev =>
-                                        prev.map((p, pIdx) =>
-                                          pIdx === idx
+                                        prev.map(p =>
+                                          p.code === i.code
                                             ? { ...p, quantity: p.quantity + 1 }
                                             : p
                                         )
@@ -325,7 +325,7 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
                             {/* 삭제 */}
                             <button
                               className="remove-btn icon"
-                              onClick={() => removeItem(idx)}
+                              onClick={() => removeItem(i.code)}
                             >
                               ✕
                             </button>

@@ -155,6 +155,14 @@ function BasicLayout({ children }: { children?: ReactNode }) {
               📈 수익률 상위
             </NavLink>
 
+            <NavLink
+              to="/stock/searchStock"
+              className="nav-ani"
+              onClick={closeMenu}
+            >
+              🔍 종목 검색
+            </NavLink>
+
             {/* ===== 시장 성과 ===== */}
             <div className="nav-dropdown">
               <button
@@ -193,10 +201,10 @@ function BasicLayout({ children }: { children?: ReactNode }) {
 
               {openMenu === "search" && (
                 <div className="nav-dropdown-menu">
-                  <NavLink to="/stock/searchStock" onClick={closeMenu}>
+                  {/* <NavLink to="/stock/searchStock" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>
                     종목 검색
-                  </NavLink>
+                  </NavLink> */}
                   <NavLink to="/kodex/summary" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>
                     ETF 검색
@@ -214,9 +222,9 @@ function BasicLayout({ children }: { children?: ReactNode }) {
               <button
                 type="button"
                 className={`nav-ani mypage-btn
-    ${!user ? "login-required" : ""}
-    ${openMenu === "mypage" ? "active" : ""}
-  `}
+                    ${!user ? "login-required" : ""}
+                    ${openMenu === "mypage" ? "active" : ""}
+                  `}
                 onClick={user ? () => toggleMenu("mypage") : undefined}
                 disabled={!user}
                 data-tooltip={!user ? "로그인 후 이용 가능" : undefined}

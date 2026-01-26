@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { StrategyDetail } from "./dualMomentum.types";
 
 type Props = {
@@ -9,17 +10,28 @@ type Props = {
    util
 ========================= */
 function formatDiff(diff: number) {
-  // + 제거, 소수점 제거
   return `${Math.trunc(diff)}%`;
 }
 
 export default function DualMomentumTable({ list, isKr }: Props) {
+  const navigate = useNavigate();
+
   return (
     <div className="content-box">
       <table>
+        <colgroup>
+          <col style={{ width: "28%" }} />  {/* 종목 */}
+          <col style={{ width: "10%" }} />  {/* 상세 */}
+          <col style={{ width: "15%" }} />  {/* 가격 */}
+          <col style={{ width: "15%" }} />  {/* 시작일 */}
+          <col style={{ width: "12%" }} />  {/* 변동 */}
+          <col style={{ width: "20%" }} />  {/* 날짜 */}
+        </colgroup>
+
         <thead>
           <tr>
             <th className="col-code">종목</th>
+            <th className="col-detail"></th>
             <th className="col-price">가격</th>
             <th className="col-prev">시작일</th>
             <th className="col-diff">변동</th>
@@ -32,6 +44,21 @@ export default function DualMomentumTable({ list, isKr }: Props) {
             <tr key={`${row.resultId}_${row.code}_${row.signalDate}`}>
               <td className="col-code">
                 {row.code} {row.name}
+              </td>
+
+              <td className="col-detail">
+                <button
+                  className="detail-link-btn"
+                  onClick={() => {
+                    navigate(
+                      isKr
+                        ? `/stock/searchStock?code=${encodeURIComponent(row.code)}&name=${encodeURIComponent(row.name)}`
+                        : `/stock/searchStock?code=${encodeURIComponent(row.code)}&name=${encodeURIComponent(row.name)}`
+                    );
+                  }}
+                >
+                  종목상세
+                </button>
               </td>
 
               <td className="col-price">
@@ -57,7 +84,6 @@ export default function DualMomentumTable({ list, isKr }: Props) {
             </tr>
           ))}
         </tbody>
-
       </table>
     </div>
   );

@@ -6,7 +6,7 @@
   border: 1px solid #ccc;
   border-radius: 10px;
   padding: 1.2rem;
-  background: #fff;
+  background: #ffffff;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   margin-bottom: 2rem;
 }
@@ -29,23 +29,38 @@ table {
   width: 100%;
   font-size: 0.9rem;
   border-collapse: collapse;
+  /* ❌ table-layout: fixed 제거 */
 }
 
 th,
 td {
-  padding: 6px;
-  vertical-align: middle; /* ✅ 세로 중앙 정렬 */
+  padding: 6px 8px;              /* 🔑 헤더/바디 패딩 통일 */
+  vertical-align: middle;        /* 세로 중앙 */
 }
 
-/* Header */
+/* ===============================
+   Header
+=============================== */
+
 th {
-  font-weight: bold;
-  border-bottom: 1px solid #ddd;
+  font-weight: 600;
+  color: #374151;
+  border-bottom: 1px solid #e5e7eb;
+  background: #fafafa;
 }
 
-/* Body */
+/* ===============================
+   Body
+=============================== */
+
 td {
-  border-bottom: 1px solid #f1f1f1;
+  color: #111827;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+/* Hover */
+tbody tr:hover {
+  background: #f9fafb;
 }
 
 /* ===============================
@@ -56,6 +71,7 @@ td {
 .col-code {
   text-align: left;
   white-space: nowrap;
+  font-weight: 500;
 }
 
 /* 숫자 컬럼 */
@@ -65,12 +81,14 @@ td {
 .col-volume {
   text-align: right;
   white-space: nowrap;
+  font-variant-numeric: tabular-nums;
 }
 
 /* 날짜 */
 .col-date {
   text-align: center;
   white-space: nowrap;
+  color: #6b7280;
 }
 
 /* ===============================
@@ -78,11 +96,56 @@ td {
 =============================== */
 
 .up {
-  color: #d93025; /* 🔴 상승 */
+  color: #d93025; /* 상승 */
   font-weight: 600;
 }
 
 .down {
-  color: #1a73e8; /* 🔵 하락 */
+  color: #1a73e8; /* 하락 */
   font-weight: 600;
+}
+
+/* ===============================
+   Detail Column
+=============================== */
+
+.col-detail {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ===============================
+   Detail Tag Button
+=============================== */
+
+.detail-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 4px 10px;
+  min-height: 22px;
+
+  font-size: 0.7rem;
+  font-weight: 600;
+
+  color: #2563eb;
+  background: #eff6ff;
+
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.detail-link-btn:hover {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.detail-link-btn:active {
+  transform: scale(0.96);
 }

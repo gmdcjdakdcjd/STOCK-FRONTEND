@@ -7,8 +7,8 @@
 
 /* 헤더 */
 .etf-item-header {
-  padding: 14px 20px;
-  font-size: 15px;
+  padding: 16px 22px;
+  font-size: 16px;
   font-weight: 600;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -22,7 +22,7 @@
 .etf-item-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .etf-item-table thead {
@@ -32,7 +32,7 @@
 /* 기본 셀 스타일 */
 .etf-item-table th,
 .etf-item-table td {
-  padding: 10px 12px;
+  padding: 12px 14px;
   border-bottom: 1px solid #e5e7eb;
   white-space: nowrap;
   text-align: center;
@@ -40,10 +40,10 @@
 }
 
 /* ================================
-   Column Alignment (사진 기준)
+   Column Alignment
 ================================ */
 
-/* 종목명: 헤더 + 바디 왼쪽 정렬 */
+/* 종목명 */
 .etf-item-table th.name,
 .etf-item-table td.name {
   text-align: left;
@@ -51,7 +51,7 @@
   font-weight: 500;
 }
 
-/* 숫자 컬럼: 헤더 + 바디 오른쪽 정렬 */
+/* 숫자 컬럼 */
 .etf-item-table th.num,
 .etf-item-table td.num {
   text-align: right;
@@ -59,12 +59,25 @@
   font-variant-numeric: tabular-nums;
 }
 
-/* hover */
+/* 상세 컬럼 */
+.etf-item-table th.detail,
+.etf-item-table td.detail {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ================================
+   Hover
+================================ */
+
 .etf-item-table tbody tr:hover {
   background: #f9fafb;
 }
 
-/* 수익 / 손실 */
+/* ================================
+   Profit / Loss
+================================ */
+
 .etf-item-table .profit {
   color: #dc2626;
   font-weight: 600;
@@ -73,4 +86,84 @@
 .etf-item-table .loss {
   color: #2563eb;
   font-weight: 600;
+}
+
+/* ================================
+   Detail Tag Button (공통 UX)
+================================ */
+
+.detail-link-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  padding: 5px 12px;
+  min-height: 26px;
+
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  color: #2563eb;
+  background: #eff6ff;
+
+  border: 1px solid #dbeafe;
+  border-radius: 999px;
+
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.detail-link-btn:hover {
+  background: #dbeafe;
+  border-color: #bfdbfe;
+  color: #1d4ed8;
+}
+
+.detail-link-btn:active {
+  transform: scale(0.96);
+}
+/* =========================
+   Row Background
+========================= */
+
+/* 상승 */
+.row-profit {
+  background: #fff5f5;
+}
+
+/* 하락 */
+.row-loss {
+  background: #f5f9ff;
+}
+
+.etf-item-table tbody tr.row-profit:hover {
+  background: #ffecec;
+}
+
+.etf-item-table tbody tr.row-loss:hover {
+  background: #eaf2ff;
+}
+
+/* =========================
+   Price Color
+========================= */
+
+.price-up {
+  color: #dc2626;
+  font-weight: 600;
+}
+
+.price-down {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.price-same {
+  color: #374151;
+}
+.sub-price {
+  margin-top: 2px;
+  font-size: 0.8rem;
+  color: #6b7280;
 }
