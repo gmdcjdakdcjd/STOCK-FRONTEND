@@ -1,7 +1,7 @@
 /* ================================
-   Overlay
+   Overlay (Create ETF 전용)
 ================================ */
-.modal-overlay {
+.create-etf-modal.modal-overlay {
   position: fixed;
   inset: 0;
   z-index: 1000;
@@ -14,9 +14,9 @@
 /* ================================
    Modal Body
 ================================ */
-.modal-body {
-  width: 90%;
-  max-width: 980px;
+.create-etf-modal .modal-body {
+  width: 92%;
+  max-width: 1200px;
   max-height: 85vh;
   display: flex;
   flex-direction: column;
@@ -28,7 +28,7 @@
 /* ================================
    Header
 ================================ */
-.modal-header {
+.create-etf-modal .modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -36,13 +36,13 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-.modal-header h3 {
+.create-etf-modal .modal-header h3 {
   margin: 0;
   font-size: 1.05rem;
   font-weight: 700;
 }
 
-.close-btn {
+.create-etf-modal .close-btn {
   border: none;
   background: none;
   cursor: pointer;
@@ -50,44 +50,46 @@
   color: #6b7280;
 }
 
-.close-btn:hover {
+.create-etf-modal .close-btn:hover {
   color: #111827;
 }
 
 /* ================================
    Content
 ================================ */
-.modal-content {
+.create-etf-modal .modal-content {
   flex: 1;
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
 
 /* ================================
    Form Section
 ================================ */
-.form-section {
+.create-etf-modal .form-section {
   padding: 0.75rem 1.25rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
 }
 
-.form-section label {
+.create-etf-modal .form-section label {
   font-size: 0.75rem;
   font-weight: 600;
   color: #374151;
 }
 
-.form-section input,
-.form-section textarea {
+.create-etf-modal .form-section input,
+.create-etf-modal .form-section textarea {
   padding: 0.5rem 0.65rem;
   border-radius: 6px;
   border: 1px solid #d1d5db;
   font-size: 0.9rem;
 }
 
-.form-section input:focus,
-.form-section textarea:focus {
+.create-etf-modal .form-section input:focus,
+.create-etf-modal .form-section textarea:focus {
   outline: none;
   border-color: #2563eb;
 }
@@ -95,35 +97,36 @@
 /* ================================
    Divider
 ================================ */
-.divider {
+.create-etf-modal .divider {
   margin: 0.75rem 0;
   border-top: 1px solid #e5e7eb;
 }
 
 /* ================================
-   ETF Builder
+   ETF Builder (좌/우 비율)
 ================================ */
-.etf-builder {
+.create-etf-modal .etf-builder {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 4fr 6fr;
   gap: 1.25rem;
   padding: 0.75rem 1.25rem 1.25rem;
-  height: 360px;
+  flex: 1;
+  min-height: 0;
 }
 
 /* ================================
    Panels
 ================================ */
-.search-panel,
-.selected-panel {
+.create-etf-modal .search-panel,
+.create-etf-modal .selected-panel {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  min-height: 0;
   overflow: hidden;
 }
 
-.search-panel h4,
-.selected-panel h4 {
+.create-etf-modal .search-panel h4,
+.create-etf-modal .selected-panel h4 {
   margin: 0 0 0.5rem;
   font-size: 0.8rem;
   font-weight: 600;
@@ -133,185 +136,121 @@
 }
 
 /* ================================
-   Search Bar
+   Search Table
 ================================ */
-.search-bar {
-  display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.search-input {
-  flex: 1;
-  padding: 0.5rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  font-size: 0.85rem;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #6366f1;
-}
-
-.search-btn {
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  border: none;
-  background: #4f46e5;
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* ================================
-   Reset Button (Ghost - Pink)
-================================ */
-.reset-btn.ghost {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: #fff1f5;
-  border: 1px solid #f3c1cf;
-  color: #d14b6f;
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.reset-btn.ghost:active {
-  transform: scale(0.96);
-}
-
-/* ================================
-   Search List
-================================ */
-.search-list {
+.create-etf-modal .search-table {
   margin-top: 0.5rem;
   border-top: 1px solid #e5e7eb;
   flex: 1;
   overflow-y: auto;
 }
 
-.search-item {
-  display: flex;
-  justify-content: space-between;
+.create-etf-modal .search-row {
+  display: grid;
+  grid-template-columns:
+    2fr
+    1fr
+    0.8fr
+    1fr
+    0.6fr;
   align-items: center;
-  padding: 0.55rem 0.25rem;
-  font-size: 0.85rem;
+  gap: 6px;
+  padding: 0.45rem 0.35rem;
+  font-size: 0.8rem;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
 }
 
-.search-item:hover {
+.create-etf-modal .search-row.header {
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: #6b7280;
   background: #f9fafb;
-}
-
-.search-item.disabled {
   cursor: default;
+}
+
+.create-etf-modal .search-row:not(.header):hover {
   background: #f9fafb;
 }
 
-.search-info {
-  display: flex;
-  flex-direction: column;
+.create-etf-modal .search-row.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
-.search-info .code {
+.create-etf-modal .search-row .action {
   font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.add-hint {
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  background: #ecfdf5;
+  text-align: right;
   color: #047857;
-  border: 1px solid #bbf7d0;
-  font-size: 0.7rem;
   font-weight: 600;
 }
 
-.added {
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  background: #e5e7eb;
-  color: #6b7280;
-  font-size: 0.7rem;
-  font-weight: 600;
-}
-
-/* ================================
-   Selected Header
-================================ */
-.selected-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 0.7rem;
-  color: #6b7280;
-  padding: 0.4rem 0;
-  border-bottom: 1px solid #e5e7eb;
-  flex-shrink: 0;
+.create-etf-modal .right {
+  text-align: right;
 }
 
 /* ================================
    Selected List
 ================================ */
-.selected-panel {
+.create-etf-modal .selected-list {
+  flex: 1;
+  min-height: 0;
   overflow-y: auto;
 }
 
-.selected-panel > .empty {
+.create-etf-modal .selected-list .empty {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 0.8rem;
+  color: #6b7280;
 }
 
 /* ================================
-   Selected Row
+   Selected Header / Row
 ================================ */
-.selected-row {
-  display: flex;
+.create-etf-modal .selected-header,
+.create-etf-modal .selected-row {
+  display: grid;
+  grid-template-columns:
+    2.4fr   /* 종목 */
+    0.6fr   /* 시장 */
+    1fr     /* 현재가 */
+    1fr     /* 수량 */
+    1.2fr   /* 총액 */
+    0.4fr;  /* 삭제 */
   align-items: center;
-  justify-content: space-between;
-  padding: 0.45rem 0;
-  font-size: 0.8rem;
-  border-bottom: 1px solid #f1f5f9;
+  gap: 6px;
 }
 
-.selected-row > span {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+
+.create-etf-modal .selected-header {
+  font-size: 0.7rem;
+  color: #6b7280;
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 /* ================================
    Quantity Control
 ================================ */
-.qty-control {
-  display: flex;
+.create-etf-modal .qty-control {
+  display: inline-flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  width: 76px;
+  height: 24px;
+  gap: 4px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
-  padding: 0.15rem 0.35rem;
+  margin: 0 auto;
 }
 
-.qty-btn {
+.create-etf-modal .qty-btn {
   width: 22px;
   height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   border: none;
   border-radius: 50%;
   font-size: 0.85rem;
@@ -319,12 +258,12 @@
   cursor: pointer;
 }
 
-.qty-btn.minus {
+.create-etf-modal .qty-btn.minus {
   background: #f3f4f6;
   color: #6b7280;
 }
 
-.qty-btn.plus {
+.create-etf-modal .qty-btn.plus {
   background: #eef2ff;
   color: #4f46e5;
 }
@@ -332,7 +271,7 @@
 /* ================================
    Remove Button
 ================================ */
-.remove-btn.icon {
+.create-etf-modal .remove-btn.icon {
   width: 22px;
   height: 22px;
   margin-left: 6px;
@@ -346,14 +285,14 @@
   cursor: pointer;
 }
 
-.remove-btn.icon:hover {
+.create-etf-modal .remove-btn.icon:hover {
   background: #fee2e2;
 }
 
 /* ================================
    Footer
 ================================ */
-.modal-footer {
+.create-etf-modal .modal-footer {
   padding: 0.75rem 1.25rem;
   display: flex;
   justify-content: flex-end;
@@ -361,7 +300,7 @@
   border-top: 1px solid #e5e7eb;
 }
 
-.primary-btn {
+.create-etf-modal .primary-btn {
   padding: 0.45rem 0.9rem;
   border-radius: 6px;
   border: none;
@@ -371,11 +310,52 @@
   cursor: pointer;
 }
 
-.secondary-btn {
+.create-etf-modal .secondary-btn {
   padding: 0.45rem 0.9rem;
   border-radius: 6px;
   border: none;
   background: #e5e7eb;
   color: #374151;
   cursor: pointer;
+}
+.create-etf-modal .search-bar {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 8px;
+  background: #f9fafb;        /* 아주 연한 회색 */
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
+}
+
+.create-etf-modal .search-input {
+  flex: 1;
+  background: transparent;
+  border: none;
+}
+.create-etf-modal .reset-btn.ghost {
+  width: 26px;
+  height: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: none;
+
+  background: #eef2f7;   /* search-bar보다 살짝 진함 */
+  color: #6b7280;
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  cursor: pointer;
+}
+
+.create-etf-modal .reset-btn.ghost:hover {
+  background: #e5e7eb;
+}
+.create-etf-modal .search-input:focus {
+  outline: none;
 }

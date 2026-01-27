@@ -281,3 +281,8 @@
   margin-top: 6px;
   margin-bottom: 14px;
 }
+.myetf-header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;   /* ← 여기 숫자만 취향대로 */
+}

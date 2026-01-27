@@ -20,12 +20,12 @@ export default function DualMomentumTable({ list, isKr }: Props) {
     <div className="content-box">
       <table>
         <colgroup>
-          <col style={{ width: "28%" }} />  {/* 종목 */}
-          <col style={{ width: "10%" }} />  {/* 상세 */}
-          <col style={{ width: "15%" }} />  {/* 가격 */}
-          <col style={{ width: "15%" }} />  {/* 시작일 */}
-          <col style={{ width: "12%" }} />  {/* 변동 */}
-          <col style={{ width: "20%" }} />  {/* 날짜 */}
+          <col style={{ width: "28%" }} /> 
+          <col style={{ width: "10%" }} /> 
+          <col style={{ width: "15%" }} />  
+          <col style={{ width: "15%" }} /> 
+          <col style={{ width: "12%" }} /> 
+          <col style={{ width: "20%" }} /> 
         </colgroup>
 
         <thead>

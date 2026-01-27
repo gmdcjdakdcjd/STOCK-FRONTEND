@@ -7,12 +7,16 @@ import "./EditEtfModal.css";
 interface MyStockItem {
   code: string;
   name: string;
+  market: "KR" | "US";
+  currentPrice: number | null;
 }
 
 interface TempItem {
   id: number | null;
   code: string;
   name: string;
+  market: "KR" | "US";
+  priceAtAdd: number | null;   // 🔑 편입가 (기존 or 현재가 스냅샷)
   quantity: number;
   originalQuantity?: number;
   deleted?: boolean;
@@ -24,6 +28,19 @@ interface Props {
   onClose: () => void;
   onSaved: () => void;
 }
+
+/* =========================
+   Utils
+========================= */
+const formatPrice = (
+  price: number | null | undefined,
+  market: "KR" | "US"
+) => {
+  if (price == null) return "-";
+  return market === "KR"
+    ? `${price.toLocaleString()}원`
+    : `$${price.toLocaleString()}`;
+};
 
 /* =========================
    Component
@@ -42,7 +59,7 @@ export default function EditEtfModal({
 
   /* =========================
      ETF 목록 로드
-     ========================= */
+========================= */
   useEffect(() => {
     if (!open) return;
 
@@ -59,7 +76,7 @@ export default function EditEtfModal({
 
   /* =========================
      선택 ETF 상세 로드
-     ========================= */
+========================= */
   useEffect(() => {
     if (!open || !selectedEtf) return;
 
@@ -72,6 +89,8 @@ export default function EditEtfModal({
             id: i.id,
             code: i.code,
             name: i.name,
+            market: i.market,
+            priceAtAdd: i.priceAtAdd, // ✅ 서버에 저장된 편입가
             quantity: i.quantity,
             originalQuantity: i.quantity,
             deleted: false,
@@ -81,13 +100,24 @@ export default function EditEtfModal({
   }, [open, selectedEtf]);
 
   /* =========================
-     Actions
-     ========================= */
-  const addItem = (code: string, name: string) => {
+     신규 종목 추가 (현재가 스냅샷)
+========================= */
+  const addItem = (s: MyStockItem) => {
     setItems(prev => {
-      const exist = prev.find(i => i.code === code && !i.deleted);
+      const exist = prev.find(i => i.code === s.code && !i.deleted);
       if (exist) return prev;
-      return [...prev, { id: null, code, name, quantity: 1 }];
+
+      return [
+        ...prev,
+        {
+          id: null,
+          code: s.code,
+          name: s.name,
+          market: s.market,
+          priceAtAdd: s.currentPrice, // 🔑 현재가 스냅샷
+          quantity: 1,
+        },
+      ];
     });
   };
 
@@ -99,6 +129,9 @@ export default function EditEtfModal({
     );
   };
 
+  /* =========================
+     저장
+========================= */
   const save = () => {
     const invalid = items.filter(
       i =>
@@ -134,23 +167,14 @@ export default function EditEtfModal({
 
   /* =========================
      Render
-     ========================= */
+========================= */
   if (!open) return null;
 
   return (
-    <div
-      className="modal-overlay"
-      onClick={e => {
-        if (e.target === e.currentTarget) {
-          onClose();
-        }
-      }}
-    >
-      <div
-        className="modal-body"
-        onClick={e => e.stopPropagation()}
-      >
-        {/* ===== Header ===== */}
+    <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+      <div className="modal-body" onClick={e => e.stopPropagation()}>
+
+        {/* Header */}
         <header className="modal-header">
           <div className="header-text">
             <h3>ETF 종목 추가</h3>
@@ -159,17 +183,9 @@ export default function EditEtfModal({
               신규로 추가한 종목만 삭제 가능합니다.
             </div>
           </div>
-
-          <button
-            className="close-btn"
-            onClick={onClose}
-            aria-label="닫기"
-          >
-            ✕
-          </button>
+          <button className="close-btn" onClick={onClose}>✕</button>
         </header>
 
-        {/* ===== Content ===== */}
         <div className="modal-content">
           {/* ETF Meta */}
           <div className="form-section">
@@ -179,9 +195,7 @@ export default function EditEtfModal({
               onChange={e => setSelectedEtf(e.target.value)}
             >
               {etfList.map(name => (
-                <option key={name} value={name}>
-                  {name}
-                </option>
+                <option key={name} value={name}>{name}</option>
               ))}
             </select>
 
@@ -195,13 +209,20 @@ export default function EditEtfModal({
 
           <div className="divider" />
 
-          {/* ===== ETF Builder ===== */}
           <div className="etf-builder">
-            {/* 좌측 */}
+            {/* ===== 좌측: 내 관심 종목 ===== */}
             <div className="search-panel">
               <h4>내 관심 종목</h4>
 
-              <div className="search-list">
+              <div className="search-table">
+                <div className="search-row header">
+                  <span>종목명</span>
+                  <span>코드</span>
+                  <span>시장</span>
+                  <span className="right">현재가</span>
+                  <span></span>
+                </div>
+
                 {myStocks.map(s => {
                   const selected = items.some(
                     it => it.code === s.code && !it.deleted
@@ -210,116 +231,114 @@ export default function EditEtfModal({
                   return (
                     <div
                       key={s.code}
-                      className={`search-item ${selected ? "disabled" : ""}`}
-                      onClick={() =>
-                        !selected && addItem(s.code, s.name)
-                      }
+                      className={`search-row ${selected ? "disabled" : ""}`}
+                      onClick={() => !selected && addItem(s)}
                     >
-                      <div className="search-info">
-                        <strong>{s.name}</strong>
-                        <span className="code">{s.code}</span>
-                      </div>
-
-                      {selected ? (
-                        <span className="added">추가됨</span>
-                      ) : (
-                        <span className="add-hint">추가</span>
-                      )}
+                      <span>{s.name}</span>
+                      <span>{s.code}</span>
+                      <span>{s.market}</span>
+                      <span className="right">
+                        {formatPrice(s.currentPrice, s.market)}
+                      </span>
+                      <span className="action">
+                        {selected ? "추가됨" : "추가"}
+                      </span>
                     </div>
                   );
                 })}
               </div>
             </div>
 
-            {/* 우측 */}
+            {/* ===== 우측: 구성 종목 ===== */}
             <div className="selected-panel">
               <h4>구성 종목</h4>
 
               <div className="selected-list">
-                <div className="selected-header">
-                  <span className="col-name">종목</span>
-                  <span className="col-qty">수량</span>
-                  <span className="col-action"></span>
+                <div className="selected-header table">
+                  <span>종목</span>
+                  <span>시장</span>
+                  <span className="right">편입가</span>
+                  <span className="center">수량</span>
+                  <span className="right">총액</span>
+                  <span></span>
                 </div>
 
-                {items
-                  .filter(i => !i.deleted)
-                  .map(i => {
-                    const isNew = i.id === null;
+                {items.filter(i => !i.deleted).map(i => {
+                  const isNew = i.id === null;
 
-                    return (
-                      <div key={i.code} className="selected-row">
-                        <span className="col-name">
-                          {i.name} ({i.code})
-                        </span>
+                  return (
+                    <div key={i.code} className="selected-row table">
+                      <span>{i.name} ({i.code})</span>
+                      <span>{i.market}</span>
 
-                        <div className="col-qty">
-                          {isNew ? (
-                            <div className="qty-control">
-                              <button
-                                className="qty-btn minus"
-                                onClick={() =>
-                                  setItems(prev =>
-                                    prev.map(p =>
-                                      p.code === i.code && p.quantity > 1
-                                        ? { ...p, quantity: p.quantity - 1 }
-                                        : p
-                                    )
+                      <span className="right">
+                        {formatPrice(i.priceAtAdd, i.market)}
+                      </span>
+
+                      <div className="qty-control">
+                        {isNew ? (
+                          <>
+                            <button
+                              className="qty-btn minus"
+                              onClick={() =>
+                                setItems(prev =>
+                                  prev.map(p =>
+                                    p.code === i.code && p.quantity > 1
+                                      ? { ...p, quantity: p.quantity - 1 }
+                                      : p
                                   )
-                                }
-                              >
-                                −
-                              </button>
-
-                              <span className="qty-value">{i.quantity}</span>
-
-                              <button
-                                className="qty-btn plus"
-                                onClick={() =>
-                                  setItems(prev =>
-                                    prev.map(p =>
-                                      p.code === i.code
-                                        ? { ...p, quantity: p.quantity + 1 }
-                                        : p
-                                    )
+                                )
+                              }
+                            >
+                              −
+                            </button>
+                            <span className="qty-value">{i.quantity}</span>
+                            <button
+                              className="qty-btn plus"
+                              onClick={() =>
+                                setItems(prev =>
+                                  prev.map(p =>
+                                    p.code === i.code
+                                      ? { ...p, quantity: p.quantity + 1 }
+                                      : p
                                   )
-                                }
-                              >
-                                +
-                              </button>
-                            </div>
-                          ) : (
-                            <span className="fixed-qty">{i.quantity}</span>
-                          )}
-                        </div>
-
-                        <button
-                          className={`remove-btn icon ${!isNew ? "disabled" : ""}`}
-                          disabled={!isNew}
-                          onClick={() => {
-                            if (!isNew) return;
-                            removeItem(i.code);
-                          }}
-                        >
-                          ✕
-                        </button>
-
+                                )
+                              }
+                            >
+                              +
+                            </button>
+                          </>
+                        ) : (
+                          <span className="fixed-qty">{i.quantity}</span>
+                        )}
                       </div>
-                    );
-                  })}
+
+                      <span className="right">
+                        {formatPrice(
+                          (i.priceAtAdd ?? 0) * i.quantity,
+                          i.market
+                        )}
+                      </span>
+
+                      <button
+                        className={`remove-btn icon ${!isNew ? "disabled" : ""}`}
+                        disabled={!isNew}
+                        onClick={() => isNew && removeItem(i.code)}
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
         </div>
 
-        {/* ===== Footer ===== */}
+        {/* Footer */}
         <div className="modal-footer">
-          <button className="secondary-btn" onClick={onClose}>
-            취소
-          </button>
-          <button className="primary-btn" onClick={save}>
-            저장
-          </button>
+          <button className="secondary-btn" onClick={onClose}>취소</button>
+          <button className="primary-btn" onClick={save}>저장</button>
         </div>
       </div>
     </div>

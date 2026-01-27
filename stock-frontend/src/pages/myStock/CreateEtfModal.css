@@ -133,189 +133,127 @@
 }
 
 /* ================================
-   Search Bar
+   LEFT : Search Table
 ================================ */
-.search-bar {
+.search-table {
   display: flex;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.search-input {
-  flex: 1;
-  padding: 0.5rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
-  font-size: 0.85rem;
-}
-
-.search-input:focus {
-  outline: none;
-  border-color: #6366f1;
-}
-
-.search-btn {
-  padding: 0.45rem 0.9rem;
-  border-radius: 999px;
-  border: none;
-  background: #4f46e5;
-  color: #ffffff;
-  font-size: 0.75rem;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* ================================
-   Reset Button (Ghost - Pink)
-================================ */
-.reset-btn.ghost {
-  width: 28px;
-  height: 28px;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 999px;
-  background: #fff1f5;
-  border: 1px solid #f3c1cf;
-  color: #d14b6f;
-  font-size: 0.8rem;
-  font-weight: 600;
-  line-height: 1;
-  cursor: pointer;
-}
-
-.reset-btn.ghost:active {
-  transform: scale(0.96);
-}
-
-/* ================================
-   Search List
-================================ */
-.search-list {
-  margin-top: 0.5rem;
-  border-top: 1px solid #e5e7eb;
+  flex-direction: column;
   flex: 1;
   overflow-y: auto;
 }
 
-.search-item {
-  display: flex;
-  justify-content: space-between;
+.search-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 60px 110px 60px;
   align-items: center;
-  padding: 0.55rem 0.25rem;
-  font-size: 0.85rem;
+  padding: 0.45rem 0.25rem;
+  font-size: 0.8rem;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
 }
 
-.search-item:hover {
-  background: #f9fafb;
-}
-
-.search-item.disabled {
-  cursor: default;
-  background: #f9fafb;
-}
-
-.search-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.search-info .code {
-  font-size: 0.7rem;
-  color: #9ca3af;
-}
-
-.add-hint {
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  background: #ecfdf5;
-  color: #047857;
-  border: 1px solid #bbf7d0;
+.search-row.header {
   font-size: 0.7rem;
   font-weight: 600;
-}
-
-.added {
-  padding: 0.25rem 0.65rem;
-  border-radius: 999px;
-  background: #e5e7eb;
   color: #6b7280;
+  cursor: default;
+}
+
+.search-row:hover:not(.header):not(.disabled) {
+  background: #f9fafb;
+}
+
+.search-row.disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: default;
+}
+
+.search-row .right {
+  text-align: right;
+}
+
+.search-row .action {
+  text-align: center;
   font-size: 0.7rem;
   font-weight: 600;
+  color: #6366f1;
 }
 
 /* ================================
-   Selected Header
+   RIGHT : Selected Table
 ================================ */
+.selected-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* 🔑 헤더 / 로우 컬럼 완전 일치 */
+.selected-header.table,
+.selected-row.table {
+  display: grid;
+  grid-template-columns:
+    1.4fr   /* 종목 */
+    60px    /* 시장 */
+    100px   /* 가격 */
+    120px   /* 수량 */
+    120px   /* 총액 */
+    32px;   /* 삭제 */
+  align-items: center;
+  gap: 8px;
+}
+
 .selected-header {
-  display: flex;
-  justify-content: space-between;
   font-size: 0.7rem;
   color: #6b7280;
   padding: 0.4rem 0;
   border-bottom: 1px solid #e5e7eb;
-  flex-shrink: 0;
 }
 
-/* ================================
-   Selected List
-================================ */
-.selected-panel {
-  overflow-y: auto;
-}
-
-.selected-panel > .empty {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ================================
-   Selected Row
-================================ */
 .selected-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.45rem 0;
+  padding: 0.4rem 0;
   font-size: 0.8rem;
   border-bottom: 1px solid #f1f5f9;
 }
 
-.selected-row > span {
-  flex: 1;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
 }
 
 /* ================================
-   Quantity Control
+   Quantity Control (✔ 최종 정렬 버전)
 ================================ */
 .qty-control {
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: space-between;
+
+  width: 78px;
+  height: 26px;
+  padding: 0 6px;
+
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
-  padding: 0.15rem 0.35rem;
 }
 
 .qty-btn {
   width: 22px;
   height: 22px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  border: none;
+
   border-radius: 50%;
+  border: none;
   font-size: 0.85rem;
   font-weight: 700;
+  line-height: 1;
   cursor: pointer;
 }
 
@@ -329,25 +267,29 @@
   color: #4f46e5;
 }
 
+.qty-value {
+  min-width: 18px;
+  text-align: center;
+  font-size: 0.75rem;
+  font-weight: 600;
+  line-height: 1;
+}
+
 /* ================================
    Remove Button
 ================================ */
 .remove-btn.icon {
   width: 22px;
   height: 22px;
-  margin-left: 6px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  background: transparent;
+  border: none;
+  background: none;
   color: #ef4444;
-  font-size: 0.8rem;
   cursor: pointer;
 }
 
 .remove-btn.icon:hover {
   background: #fee2e2;
+  border-radius: 50%;
 }
 
 /* ================================

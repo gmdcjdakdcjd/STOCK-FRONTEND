@@ -106,9 +106,7 @@ export default function ResultDetailKRPage() {
   return (
     <>
       <div className="result-detail-page">
-        {/* =========================
-           Header Card
-           ========================= */}
+
         <div className="detail-header-card">
           <div className="detail-header-left">
             <h4>{captureName}</h4>
@@ -145,9 +143,6 @@ export default function ResultDetailKRPage() {
           </div>
         </div>
 
-        {/* =========================
-           Table
-           ========================= */}
         <div className="result-card">
           <div className="result-card-header">
             포착 종목 목록
@@ -158,8 +153,8 @@ export default function ResultDetailKRPage() {
               <col style={{ width: "48px" }} />
               <col style={{ width: "120px" }} />
               <col style={{ width: "10%" }} />
-              <col style={{ width: "120px" }} /> {/* 상세 */}
-              <col style={{ width: "120px" }} /> {/* 현재가 */}
+              <col style={{ width: "120px" }} />
+              <col style={{ width: "120px" }} />
               <col style={{ width: "120px" }} />
               <col style={{ width: "100px" }} />
               <col style={{ width: "140px" }} />

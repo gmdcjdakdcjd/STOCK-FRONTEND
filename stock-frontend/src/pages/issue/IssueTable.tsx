@@ -10,6 +10,7 @@ type Props = {
 
 export default function IssueTable({ title, list, market }: Props) {
   const navigate = useNavigate();
+  const isEtf = title.includes("ETF");
 
   return (
     <div className="dashboard-card">
@@ -49,19 +50,22 @@ export default function IssueTable({ title, list, market }: Props) {
                 </td>
 
                 <td className="col-detail">
-                  <button
-                    className="detail-link-btn"
-                    onClick={() =>
-                      navigate(
-                        `/stock/searchStock?code=${encodeURIComponent(
-                          row.code
-                        )}&name=${encodeURIComponent(row.name)}`
-                      )
-                    }
-                  >
-                    종목상세
-                  </button>
+                  {!isEtf && (
+                    <button
+                      className="detail-link-btn"
+                      onClick={() =>
+                        navigate(
+                          `/stock/searchStock?code=${encodeURIComponent(
+                            row.code
+                          )}&name=${encodeURIComponent(row.name)}`
+                        )
+                      }
+                    >
+                      종목상세
+                    </button>
+                  )}
                 </td>
+
 
                 <td className="col-price">
                   {row.price?.toLocaleString()}
@@ -74,13 +78,12 @@ export default function IssueTable({ title, list, market }: Props) {
                 </td>
 
                 <td
-                  className={`col-diff ${
-                    row.diff > 0
-                      ? "up"
-                      : row.diff < 0
+                  className={`col-diff ${row.diff > 0
+                    ? "up"
+                    : row.diff < 0
                       ? "down"
                       : ""
-                  }`}
+                    }`}
                 >
                   {row.diff}%
                 </td>

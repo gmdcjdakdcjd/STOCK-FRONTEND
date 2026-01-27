@@ -81,7 +81,7 @@
   gap: 8px;
   margin-left: auto;
 
-  --indicator-color: #6d5dfc;
+  /* --indicator-color: #6d5dfc; */
   flex-shrink: 0;
 }
 

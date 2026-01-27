@@ -46,76 +46,86 @@ export default function MyEtfListPage() {
      ========================= */
   return (
     <div className="myetf-page">
-        {/* Header */}
-        <div className="myetf-header">
-          <h2>내가 만든 ETF</h2>
-          {/* CreateEtfModal 내부 버튼에 btn-primary 적용 */}
+      {/* Header */}
+      <div className="myetf-header">
+        <h2>내가 만든 ETF</h2>
+
+        <div className="myetf-header-actions">
+          <button
+            className="btn-etf-outline"
+            onClick={() => navigate("/stock/myStock")}
+          >
+            나의 즐겨찾기 종목 보기
+          </button>
+
           <CreateEtfModal onCreated={() => load(page)} />
         </div>
+      </div>
 
-        {/* List */}
-        {!result ? (
-          <div className="myetf-loading">Loading...</div>
-        ) : list.length === 0 ? (
-          <div className="myetf-empty">생성된 ETF가 없습니다.</div>
-        ) : (
-          <div className="myetf-list">
-            {/* ===== Header ===== */}
-            <div className="myetf-row header">
-              <div className="col no">No</div>
-              <div className="col name">ETF 이름</div>
-              <div className="col count">종목 수</div>
-              <div className="col action">삭제</div>
-            </div>
 
-            {/* ===== Rows ===== */}
-            {list.map((etf, idx) => (
-              <div
-                key={etf.etfName}
-                className="myetf-row"
-                onClick={() => moveDetail(etf.etfName)}
-              >
-                <div className="col no">
-                  {(result.page - 1) * result.size + idx + 1}
-                </div>
-                <div className="col name">{etf.etfName}</div>
-                <div className="col count">
-                  <span className="count-badge">{etf.itemCount}</span>
-                </div>
-                <div className="col action">
-                  <button
-                    className="btn-danger"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(etf.etfName);
-                    }}
-                  >
-                    삭제
-                  </button>
-                </div>
+      {/* List */}
+      {!result ? (
+        <div className="myetf-loading">Loading...</div>
+      ) : list.length === 0 ? (
+        <div className="myetf-empty">생성된 ETF가 없습니다.</div>
+      ) : (
+        <div className="myetf-list">
+          {/* ===== Header ===== */}
+          <div className="myetf-row header">
+            <div className="col no">No</div>
+            <div className="col name">ETF 이름</div>
+            <div className="col count">종목 수</div>
+            <div className="col action">삭제</div>
+          </div>
+
+          {/* ===== Rows ===== */}
+          {list.map((etf, idx) => (
+            <div
+              key={etf.etfName}
+              className="myetf-row"
+              onClick={() => moveDetail(etf.etfName)}
+            >
+              <div className="col no">
+                {(result.page - 1) * result.size + idx + 1}
               </div>
-            ))}
-          </div>
-        )}
+              <div className="col name">{etf.etfName}</div>
+              <div className="col count">
+                <span className="count-badge">{etf.itemCount}</span>
+              </div>
+              <div className="col action">
+                <button
+                  className="btn-danger"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDelete(etf.etfName);
+                  }}
+                >
+                  삭제
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
 
 
-        {/* Pagination */}
-        {result && result.total > 0 && (
-          <div className="pagination">
-            {Array.from(
-              { length: result.end - result.start + 1 },
-              (_, i) => result.start + i
-            ).map((p) => (
-              <button
-                key={p}
-                className={p === result.page ? "active" : ""}
-                onClick={() => setPage(p)}
-              >
-                {p}
-              </button>
-            ))}
-          </div>
-        )}
+      {/* Pagination */}
+      {result && result.total > 0 && (
+        <div className="pagination">
+          {Array.from(
+            { length: result.end - result.start + 1 },
+            (_, i) => result.start + i
+          ).map((p) => (
+            <button
+              key={p}
+              className={p === result.page ? "active" : ""}
+              onClick={() => setPage(p)}
+            >
+              {p}
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

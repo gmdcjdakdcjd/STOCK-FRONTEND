@@ -145,9 +145,6 @@ export default function ResultDetailUSPage() {
           </div>
         </div>
 
-        {/* =========================
-           Table
-           ========================= */}
         <div className="result-card">
           <div className="result-card-header">
             포착 종목 목록
@@ -158,8 +155,8 @@ export default function ResultDetailUSPage() {
               <col style={{ width: "48px" }} />
               <col style={{ width: "120px" }} />
               <col style={{ width: "10%" }} />
-              <col style={{ width: "120px" }} /> {/* 상세 */}
-              <col style={{ width: "120px" }} /> {/* 현재가 */}
+              <col style={{ width: "120px" }} />
+              <col style={{ width: "120px" }} />
               <col style={{ width: "120px" }} />
               <col style={{ width: "100px" }} />
               <col style={{ width: "140px" }} />
@@ -207,7 +204,6 @@ export default function ResultDetailUSPage() {
                   <td className="col-code">{r.code}</td>
                   <td className="col-name">{r.name}</td>
 
-                  {/* 상세 컬럼 */}
                   <td className="col-detail">
                     <button
                       className="detail-link-btn"

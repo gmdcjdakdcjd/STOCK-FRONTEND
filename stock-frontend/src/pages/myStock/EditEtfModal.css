@@ -82,9 +82,10 @@
 }
 
 .form-section input,
-.form-section textarea {
+.form-section textarea,
+.form-section select {
   padding: 0.5rem 0.65rem;
-  border-radius: 6px;
+  border-radius: 8px;
   border: 1px solid #d1d5db;
   font-size: 0.9rem;
 }
@@ -130,37 +131,61 @@
 }
 
 /* ================================
-   Search List
+   Search Table (좌측)
 ================================ */
-.search-list {
-  margin-top: 0.5rem;
+.search-table {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   overflow-y: auto;
-  border-top: 1px solid #e5e7eb;
 }
 
-.search-item {
-  display: flex;
-  justify-content: space-between;
+.search-row {
+  display: grid;
+  grid-template-columns: 1fr 90px 60px 110px 60px;
   align-items: center;
-  padding: 0.55rem 0.25rem;
-  font-size: 0.85rem;
+  padding: 0.45rem 0.25rem;
+  font-size: 0.8rem;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
 }
 
-.search-item.disabled {
-  background: #f3f4f6;
+.search-row.header {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
   cursor: default;
 }
 
+.search-row.disabled {
+  background: #f3f4f6;
+  color: #9ca3af;
+  cursor: default;
+}
+
+.search-row .right {
+  text-align: right;
+}
+
+.search-row .action {
+  text-align: center;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6366f1;
+}
+
 /* ================================
-   Selected Header / Row
+   Selected Table (우측)
 ================================ */
-.selected-header,
-.selected-row {
+.selected-list {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.selected-header.table,
+.selected-row.table {
   display: grid;
-  grid-template-columns: 1fr auto 32px; /* ⭐ 핵심 */
+  grid-template-columns: 1.4fr 60px 100px 120px 120px 32px;
   align-items: center;
   gap: 8px;
 }
@@ -172,28 +197,32 @@
   border-bottom: 1px solid #e5e7eb;
 }
 
-.col-name {
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
+.selected-row {
+  padding: 0.4rem 0;
+  border-bottom: 1px solid #f1f5f9;
+  font-size: 0.8rem;
+}
+
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
 }
 
 /* ================================
-   Quantity Column
+   Quantity Control
 ================================ */
-.col-qty {
-  display: flex;
-  justify-content: flex-end;
-  align-items: center;
-}
-
-/* 신규 종목 (- 1 +) */
 .qty-control {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  height: 24px;
+  justify-content: space-between;
+
+  width: 78px;          /* ⭐ 고정 폭 */
+  height: 26px;
   padding: 0 6px;
+
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
@@ -226,7 +255,6 @@
   font-weight: 600;
 }
 
-/* 기존 종목 (초록 pill) */
 .fixed-qty {
   display: inline-flex;
   align-items: center;
@@ -258,6 +286,16 @@
   border-radius: 50%;
 }
 
+.remove-btn.icon.disabled {
+  cursor: not-allowed;
+  color: #9ca3af;
+  opacity: 0.5;
+}
+
+.remove-btn.icon.disabled:hover {
+  background: none;
+}
+
 /* ================================
    Footer
 ================================ */
@@ -267,51 +305,4 @@
   justify-content: flex-end;
   gap: 0.5rem;
   border-top: 1px solid #e5e7eb;
-}
-
-/* ================================
-   Scroll Fix
-================================ */
-.selected-list {
-  overflow-y: auto;
-  overflow-x: hidden;
-}
-/* ================================
-   Select (ETF 선택)
-================================ */
-.form-section select {
-  width: 100%;
-  padding: 0.5rem 0.65rem;
-
-  border-radius: 8px;
-  border: 1px solid #d1d5db;
-  background-color: #ffffff;
-
-  font-size: 0.9rem;
-  font-weight: 500;
-  color: #111827;
-
-  cursor: pointer;
-}
-
-/* Hover */
-.form-section select:hover {
-  border-color: #9ca3af;
-  background-color: #f9fafb;
-}
-
-/* Focus */
-.form-section select:focus {
-  outline: none;
-  border-color: #6366f1;
-  box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.15);
-}
-.remove-btn.icon.disabled {
-  cursor: not-allowed;
-  color: #9ca3af;
-  opacity: 0.5;
-}
-
-.remove-btn.icon.disabled:hover {
-  background: none;
 }

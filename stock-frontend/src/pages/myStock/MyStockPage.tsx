@@ -242,6 +242,14 @@ export default function MyStockPage() {
                 <h3>내 관심 종목</h3>
 
                 <div className="mystock-header-actions">
+
+                    <button
+                        className="btn-etf btn-etf-outline"
+                        onClick={() => navigate("/myetf/list")}
+                    >
+                        나의 ETF 가기
+                    </button>
+                    
                     <button
                         className="btn-etf"
                         onClick={() => setShowAddToEtf(true)}
@@ -265,6 +273,9 @@ export default function MyStockPage() {
                     >
                         삭제된 종목 보기
                     </button>
+
+
+
                 </div>
             </div>
 
@@ -273,17 +284,17 @@ export default function MyStockPage() {
                 <div className="mystock-card-title">한국 관심 종목</div>
                 <table className="mystock-table">
                     <colgroup>
-                        <col style={{ width: "48px" }} /> 
-                        <col style={{ width: "100px" }} />  
-                        <col style={{ width: "10px" }} />   
+                        <col style={{ width: "48px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "10px" }} />
                         <col style={{ width: "110px" }} />
-                        <col style={{ width: "110px" }} /> 
-                        <col style={{ width: "110px" }} /> 
-                        <col style={{ width: "90px" }} />  
-                        <col style={{ width: "90px" }} />   
-                        <col style={{ width: "140px" }} />  
-                        <col style={{ width: "110px" }} />  
-                        <col style={{ width: "80px" }} /> 
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "90px" }} />
+                        <col style={{ width: "90px" }} />
+                        <col style={{ width: "140px" }} />
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "80px" }} />
                     </colgroup>
 
                     <thead>
@@ -312,17 +323,17 @@ export default function MyStockPage() {
                 <div className="mystock-card-title">미국 관심 종목</div>
                 <table className="mystock-table">
                     <colgroup>
-                        <col style={{ width: "48px" }} />   
-                        <col style={{ width: "100px" }} />  
-                        <col style={{ width: "10px" }} />   
-                        <col style={{ width: "110px" }} /> 
-                        <col style={{ width: "110px" }} />  
-                        <col style={{ width: "110px" }} /> 
-                        <col style={{ width: "90px" }} />   
-                        <col style={{ width: "90px" }} />  
+                        <col style={{ width: "48px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "10px" }} />
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "90px" }} />
+                        <col style={{ width: "90px" }} />
                         <col style={{ width: "140px" }} />
-                        <col style={{ width: "110px" }} /> 
-                        <col style={{ width: "80px" }} />   
+                        <col style={{ width: "110px" }} />
+                        <col style={{ width: "80px" }} />
                     </colgroup>
 
                     <thead>
@@ -358,31 +369,48 @@ export default function MyStockPage() {
                 <CreateEtfModal
                     open={showCreateEtf}
                     myStocks={[
-                        ...(krResult?.dtoList ?? []),
-                        ...(usResult?.dtoList ?? []),
-                    ].map(s => ({
-                        code: s.code,
-                        name: s.name,
-                    }))}
+                        ...(krResult?.dtoList ?? []).map(s => ({
+                            code: s.code,
+                            name: s.name,
+                            market: "KR" as const,
+                            currentPrice: s.currentPrice,
+                        })),
+                        ...(usResult?.dtoList ?? []).map(s => ({
+                            code: s.code,
+                            name: s.name,
+                            market: "US" as const,
+                            currentPrice: s.currentPrice,
+                        })),
+                    ]}
+
                     onClose={() => setShowCreateEtf(false)}
                     onCreated={() => setShowCreateEtf(false)}
                 />
             )}
 
+
             {showAddToEtf && (
                 <EditEtfModal
                     open={showAddToEtf}
                     myStocks={[
-                        ...(krResult?.dtoList ?? []),
-                        ...(usResult?.dtoList ?? []),
-                    ].map(s => ({
-                        code: s.code,
-                        name: s.name,
-                    }))}
+                        ...(krResult?.dtoList ?? []).map(s => ({
+                            code: s.code,
+                            name: s.name,
+                            market: "KR" as const,
+                            currentPrice: s.currentPrice,
+                        })),
+                        ...(usResult?.dtoList ?? []).map(s => ({
+                            code: s.code,
+                            name: s.name,
+                            market: "US" as const,
+                            currentPrice: s.currentPrice,
+                        })),
+                    ]}
                     onClose={() => setShowAddToEtf(false)}
                     onSaved={() => setShowAddToEtf(false)}
                 />
             )}
+
         </div>
     );
 }

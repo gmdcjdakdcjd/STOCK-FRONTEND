@@ -15,8 +15,8 @@
    Modal Body
 ================================ */
 .modal-body {
-  width: 90%;
-  max-width: 980px;
+  width: 92%;
+  max-width: 1200px; /* ⬅ Create와 동일 */
   max-height: 85vh;
   display: flex;
   flex-direction: column;
@@ -33,7 +33,6 @@
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
-
   padding: 1rem 1.25rem;
   border-bottom: 1px solid #e5e7eb;
 }
@@ -51,16 +50,15 @@
   color: #111827;
 }
 
-/* ⭐ 안내 문구 (최종 톤) */
 .header-notice {
-  font-size: 0.72rem;          /* 살짝 작게 */
+  margin-top: 4px;
+  font-size: 0.72rem;
   line-height: 1.45;
-
-  color: #ea580c;              /* 🔥 주황 포인트 */
   font-weight: 500;
+  color: #ea580c;
 }
 
-/* 닫기 버튼 */
+/* Close */
 .close-btn {
   background: none;
   border: none;
@@ -80,10 +78,9 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;   /* 스크롤은 여기서 */
-  min-height: 0;      /* ⭐ 중요 */
+  overflow-y: auto;
+  min-height: 0;
 }
-
 
 /* ================================
    Form Section
@@ -124,16 +121,15 @@
 }
 
 /* ================================
-   ETF Builder
+   ETF Builder (Create와 동일)
 ================================ */
 .etf-builder {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 4fr 6fr; /* ⬅ 핵심 */
   gap: 1.25rem;
   padding: 0.75rem 1.25rem 1.25rem;
-  /* height: 360px; */
-  flex: 1;          /* 남는 높이 전부 차지 */
-  min-height: 0;    /* 내부 스크롤 정상화 */
+  flex: 1;
+  min-height: 0;
 }
 
 /* ================================
@@ -162,47 +158,105 @@
    Search
 ================================ */
 .search-bar {
-  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  padding: 6px 8px;
+  background: #f9fafb;          /* 연한 배경 */
+  border: 1px solid #e5e7eb;
+  border-radius: 999px;
 }
 
+
 .search-input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border-radius: 999px;
-  border: 1px solid #d1d5db;
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 0.25rem 0.25rem;
   font-size: 0.85rem;
 }
 
 .search-input:focus {
   outline: none;
-  border-color: #6366f1;
 }
-
-.search-list {
+/* ================================
+   Search Table (Create / Edit 공통)
+================================ */
+.search-table {
   margin-top: 0.5rem;
   flex: 1;
   overflow-y: auto;
   border-top: 1px solid #e5e7eb;
 }
 
-.search-item {
-  display: flex;
-  justify-content: space-between;
+/* Row 공통 */
+.search-row {
+  display: grid;
+  grid-template-columns:
+    2fr    /* 종목명 */
+    1fr    /* 코드 */
+    0.8fr  /* 시장 */
+    1fr    /* 현재가 */
+    0.6fr; /* 액션 */
   align-items: center;
-  padding: 0.55rem 0.25rem;
-  font-size: 0.85rem;
+  gap: 6px;
+  padding: 0.45rem 0.35rem;
+  font-size: 0.8rem;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
 }
 
-.search-item:hover {
+/* Header */
+.search-row.header {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #6b7280;
+  background: #f9fafb;
+  cursor: default;
+}
+
+/* Hover */
+.search-row:not(.header):hover {
   background: #f9fafb;
 }
 
-.search-item.disabled {
-  cursor: default;
-  background: #f3f4f6;
+/* Disabled */
+.search-row.disabled {
+  opacity: 0.5;
+  pointer-events: none;
 }
+
+/* Action */
+.search-row .action {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #047857;
+  text-align: right;
+}
+.reset-btn.ghost {
+  width: 26px;
+  height: 26px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  border-radius: 50%;
+  border: none;
+
+  background: #f1f5f9;
+  color: #6b7280;
+
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.reset-btn.ghost:hover {
+  background: #e5e7eb;
+}
+
 
 .search-info {
   display: flex;
@@ -234,15 +288,41 @@
 }
 
 /* ================================
-   Selected Header / Row
+   Selected List
 ================================ */
-.selected-header,
-.selected-row {
-  display: grid;
-  grid-template-columns: 1fr 96px 32px;
-  align-items: center;
-  gap: 8px;
+.selected-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  scrollbar-gutter: stable;
+  padding-right: 8px;
 }
+
+/* ================================
+   Selected Header / Row (Create 기준)
+================================ */
+.selected-header.table,
+.selected-row.table {
+  display: grid;
+  grid-template-columns:
+    2.4fr   /* 종목 */
+    0.7fr   /* 시장 */
+    1fr     /* 현재가 */
+    0.9fr   /* 수량 */
+    1.0fr   /* 총액 */
+    0.4fr;  /* 삭제 */
+  align-items: center;
+  gap: 6px;
+}
+.right {
+  text-align: right;
+}
+
+.center {
+  text-align: center;
+}
+
 
 .selected-header {
   font-size: 0.7rem;
@@ -258,33 +338,33 @@
   text-overflow: ellipsis;
 }
 
-/* ================================
-   Quantity Column
-================================ */
 .col-qty {
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
-  min-width: 96px;
 }
 
+/* ================================
+   Quantity Control
+================================ */
 .qty-control {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
-
+  margin-left: 6px; 
+  width: 76px;          /* ⭐ 핵심 */
   height: 24px;
-  min-width: 72px;
-  padding: 0 6px;
 
+  gap: 4px;
   background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
 }
 
+
 .qty-btn {
-  width: 20px;
-  height: 20px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   border: none;
   font-size: 0.85rem;
@@ -310,7 +390,25 @@
 }
 
 /* ================================
-   Remove Button
+   Fixed Quantity
+================================ */
+.fixed-qty {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  min-width: 48px;
+  padding: 0 10px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #065f46;
+  background: #d1fae5;
+  border: 1px solid #bbf7d0;
+  border-radius: 999px;
+}
+
+/* ================================
+   Remove
 ================================ */
 .remove-btn.icon {
   width: 22px;
@@ -319,8 +417,6 @@
   background: none;
   color: #ef4444;
   cursor: pointer;
-  position: relative;
-  z-index: 1;
 }
 
 .remove-btn.icon:hover {
@@ -340,40 +436,16 @@
 }
 
 /* ================================
-   Fixed Quantity Badge
-================================ */
-.fixed-qty {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-
-  height: 24px;
-  min-width: 48px;
-  padding: 0 10px;
-
-  font-size: 0.75rem;
-  font-weight: 700;
-
-  color: #065f46;
-  background: #d1fae5;
-  border: 1px solid #bbf7d0;
-  border-radius: 999px;
-}
-
-/* ================================
    Ghost Button
 ================================ */
 .ghost-btn {
   padding: 0.45rem 0.9rem;
   border-radius: 6px;
-
   border: 1px solid #d1d5db;
   background: #ffffff;
-
   font-size: 0.75rem;
   font-weight: 600;
   color: #374151;
-
   cursor: pointer;
 }
 
@@ -381,27 +453,13 @@
   background: #f9fafb;
   border-color: #9ca3af;
 }
-.modal-header .header-notice {
-  margin-top: 4px;
 
-  font-size: 0.72rem;
-  line-height: 1.45;
-  font-weight: 500;
-
-  color: #ea580c;   /* 🔥 주황 포인트 */
-}
-
-.selected-list {
-  flex: 1;
-  min-height: 0;
-  overflow-y: auto;
-  overflow-x: hidden;   /* ⭐ 이 줄 */
-  scrollbar-gutter: stable;
-  padding-right: 8px;
-}
+/* ================================
+   Delete Warning
+================================ */
 .delete-warning {
   margin-top: 0.75rem;
   font-size: 0.75rem;
-  color: #ea580c;        /* 빨강 */
+  color: #ea580c;
   text-align: right;
 }

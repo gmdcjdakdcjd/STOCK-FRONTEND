@@ -9,6 +9,7 @@ export type MarketIndicator = {
 
 export type IndicatorResponse = {
   dow: MarketIndicator[];
+  snp500: MarketIndicator[];
   hongkong: MarketIndicator[];
   italy: MarketIndicator[];
   kosdaq: MarketIndicator[];

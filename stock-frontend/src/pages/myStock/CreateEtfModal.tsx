@@ -10,6 +10,8 @@ import "./CreateEtfModal.css";
 interface MyStockItem {
   code: string;
   name: string;
+  market: "KR" | "US";
+  currentPrice: number;
 }
 
 interface Props {
@@ -19,11 +21,27 @@ interface Props {
   onCreated: () => void;
 }
 
+/** 🔑 화면 전용 상태 */
 interface TempItem {
   code: string;
   name: string;
+  market: "KR" | "US";
+  priceAtAdd: number;
   quantity: number;
 }
+
+/* =========================
+   Utils
+========================= */
+const formatPrice = (
+  price: number | null | undefined,
+  market: "KR" | "US"
+) => {
+  if (price == null) return "-";
+  return market === "KR"
+    ? `${price.toLocaleString()}원`
+    : `$${price.toLocaleString()}`;
+};
 
 /* =========================
    Component
@@ -42,7 +60,7 @@ export default function CreateEtfModal({
 
   /* =========================
      초기화
-     ========================= */
+  ========================= */
   const resetForm = () => {
     setEtfName("");
     setEtfDescription("");
@@ -50,19 +68,22 @@ export default function CreateEtfModal({
   };
 
   /* =========================
-     종목 추가 / 제거
-     ========================= */
-  const addItem = (code: string, name: string) => {
+     종목 추가 (UI 전용)
+  ========================= */
+  const addItem = (s: MyStockItem) => {
     setTempItems(prev => {
-      const exist = prev.find(i => i.code === code);
-      if (exist) {
-        return prev.map(i =>
-          i.code === code
-            ? { ...i, quantity: i.quantity + 1 }
-            : i
-        );
-      }
-      return [...prev, { code, name, quantity: 1 }];
+      if (prev.some(i => i.code === s.code)) return prev;
+
+      return [
+        ...prev,
+        {
+          code: s.code,
+          name: s.name,
+          market: s.market,
+          priceAtAdd: s.currentPrice, // 🔑 화면용 스냅샷
+          quantity: 1,
+        },
+      ];
     });
   };
 
@@ -71,8 +92,8 @@ export default function CreateEtfModal({
   };
 
   /* =========================
-     저장
-     ========================= */
+     저장 (🔑 기존 로직 그대로)
+  ========================= */
   const save = async () => {
     if (!etfName.trim()) {
       alert("ETF 이름을 입력하세요.");
@@ -84,56 +105,42 @@ export default function CreateEtfModal({
       return;
     }
 
+    /** 🔑 서버로 보내는 payload는 원본 구조 */
     const body: MyEtfCreateRequestDTO = {
       etfName,
       etfDescription,
-      items: tempItems,
+      items: tempItems.map(i => ({
+        code: i.code,
+        name: i.name,
+        quantity: i.quantity,
+      })),
     };
 
-    try {
-      await createMyEtf(body);
-      alert("ETF가 생성되었습니다.");
+    await createMyEtf(body);
+    alert("ETF가 생성되었습니다.");
 
-      resetForm();
-      onCreated();
-      onClose();
-    } catch (e: any) {
-      if (e?.message === "DUPLICATED_ETF_NAME") {
-        alert("이미 존재하는 ETF 이름입니다.");
-      } else {
-        alert("ETF 생성 중 오류가 발생했습니다.");
-      }
-    }
+    resetForm();
+    onCreated();
+    onClose();
   };
 
   /* =========================
      Render
-     ========================= */
+  ========================= */
   return (
     <div
-      className="modal-overlay"
+      className="create-etf-modal modal-overlay"
       onClick={e => {
         if (e.target !== e.currentTarget) return;
         resetForm();
         onClose();
       }}
     >
-      <div
-        className="modal-body"
-        onClick={e => e.stopPropagation()}
-      >
+      <div className="modal-body" onClick={e => e.stopPropagation()}>
         {/* Header */}
         <header className="modal-header">
           <h3>나만의 ETF 만들기</h3>
-          <button
-            className="close-btn"
-            onClick={() => {
-              resetForm();
-              onClose();
-            }}
-          >
-            ✕
-          </button>
+          <button className="close-btn" onClick={onClose}>✕</button>
         </header>
 
         {/* Content */}
@@ -156,42 +163,38 @@ export default function CreateEtfModal({
 
           <div className="divider" />
 
-          {/* ETF Builder */}
           <div className="etf-builder">
             {/* 좌측: 내 관심 종목 */}
             <div className="search-panel">
               <h4>내 관심 종목</h4>
 
-              <div className="search-list">
-                {myStocks.length === 0 && (
-                  <div className="empty">
-                    관심 종목이 없습니다
-                  </div>
-                )}
+              <div className="search-table">
+                <div className="search-row header">
+                  <span>종목명</span>
+                  <span>코드</span>
+                  <span>시장</span>
+                  <span className="right">현재가</span>
+                  <span></span>
+                </div>
 
                 {myStocks.map(s => {
-                  const isSelected = tempItems.some(
-                    i => i.code === s.code
-                  );
+                  const isSelected = tempItems.some(i => i.code === s.code);
 
                   return (
                     <div
                       key={s.code}
-                      className={`search-item ${isSelected ? "disabled" : ""}`}
-                      onClick={() =>
-                        !isSelected && addItem(s.code, s.name)
-                      }
+                      className={`search-row ${isSelected ? "disabled" : ""}`}
+                      onClick={() => !isSelected && addItem(s)}
                     >
-                      <div className="search-info">
-                        <strong>{s.name}</strong>
-                        <span className="code">{s.code}</span>
-                      </div>
-
-                      {isSelected ? (
-                        <span className="added">선택됨</span>
-                      ) : (
-                        <span className="add-hint">선택</span>
-                      )}
+                      <span>{s.name}</span>
+                      <span>{s.code}</span>
+                      <span>{s.market}</span>
+                      <span className="right">
+                        {formatPrice(s.currentPrice, s.market)}
+                      </span>
+                      <span className="action">
+                        {isSelected ? "추가됨" : "추가"}
+                      </span>
                     </div>
                   );
                 })}
@@ -203,9 +206,12 @@ export default function CreateEtfModal({
               <h4>구성 종목</h4>
 
               <div className="selected-list">
-                <div className="selected-header">
+                <div className="selected-header table">
                   <span>종목</span>
-                  <span>수량</span>
+                  <span>시장</span>
+                  <span className="right">현재가</span>
+                  <span className="center">수량</span>
+                  <span className="right">총액</span>
                   <span></span>
                 </div>
 
@@ -216,12 +222,14 @@ export default function CreateEtfModal({
                 )}
 
                 {tempItems.map((i, idx) => (
-                  <div key={idx} className="selected-row">
-                    <span>
-                      {i.name} ({i.code})
+                  <div key={idx} className="selected-row table">
+                    <span>{i.name} ({i.code})</span>
+                    <span>{i.market}</span>
+
+                    <span className="right">
+                      {formatPrice(i.priceAtAdd, i.market)}
                     </span>
 
-                    {/* 수량 컨트롤 */}
                     <div className="qty-control">
                       <button
                         className="qty-btn minus"
@@ -238,9 +246,7 @@ export default function CreateEtfModal({
                         −
                       </button>
 
-                      <span className="qty-value">
-                        {i.quantity}
-                      </span>
+                      <span className="qty-value">{i.quantity}</span>
 
                       <button
                         className="qty-btn plus"
@@ -258,11 +264,13 @@ export default function CreateEtfModal({
                       </button>
                     </div>
 
-                    {/* 삭제 */}
+                    <span className="right">
+                      {formatPrice(i.priceAtAdd * i.quantity, i.market)}
+                    </span>
+
                     <button
                       className="remove-btn icon"
                       onClick={() => removeItem(idx)}
-                      title="종목 제거"
                     >
                       ✕
                     </button>
@@ -275,21 +283,8 @@ export default function CreateEtfModal({
 
         {/* Footer */}
         <div className="modal-footer">
-          <button
-            className="secondary-btn"
-            onClick={() => {
-              resetForm();
-              onClose();
-            }}
-          >
-            취소
-          </button>
-          <button
-            className="primary-btn"
-            onClick={save}
-          >
-            ETF 생성
-          </button>
+          <button className="secondary-btn" onClick={onClose}>취소</button>
+          <button className="primary-btn" onClick={save}>ETF 생성</button>
         </div>
       </div>
     </div>

@@ -33,6 +33,7 @@ export default function IndicatorPage() {
   const INDEX_LIST = [
     "DOW",
     "NASDAQ",
+    "S&P500",
     "KOSPI",
     "KOSDAQ",
     "JAPAN",
@@ -47,78 +48,82 @@ export default function IndicatorPage() {
   ] as const;
 
   return (
-      <div className="indicator-page">
-        {/* =========================
+    <div className="indicator-page">
+      {/* =========================
             우측 인덱스 네비
         ========================= */}
-        <div className="index-side-nav">
-          {INDEX_LIST.map(code => (
-            <button
-              key={code}
-              className="index-nav-item"
-              onClick={() => scrollToIndex(code)}
-            >
-              {code}
-            </button>
-          ))}
-        </div>
+      <div className="index-side-nav">
+        {INDEX_LIST.map(code => (
+          <button
+            key={code}
+            className="index-nav-item"
+            onClick={() => scrollToIndex(code)}
+          >
+            {code}
+          </button>
+        ))}
+      </div>
 
-        {/* =========================
+      {/* =========================
             카드 그리드
         ========================= */}
-        <div className="grid-container">
-          <div id="DOW" className="indicator-card-wrapper">
-            <IndicatorCard title="DOW" data={data.dow} colorKey="dow" />
-          </div>
+      <div className="grid-container">
+        <div id="DOW" className="indicator-card-wrapper">
+          <IndicatorCard title="DOW" data={data.dow} colorKey="dow" />
+        </div>
 
-          <div id="NASDAQ" className="indicator-card-wrapper">
-            <IndicatorCard title="NASDAQ" data={data.nasdaq} colorKey="nasdaq" />
-          </div>
+        <div id="NASDAQ" className="indicator-card-wrapper">
+          <IndicatorCard title="NASDAQ" data={data.nasdaq} colorKey="nasdaq" />
+        </div>
 
-          <div id="KOSPI" className="indicator-card-wrapper">
-            <IndicatorCard title="KOSPI" data={data.kospi} colorKey="kospi" />
-          </div>
+        <div id="S&P500" className="indicator-card-wrapper">
+          <IndicatorCard title="S&P500" data={data.snp500} colorKey="snp500" />
+        </div>
 
-          <div id="KOSDAQ" className="indicator-card-wrapper">
-            <IndicatorCard title="KOSDAQ" data={data.kosdaq} colorKey="kosdaq" />
-          </div>
+        <div id="KOSPI" className="indicator-card-wrapper">
+          <IndicatorCard title="KOSPI" data={data.kospi} colorKey="kospi" />
+        </div>
 
-          <div id="JAPAN" className="indicator-card-wrapper">
-            <IndicatorCard title="JAPAN" data={data.japan} colorKey="japan" />
-          </div>
+        <div id="KOSDAQ" className="indicator-card-wrapper">
+          <IndicatorCard title="KOSDAQ" data={data.kosdaq} colorKey="kosdaq" />
+        </div>
 
-          <div id="CHINA" className="indicator-card-wrapper">
-            <IndicatorCard title="CHINA" data={data.china} colorKey="china" />
-          </div>
+        <div id="JAPAN" className="indicator-card-wrapper">
+          <IndicatorCard title="JAPAN" data={data.japan} colorKey="japan" />
+        </div>
 
-          <div id="HONGKONG" className="indicator-card-wrapper">
-            <IndicatorCard title="HONGKONG" data={data.hongkong} colorKey="hongkong" />
-          </div>
+        <div id="CHINA" className="indicator-card-wrapper">
+          <IndicatorCard title="CHINA" data={data.china} colorKey="china" />
+        </div>
 
-          <div id="TAIWAN" className="indicator-card-wrapper">
-            <IndicatorCard title="TAIWAN" data={data.taiwan} colorKey="taiwan" />
-          </div>
+        <div id="HONGKONG" className="indicator-card-wrapper">
+          <IndicatorCard title="HONGKONG" data={data.hongkong} colorKey="hongkong" />
+        </div>
 
-          <div id="EURO" className="indicator-card-wrapper">
-            <IndicatorCard title="EURO" data={data.euro} colorKey="euro" />
-          </div>
+        <div id="TAIWAN" className="indicator-card-wrapper">
+          <IndicatorCard title="TAIWAN" data={data.taiwan} colorKey="taiwan" />
+        </div>
 
-          <div id="ENGLAND" className="indicator-card-wrapper">
-            <IndicatorCard title="ENGLAND" data={data.england} colorKey="england" />
-          </div>
+        <div id="EURO" className="indicator-card-wrapper">
+          <IndicatorCard title="EURO" data={data.euro} colorKey="euro" />
+        </div>
 
-          <div id="FRANCE" className="indicator-card-wrapper">
-            <IndicatorCard title="FRANCE" data={data.france} colorKey="france" />
-          </div>
+        <div id="ENGLAND" className="indicator-card-wrapper">
+          <IndicatorCard title="ENGLAND" data={data.england} colorKey="england" />
+        </div>
 
-          <div id="GERMANY" className="indicator-card-wrapper">
-            <IndicatorCard title="GERMANY" data={data.german} colorKey="german" />
-          </div>
+        <div id="FRANCE" className="indicator-card-wrapper">
+          <IndicatorCard title="FRANCE" data={data.france} colorKey="france" />
+        </div>
 
-          <div id="ITALY" className="indicator-card-wrapper">
-            <IndicatorCard title="ITALY" data={data.italy} colorKey="italy" />
-          </div>
+        <div id="GERMANY" className="indicator-card-wrapper">
+          <IndicatorCard title="GERMANY" data={data.german} colorKey="german" />
+        </div>
+
+        <div id="ITALY" className="indicator-card-wrapper">
+          <IndicatorCard title="ITALY" data={data.italy} colorKey="italy" />
         </div>
       </div>
+    </div>
   );
 }

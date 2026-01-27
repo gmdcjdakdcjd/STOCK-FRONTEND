@@ -1,5 +1,6 @@
 export type IndicatorKey =
   | "dow"
+  | "snp500"
   | "hongkong"
   | "italy"
   | "kosdaq"
@@ -24,6 +25,10 @@ export const INDICATOR_COLORS: Record<
   nasdaq: {
     border: "#3498DB",
     background: "rgba(52,152,219,0.25)"
+  },
+  snp500: {
+    border: "#9B59B6",
+    background: "rgba(155,89,182,0.25)"
   },
   kospi: {
     border: "#2E86DE",
