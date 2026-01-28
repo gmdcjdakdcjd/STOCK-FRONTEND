@@ -6,13 +6,14 @@
 }
 
 /* ===============================
-   Layout Tokens
+   Layout Tokens (고정 기준)
 ================================ */
 :root {
   --content-max-width: none;
-  --content-padding-x: clamp(120px, 12vw, 520px);
-  --content-padding-y: clamp(32px, 4vw, 72px);
+  --content-padding-x: clamp(120px, 10vw, 420px);
+  --content-padding-y: 32px;
 }
+
 
 /* ===============================
    Layout Base
@@ -23,17 +24,18 @@ body,
   height: 100%;
 }
 
+/* ✅ 스크롤은 body만 담당 */
+html {
+  overflow: hidden;
+}
+
 body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden;
-}
-
-html {
+  overflow-x: auto;
+  overflow-y: auto;
   scrollbar-gutter: stable;
-  overflow-y: scroll;
-  overflow-x: hidden;
 }
 
 /* ===============================
@@ -71,7 +73,7 @@ html {
 }
 
 /* ===============================
-   Header (고정 기준)
+   Header
 ================================ */
 .header {
   background: #ffffff;
@@ -88,12 +90,8 @@ html {
   align-items: center;
   justify-content: space-between;
 
-  max-width: none;
   width: 100%;
-  margin: 0;
-
   min-height: 64px;
-  height: auto;
   padding: 0 var(--content-padding-x);
 }
 
@@ -117,12 +115,11 @@ html {
   justify-content: center;
   gap: 14px;
 
-  flex: 1;        /* 남은 영역만 차지 */
+  flex: 1;
   min-width: 0;
   white-space: nowrap;
 }
 
-/* nav item (link + button 공용) */
 .nav-ani {
   position: relative;
   padding: 0.5rem 0.9rem;
@@ -139,7 +136,6 @@ html {
   cursor: pointer;
 }
 
-/* underline animation */
 .nav-ani::after {
   content: "";
   position: absolute;
@@ -162,7 +158,6 @@ html {
   font-weight: 600;
 }
 
-/* caret */
 .nav-caret {
   margin-left: 6px;
   font-size: 1.05rem;
@@ -211,9 +206,6 @@ html {
   background: #f3f4f6;
 }
 
-/* ===============================
-   Dash Marker (–)
-================================ */
 .nav-dd-mark {
   width: 14px;
   text-align: center;
@@ -225,13 +217,13 @@ html {
    MyPage (Login Required)
 ================================ */
 .mypage-btn.login-required {
-  color: #111827;        /* 일반 nav와 동일 */
+  color: #111827;
   font-weight: 500;
   cursor: pointer;
 }
 
 .mypage-btn.login-required::after {
-  display: none;         /* 밑줄 제거 */
+  display: none;
 }
 
 /* ===============================
@@ -242,30 +234,36 @@ html {
   width: 100%;
 }
 
+/* 🔑 핵심: 1400px 기준 고정 레이아웃 */
 .content-inner {
   width: 100%;
-  max-width: var(--content-max-width);
-  margin: 0;
+  min-width: 1200px;
+
   padding: var(--content-padding-y) var(--content-padding-x);
 }
 
 /* ===============================
-   Responsive
+   Page Header (공용)
 ================================ */
-@media (max-width: 900px) {
-  .header {
-    padding: 0.5rem 0;
-  }
+.page-header {
+  margin-bottom: 1.5rem;
 
-  .nav {
-    flex-wrap: wrap;
-    white-space: normal;
-    gap: 8px 10px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 
-  .logo {
-    font-size: 1.1rem;
-  }
+.page-title {
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.page-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
 }
 
 /* ===============================
@@ -279,6 +277,7 @@ html {
   font-size: 0.8rem;
   color: #6b7280;
 }
+
 /* ===============================
    Tooltip (Login Required)
 ================================ */

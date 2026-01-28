@@ -2,71 +2,22 @@ import IndicatorCard from "./stockIndex";
 import { useIndicatorData } from "./useStockIndexData";
 import "./stockIndex.css";
 
-/* =========================
-   스크롤 이동 함수
-========================= */
-function scrollToIndex(id: string) {
-  const el = document.getElementById(id);
-  if (el) {
-    el.scrollIntoView({
-      behavior: "smooth",
-      block: "start"
-    });
-  }
-}
-
 export default function IndicatorPage() {
   const { data, loading } = useIndicatorData();
 
   if (loading) {
-    return (
-      <div>로딩중...</div>
-    );
+    return <div>로딩중...</div>;
   }
 
   if (!data) {
-    return (
-      <div>데이터 없음</div>
-    );
+    return <div>데이터 없음</div>;
   }
-
-  const INDEX_LIST = [
-    "DOW",
-    "NASDAQ",
-    "S&P500",
-    "KOSPI",
-    "KOSDAQ",
-    "JAPAN",
-    "CHINA",
-    "HONGKONG",
-    "TAIWAN",
-    "EURO",
-    "ENGLAND",
-    "FRANCE",
-    "GERMANY",
-    "ITALY"
-  ] as const;
 
   return (
     <div className="indicator-page">
       {/* =========================
-            우측 인덱스 네비
-        ========================= */}
-      <div className="index-side-nav">
-        {INDEX_LIST.map(code => (
-          <button
-            key={code}
-            className="index-nav-item"
-            onClick={() => scrollToIndex(code)}
-          >
-            {code}
-          </button>
-        ))}
-      </div>
-
-      {/* =========================
-            카드 그리드
-        ========================= */}
+          카드 그리드
+      ========================= */}
       <div className="grid-container">
         <div id="DOW" className="indicator-card-wrapper">
           <IndicatorCard title="DOW" data={data.dow} colorKey="dow" />
@@ -97,7 +48,11 @@ export default function IndicatorPage() {
         </div>
 
         <div id="HONGKONG" className="indicator-card-wrapper">
-          <IndicatorCard title="HONGKONG" data={data.hongkong} colorKey="hongkong" />
+          <IndicatorCard
+            title="HONGKONG"
+            data={data.hongkong}
+            colorKey="hongkong"
+          />
         </div>
 
         <div id="TAIWAN" className="indicator-card-wrapper">
