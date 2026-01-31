@@ -19,13 +19,13 @@ export default function IssueTable({ title, list, market }: Props) {
       <div className="content-box">
         <table>
           <colgroup>
-            <col style={{ width: "28%" }} /> {/* 종목 */}
-            <col style={{ width: "10%" }} /> {/* 상세 */}
-            <col style={{ width: "14%" }} /> {/* 가격 */}
-            <col style={{ width: "14%" }} /> {/* 전일 */}
-            <col style={{ width: "10%" }} /> {/* 변동 */}
-            <col style={{ width: "12%" }} /> {/* 거래량 */}
-            <col style={{ width: "12%" }} /> {/* 날짜 */}
+            <col style={{ width: "28%" }} />
+            <col style={{ width: "10%" }} />
+            <col style={{ width: "14%" }} /> 
+            <col style={{ width: "14%" }} />
+            <col style={{ width: "10%" }} /> 
+            <col style={{ width: "12%" }} />
+            <col style={{ width: "12%" }} /> 
           </colgroup>
 
           <thead>

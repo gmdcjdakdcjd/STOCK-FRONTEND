@@ -25,6 +25,9 @@ export default function ResultDetailUSPage() {
   const [checked, setChecked] = useState<string[]>([]);
   const [authenticated, setAuthenticated] = useState(false);
 
+  const isDualMomentum = strategy.startsWith("DUAL_MOMENTUM");
+
+
   /* =========================
      데이터 조회 (US)
      ========================= */
@@ -159,7 +162,10 @@ export default function ResultDetailUSPage() {
               <col style={{ width: "120px" }} />
               <col style={{ width: "120px" }} />
               <col style={{ width: "100px" }} />
-              <col style={{ width: "140px" }} />
+              {!isDualMomentum && (
+                <col style={{ width: "140px" }} />
+              )}
+
             </colgroup>
 
             <thead>
@@ -184,7 +190,10 @@ export default function ResultDetailUSPage() {
                 <th className="col-num">현재가</th>
                 <th className="col-num">{priceLabel}</th>
                 <th className="col-num">등락률</th>
-                <th className="col-num">거래량</th>
+                {!isDualMomentum && (
+                  <th className="col-num">거래량</th>
+                )}
+
               </tr>
             </thead>
 
@@ -233,16 +242,18 @@ export default function ResultDetailUSPage() {
                         r.diff > 0
                           ? "#dc2626"
                           : r.diff < 0
-                          ? "#2563eb"
-                          : "#6b7280",
+                            ? "#2563eb"
+                            : "#6b7280",
                     }}
                   >
                     {r.diff}%
                   </td>
 
-                  <td className="col-num">
-                    {r.volume.toLocaleString()}
-                  </td>
+                  {!isDualMomentum && (
+                    <td className="col-num">
+                      {r.volume.toLocaleString()}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>

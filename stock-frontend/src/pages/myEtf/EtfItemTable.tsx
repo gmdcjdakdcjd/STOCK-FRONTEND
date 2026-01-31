@@ -32,7 +32,6 @@ export default function EtfItemTable({ items }: Props) {
 
           <tbody>
             {items.map((s, idx) => {
-              console.log(s.code, s.market);
               // =========================
               // 수익 기준 (통화 섞임 방지)
               // =========================

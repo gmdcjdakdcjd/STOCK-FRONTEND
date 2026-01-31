@@ -25,6 +25,9 @@ export default function ResultDetailKRPage() {
   const [checked, setChecked] = useState<string[]>([]);
   const [authenticated, setAuthenticated] = useState(false);
 
+  const isDualMomentum = strategy.startsWith("DUAL_MOMENTUM");
+
+
   /* =========================
      데이터 조회
      ========================= */
@@ -54,9 +57,9 @@ export default function ResultDetailKRPage() {
   /* =========================
      체크박스
      ========================= */
-  const toggleAll = (on: boolean) => {
-    setChecked(on ? rows.map(r => r.code) : []);
-  };
+  // const toggleAll = (on: boolean) => {
+  //   setChecked(on ? rows.map(r => r.code) : []);
+  // };
 
   const toggleOne = (code: string) => {
     setChecked(prev =>
@@ -157,7 +160,10 @@ export default function ResultDetailKRPage() {
               <col style={{ width: "120px" }} />
               <col style={{ width: "120px" }} />
               <col style={{ width: "100px" }} />
-              <col style={{ width: "140px" }} />
+              {!isDualMomentum && (
+                <col style={{ width: "140px" }} />
+              )}
+
             </colgroup>
 
             <thead>
@@ -169,7 +175,10 @@ export default function ResultDetailKRPage() {
                 <th className="col-num">현재가</th>
                 <th className="col-num">{priceLabel}</th>
                 <th className="col-num">등락률</th>
-                <th className="col-num">거래량</th>
+                {!isDualMomentum && (
+                  <th className="col-num">거래량</th>
+                )}
+
               </tr>
             </thead>
 
@@ -227,9 +236,11 @@ export default function ResultDetailKRPage() {
                     {r.diff}%
                   </td>
 
-                  <td className="col-num">
-                    {r.volume.toLocaleString()}
-                  </td>
+                  {!isDualMomentum && (
+                    <td className="col-num">
+                      {r.volume.toLocaleString()}
+                    </td>
+                  )}
                 </tr>
               ))}
             </tbody>
