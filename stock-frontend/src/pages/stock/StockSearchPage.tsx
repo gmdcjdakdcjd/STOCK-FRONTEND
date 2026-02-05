@@ -113,8 +113,12 @@ function StockSearchPage() {
 
     try {
       const params = new URLSearchParams();
-      if (safeName) params.append("stockName", safeName);
-      if (safeCode) params.append("stockCode", safeCode);
+
+      if (code?.trim()) {
+        params.append("stockCode", code.trim());
+      } else if (name?.trim()) {
+        params.append("stockName", name.trim());
+      }
 
       const res = await fetch(
         `/api/stock/searchStock?${params.toString()}`
