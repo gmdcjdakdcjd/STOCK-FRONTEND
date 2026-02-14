@@ -1,0 +1,288 @@
+/* =========================
+   Indicator Grid
+========================= */
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 1.25rem;
+}
+
+/* =========================
+   Indicator Card Box
+========================= */
+.card {
+  margin-bottom: 0;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  background: #ffffff;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* =========================
+   Card Header ( 안정화 완료)
+========================= */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+
+  height: 52px;
+  /*  고정 기준 */
+  padding: 0 14px;
+
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+
+  white-space: nowrap;
+  /*  PC에서 줄바꿈 차단 */
+  overflow: visible;
+  /*  툴팁 표시를 위해 visible로 변경 */
+}
+
+/* 제목 */
+.title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.card-header .fw-bold {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* 도움말 아이콘 */
+.help-icon-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.help-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #f1f3f4;
+  color: #5f6368;
+  font-size: 11px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.help-icon:hover {
+  background: #e8eaed;
+}
+
+/* 툴팁 박스 */
+.help-tooltip {
+  position: absolute;
+  top: 30px;
+  /* 아이콘 아래로 충분히 띄움 */
+  left: 50%;
+  transform: translateX(-50%) translateY(-5px);
+  width: 240px;
+  padding: 10px 14px;
+  background: rgba(33, 37, 41, 0.95);
+  /* 더 깊은 다크톤 */
+  color: #ffffff;
+  font-size: 0.78rem;
+  line-height: 1.5;
+  border-radius: 8px;
+  z-index: 9999;
+  /* 최상단 유지 */
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  white-space: pre-line;
+  /* \n 문자를 줄바꿈으로 렌더링하도록 변경 */
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: left;
+}
+
+/* 툴팁 화살표 */
+.help-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  margin-left: -6px;
+  border-width: 6px;
+  border-style: solid;
+  border-color: transparent transparent rgba(33, 37, 41, 0.95) transparent;
+}
+
+.help-icon-container:hover .help-tooltip {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+
+/* =========================
+   Latest Info
+========================= */
+.latest-info {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  font-size: 0.85rem;
+  color: #333;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.latest-info.up {
+  color: #d93025;
+  font-weight: 600;
+}
+
+.latest-info.down {
+  color: #1a73e8;
+  font-weight: 600;
+}
+
+/* =========================
+   Range Buttons
+========================= */
+.btn-group.btn-group-sm {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+
+  /* --indicator-color: #6d5dfc; */
+  flex-shrink: 0;
+}
+
+.btn-group.btn-group-sm .btn {
+  padding: 6px 14px;
+  font-size: 13px;
+  border-radius: 8px;
+
+  border: 1px solid var(--indicator-color);
+  background: #ffffff;
+  color: var(--indicator-color);
+
+  cursor: pointer;
+
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    box-shadow 0.15s ease,
+    transform 0.12s ease;
+}
+
+.btn-group.btn-group-sm .btn:hover {
+  background: color-mix(in srgb,
+      var(--indicator-color) 10%,
+      transparent);
+}
+
+.btn-group.btn-group-sm .btn.active {
+  background: var(--indicator-color) !important;
+  border-color: var(--indicator-color) !important;
+  color: #ffffff !important;
+
+  box-shadow: 0 3px 8px color-mix(in srgb, var(--indicator-color) 45%, transparent);
+}
+
+.btn-group.btn-group-sm .btn:active {
+  transform: scale(0.96);
+}
+
+/* =========================
+   Card Body / Chart
+========================= */
+.card-body {
+  padding: 12px;
+  height: 360px;
+}
+
+/* =========================
+   Responsive (모바일만 wrap 허용)
+========================= */
+@media (max-width: 992px) {
+  .grid-container {
+    grid-template-columns: 1fr;
+  }
+
+  .card-header {
+    flex-wrap: wrap;
+    /* 모바일에서만 줄바꿈 */
+    height: auto;
+    min-height: 52px;
+    /*  기준 유지 */
+    gap: 8px;
+
+    white-space: normal;
+    overflow: visible;
+  }
+
+  .btn-group.btn-group-sm {
+    margin-left: 0;
+  }
+}
+
+.indicator-page {
+  width: 100%;
+}
+
+body {
+  overflow-y: scroll;
+}
+
+/* =========================
+   Index Side Navigation
+========================= */
+.index-side-nav {
+  position: fixed;
+  right: 24px;
+  top: 120px;
+  /* 상단 헤더 아래 */
+  display: flex;
+  flex-direction: column;
+  /*  세로 정렬 */
+  gap: 8px;
+
+  z-index: 100;
+}
+
+.index-nav-item {
+  background: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 8px;
+
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 500;
+
+  color: #333;
+  cursor: pointer;
+
+  white-space: nowrap;
+  text-align: center;
+
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.04),
+    0 2px 6px rgba(0, 0, 0, 0.06);
+
+  transition:
+    background-color 0.2s ease,
+    transform 0.12s ease,
+    box-shadow 0.15s ease;
+}
+
+.index-nav-item:hover {
+  background: #f5f7fa;
+}
+
+.index-nav-item:active {
+  transform: scale(0.96);
+}

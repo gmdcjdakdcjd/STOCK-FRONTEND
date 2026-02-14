@@ -45,6 +45,11 @@ import MyStockPage from "../pages/myStock/MyStockPage";
 import MyEtfListPage from "../pages/myEtf/MyEtfListPage";
 import MyEtfDetailPage from "../pages/myEtf/MyEtfDetailPage";
 
+/* =========================
+   CRYPTO
+   ========================= */
+import CryptoPage from "../pages/crypto/cryptoIndexPage";
+
 function AppRouter() {
    return (
       <BrowserRouter>
@@ -70,6 +75,7 @@ function AppRouter() {
                <Route path="/result/detailKR" element={<BoardDetailKRPage />} />
                <Route path="/result/detailUS" element={<BoardDetailUSPage />} />
 
+
                {/* =========================
               MANAGE (ADMIN)
               ========================= */}
@@ -85,6 +91,7 @@ function AppRouter() {
                <Route path="/exchange" element={<ExchangePage />} />
                <Route path="/stockIndex" element={<StockIndexPage />} />
                <Route path="/physical" element={<PhysicalPage />} />
+               <Route path="/crypto" element={<CryptoPage />} />
                {/* =========================
               STOCK / ETF / NPS
               ========================= */}
@@ -100,6 +107,7 @@ function AppRouter() {
                <Route path="/kodex/summary" element={<KodexSummaryPage />} />
                <Route path="/nps/summary" element={<NpsSummaryPage />} />
                <Route path="/nps/list" element={<NpsListPage />} />
+
             </Route>
 
          </Routes>

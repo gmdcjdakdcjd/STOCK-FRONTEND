@@ -139,6 +139,10 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                     <span className="nav-dd-mark">–</span>
                     원자재 지수
                   </NavLink>
+                  <NavLink to="/crypto" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    코인 지수
+                  </NavLink>
                 </div>
               )}
             </div>
