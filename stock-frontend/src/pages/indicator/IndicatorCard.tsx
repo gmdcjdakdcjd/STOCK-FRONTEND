@@ -63,13 +63,13 @@ export default function IndicatorCard({
     const ctx = canvasRef.current.getContext("2d");
     if (!ctx) return;
 
-    const now = new Date();
-    const from = new Date();
+    const lastDataDate = data.length > 0 ? new Date(data[data.length - 1].date) : new Date();
+    const from = new Date(lastDataDate);
 
-    if (range === "1m") from.setMonth(now.getMonth() - 1);
-    if (range === "3m") from.setMonth(now.getMonth() - 3);
-    if (range === "6m") from.setMonth(now.getMonth() - 6);
-    if (range === "1y") from.setFullYear(now.getFullYear() - 1);
+    if (range === "1m") from.setMonth(lastDataDate.getMonth() - 1);
+    if (range === "3m") from.setMonth(lastDataDate.getMonth() - 3);
+    if (range === "6m") from.setMonth(lastDataDate.getMonth() - 6);
+    if (range === "1y") from.setFullYear(lastDataDate.getFullYear() - 1);
 
     const dataset = {
       data: data.map(d => ({
@@ -118,7 +118,7 @@ export default function IndicatorCard({
             x: {
               type: "time",
               min: from.getTime(),
-              max: now.getTime(),
+              max: lastDataDate.getTime(),
               grid: { display: false },
               ticks: {
                 maxRotation: 45,
@@ -141,7 +141,7 @@ export default function IndicatorCard({
       chartRef.current = new Chart(ctx, config);
     } else {
       chartRef.current.options.scales!.x!.min = from.getTime();
-      chartRef.current.options.scales!.x!.max = now.getTime();
+      chartRef.current.options.scales!.x!.max = lastDataDate.getTime();
       chartRef.current.update();
     }
   }, [data, range, isUSD, colorKey]);

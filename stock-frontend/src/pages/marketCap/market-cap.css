@@ -1,0 +1,207 @@
+/* ================================
+   Market Cap Table Layout
+   ================================ */
+.market-cap-table {
+    border-top: 1px solid #e5e7eb;
+}
+
+/* header / row 공통 */
+.market-cap-table-header,
+.market-cap-table-row {
+    display: grid;
+    /* 순위 | 종목명(코드) | 현재가 | 시가총액 | 상세보기 */
+    grid-template-columns: 60px 1fr 130px 320px 100px;
+    align-items: center;
+    padding: 14px 20px;
+    gap: 16px;
+}
+
+/* ================================
+   Header
+   ================================ */
+.market-cap-table-header {
+    font-weight: 700;
+    background: #f9fafb;
+    border-bottom: 2px solid #e5e7eb;
+    color: #374151;
+}
+
+/* ================================
+   Row
+   ================================ */
+.market-cap-table-row {
+    border-bottom: 1px solid #e5e7eb;
+    transition: background 0.15s ease;
+}
+
+.market-cap-table-row:hover {
+    background: #fafafa;
+}
+
+/* ================================
+   Columns
+   ================================ */
+
+/* 순위 */
+.rank-col {
+    text-align: center;
+    font-weight: 700;
+    color: #6b7280;
+}
+
+/* 종목 명 */
+.stock-name-cell {
+    font-weight: 600;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.stock-code {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    font-weight: normal;
+}
+
+/* 숫자 열 공통 */
+.num-col {
+    text-align: right;
+    font-weight: 600;
+    color: #374151;
+    font-variant-numeric: tabular-nums;
+}
+
+.mkt-cap-val {
+    color: #4338ca;
+    font-size: 1.05rem;
+}
+
+/* 상세 버튼 열 */
+.detail-col {
+    display: flex;
+    justify-content: center;
+}
+
+/* ================================
+   Detail Tag Button (Issue 스타일 계승)
+   ================================ */
+.detail-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 4px 10px;
+    min-height: 22px;
+
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    color: #2563eb;
+    background: #eff6ff;
+
+    border: 1px solid #dbeafe;
+    border-radius: 999px;
+
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.15s ease;
+}
+
+.detail-link-btn:hover {
+    background: #dbeafe;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+}
+
+.detail-link-btn:active {
+    transform: scale(0.96);
+}
+
+
+/* ================================
+   Search Area (Reusing Kodex Style)
+   ================================ */
+.nps-search {
+    margin-bottom: 24px;
+}
+
+.nps-search-row {
+    display: flex;
+    gap: 8px;
+    max-width: 500px;
+}
+
+.nps-search-input-wrap {
+    position: relative;
+    flex: 1;
+}
+
+.nps-search-input-wrap input {
+    width: 100%;
+    padding: 10px 40px 10px 16px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+.nps-search-input-wrap input:focus {
+    border-color: #4338ca;
+}
+
+.nps-reset-inside {
+    position: absolute;
+    top: 50%;
+    right: 10px;
+    transform: translateY(-50%);
+
+    width: 22px;
+    height: 22px;
+    padding: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    border: 1px solid #f3c1cf;
+    background: #fff1f5;
+
+    color: #d14b6f;
+    font-size: 0.85rem;
+    line-height: 1;
+    cursor: pointer;
+
+    transition: transform 0.1s ease;
+}
+
+.nps-reset-inside:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.nps-search-btn {
+    padding: 0 20px;
+    background: #4338ca;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.nps-search-btn:hover {
+    background: #3730a3;
+}
+
+/* ================================
+   State
+   ================================ */
+.loading,
+.empty {
+    padding: 3rem;
+    text-align: center;
+    color: #6b7280;
+    font-size: 1rem;
+}

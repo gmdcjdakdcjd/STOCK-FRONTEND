@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import "./basic-layout.css";
 import "./page-header.css";
 
@@ -20,6 +20,7 @@ function BasicLayout({ children }: { children?: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [openMenu, setOpenMenu] = useState<MenuKey | null>(null);
+  const navRef = useRef<HTMLElement | null>(null);
 
   const navigate = useNavigate();
 
@@ -78,6 +79,27 @@ function BasicLayout({ children }: { children?: ReactNode }) {
 
   const closeMenu = () => setOpenMenu(null);
 
+  /* =========================
+     외부 클릭 시 메뉴 닫기
+     ========================= */
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (navRef.current && !navRef.current.contains(event.target as Node)) {
+        closeMenu();
+      }
+    };
+
+    if (openMenu) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [openMenu]);
+
   return (
     <>
       {/* ================= TOP AUTH BAR ================= */}
@@ -113,7 +135,7 @@ function BasicLayout({ children }: { children?: ReactNode }) {
             STOCK PROJECT
           </NavLink>
 
-          <nav className="nav">
+          <nav className="nav" ref={navRef}>
             {/* ===== 지수 ===== */}
             <div className="nav-dropdown">
               <button
@@ -212,6 +234,10 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                   <NavLink to="/kodex/summary" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>
                     ETF 검색
+                  </NavLink>
+                  <NavLink to="/marketCap" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    시가총액
                   </NavLink>
                   <NavLink to="/nps/summary" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>

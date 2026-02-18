@@ -27,6 +27,7 @@ import NpsSummaryPage from "../pages/nps/NpsSummaryPage";
 import NpsListPage from "../pages/nps/NpsListPage";
 import KodexSummaryPage from "../pages/kodex/KodexSummaryPage";
 import StockSearchPage from "../pages/stock/StockSearchPage";
+import MarketCapPage from "../pages/marketCap/MarketCapPage";
 // import IndicatorPage from "../pages/indicator/IndicatorPage";
 // import BondPage from "../pages/bond/BondPage";
 import IssuePage from "../pages/issue/IssuePage";
@@ -105,6 +106,7 @@ function AppRouter() {
                <Route path="/myetf/detail" element={<MyEtfDetailPage />} />
 
                <Route path="/kodex/summary" element={<KodexSummaryPage />} />
+               <Route path="/marketCap" element={<MarketCapPage />} />
                <Route path="/nps/summary" element={<NpsSummaryPage />} />
                <Route path="/nps/list" element={<NpsListPage />} />
 
