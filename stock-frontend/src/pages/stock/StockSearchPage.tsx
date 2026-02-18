@@ -39,6 +39,7 @@ export type SignalInfo = {
 type AutoItem = {
   code: string;
   name: string;
+  market?: string;
 };
 
 function StockSearchPage() {
@@ -73,6 +74,7 @@ function StockSearchPage() {
   const [codeAutoOpen, setCodeAutoOpen] = useState(false);
   const [activeNameIndex, setActiveNameIndex] = useState(-1);
   const [activeCodeIndex, setActiveCodeIndex] = useState(-1);
+  const [selectedMarket, setSelectedMarket] = useState<string | null>(null);
 
   const isKR =
     stock?.marketType === "KOSPI" || stock?.marketType === "KOSDAQ";
@@ -89,6 +91,7 @@ function StockSearchPage() {
     setCodeAutoOpen(false);
     setActiveNameIndex(-1);
     setActiveCodeIndex(-1);
+    setSelectedMarket(null);
     setStock(null);
     setPriceList([]);
     setSignalList([]);
@@ -110,15 +113,32 @@ function StockSearchPage() {
     setStock(null);
     setPriceList([]);
     setSignalList([]);
+    setSelectedMarket(null);
 
     try {
       const params = new URLSearchParams();
 
-      if (code?.trim()) {
-        params.append("stockCode", code.trim());
-      } else if (name?.trim()) {
-        params.append("stockName", name.trim());
+      // 미국 주식은 숫자 이외의 문자가 포함된 코드를 가짐 (알파벳 티커)
+      // 한국 주식은 보통 6자리 숫자 코드임
+      const isUs = selectedMarket === "US" || (!selectedMarket && code && isNaN(Number(code)));
+
+      if (isUs) {
+        // 미국 주식: 이름 우선 (동일 티커 중복 방지)
+        if (name?.trim()) {
+          params.append("stockName", name.trim());
+        } else if (code?.trim()) {
+          params.append("stockCode", code.trim());
+        }
+      } else {
+        // 한국 주식: 코드 우선 (안정적인 검색)
+        if (code?.trim()) {
+          params.append("stockCode", code.trim());
+        } else if (name?.trim()) {
+          params.append("stockName", name.trim());
+        }
       }
+
+      // console.log("Search API Request:", params.toString());
 
       const res = await fetch(
         `/api/stock/searchStock?${params.toString()}`
@@ -224,6 +244,7 @@ function StockSearchPage() {
       const item = nameAutoList[activeNameIndex];
       setStockName(item.name);
       setStockCode(item.code);
+      setSelectedMarket(item.market || null);
       setNameAutoOpen(false);
       setActiveNameIndex(-1);
     }
@@ -246,6 +267,7 @@ function StockSearchPage() {
       const item = codeAutoList[activeCodeIndex];
       setStockCode(item.code);
       setStockName(item.name);
+      setSelectedMarket(item.market || null);
       setCodeAutoOpen(false);
       setActiveCodeIndex(-1);
     }
@@ -284,6 +306,7 @@ function StockSearchPage() {
                     onClick={() => {
                       setStockName(item.name);
                       setStockCode(item.code);
+                      setSelectedMarket(item.market || null);
                       setNameAutoOpen(false);
                     }}
                   >
@@ -315,6 +338,7 @@ function StockSearchPage() {
                     onClick={() => {
                       setStockCode(item.code);
                       setStockName(item.name);
+                      setSelectedMarket(item.market || null);
                       setCodeAutoOpen(false);
                     }}
                   >
