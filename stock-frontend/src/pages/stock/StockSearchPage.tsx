@@ -153,6 +153,18 @@ function StockSearchPage() {
         return;
       }
 
+      // 정확한 일치 여부 확인 (대소문자 무시, 사용자가 수동으로 입력했을 경우 대비)
+      const isExactMatch =
+        (safeName &&
+          data.stock?.name.toUpperCase() === safeName.toUpperCase()) ||
+        (safeCode &&
+          data.stock?.code.toUpperCase() === safeCode.toUpperCase());
+
+      if (!isExactMatch) {
+        setError("종목명 또는 종목코드를 완전하게 입력해주세요.");
+        return;
+      }
+
       setStock(data.stock);
       setPriceList(data.priceList || []);
       setSignalList(data.signalList || []);
@@ -240,13 +252,17 @@ function StockSearchPage() {
       e.preventDefault();
       setActiveNameIndex(i => Math.max(i - 1, 0));
     }
-    if (e.key === "Enter" && activeNameIndex >= 0) {
-      const item = nameAutoList[activeNameIndex];
-      setStockName(item.name);
-      setStockCode(item.code);
-      setSelectedMarket(item.market || null);
-      setNameAutoOpen(false);
-      setActiveNameIndex(-1);
+    if (e.key === "Enter") {
+      if (activeNameIndex >= 0) {
+        const item = nameAutoList[activeNameIndex];
+        setStockName(item.name);
+        setStockCode(item.code);
+        setSelectedMarket(item.market || null);
+        setNameAutoOpen(false);
+        setActiveNameIndex(-1);
+      } else {
+        search();
+      }
     }
   };
 
@@ -263,13 +279,17 @@ function StockSearchPage() {
       e.preventDefault();
       setActiveCodeIndex(i => Math.max(i - 1, 0));
     }
-    if (e.key === "Enter" && activeCodeIndex >= 0) {
-      const item = codeAutoList[activeCodeIndex];
-      setStockCode(item.code);
-      setStockName(item.name);
-      setSelectedMarket(item.market || null);
-      setCodeAutoOpen(false);
-      setActiveCodeIndex(-1);
+    if (e.key === "Enter") {
+      if (activeCodeIndex >= 0) {
+        const item = codeAutoList[activeCodeIndex];
+        setStockCode(item.code);
+        setStockName(item.name);
+        setSelectedMarket(item.market || null);
+        setCodeAutoOpen(false);
+        setActiveCodeIndex(-1);
+      } else {
+        search();
+      }
     }
   };
 

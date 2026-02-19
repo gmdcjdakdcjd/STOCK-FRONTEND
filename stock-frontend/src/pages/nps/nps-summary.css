@@ -1,5 +1,6 @@
 .nps-summary {
   width: 100%;
+  text-align: center;
 }
 
 .nps-summary-header {
@@ -19,13 +20,17 @@
 
 /* ===== Grid ===== */
 .nps-card-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
-  gap: 1.5rem;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 2rem;
+  justify-content: center;
+  padding: 1rem 0;
 }
 
 /* ===== Card ===== */
 .nps-card {
+  width: 540px;
+  flex-shrink: 0;
   border-radius: 18px;
   border: 1px solid #e5e7eb;
   padding: 1.5rem;
@@ -41,7 +46,7 @@
 
 .nps-card:hover {
   transform: translateY(-6px);
-  box-shadow: 0 10px 28px rgba(0,0,0,.10);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, .10);
 }
 
 /* ===== Card content ===== */
