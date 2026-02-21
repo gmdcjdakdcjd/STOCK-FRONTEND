@@ -50,6 +50,7 @@ import MyEtfDetailPage from "../pages/myEtf/MyEtfDetailPage";
    CRYPTO
    ========================= */
 import CryptoPage from "../pages/crypto/cryptoIndexPage";
+import MarketTrendPage from "../pages/marketTrend/MarketTrendPage";
 
 function AppRouter() {
    return (
@@ -109,6 +110,7 @@ function AppRouter() {
                <Route path="/marketCap" element={<MarketCapPage />} />
                <Route path="/nps/summary" element={<NpsSummaryPage />} />
                <Route path="/nps/list" element={<NpsListPage />} />
+               <Route path="/marketTrend" element={<MarketTrendPage />} />
 
             </Route>
 

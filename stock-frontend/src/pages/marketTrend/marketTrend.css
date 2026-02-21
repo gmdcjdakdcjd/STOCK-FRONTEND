@@ -1,0 +1,300 @@
+.market-trend-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+    color: #111827;
+}
+
+/* 요약 카드 그리드 */
+.today-card-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+    margin-bottom: 3rem;
+}
+
+.market-summary-card {
+    background: #ffffff;
+    border-radius: 16px;
+    padding: 1.5rem;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+    cursor: pointer;
+}
+
+.market-summary-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    border-bottom: 1px solid #f3f4f6;
+    padding-bottom: 0.75rem;
+}
+
+.card-title {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #1f2937;
+}
+
+.card-date {
+    font-size: 0.85rem;
+    color: #9ca3af;
+}
+
+.card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.summary-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.summary-item .label {
+    font-size: 0.95rem;
+    color: #4b5563;
+}
+
+.summary-item .value {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.summary-item.total {
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px dashed #e5e7eb;
+}
+
+/* 증시자금 카드 특화 수직 센터링 레이아웃 */
+.summary-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 1rem 0;
+    gap: 0.5rem;
+    transition: background-color 0.2s;
+}
+
+.summary-row:not(:last-child) {
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.row-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+.row-values {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+}
+
+.row-balance {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.row-unit {
+    display: none;
+    /* 개별 단위는 숨김 처리 */
+}
+
+.card-unit-sm {
+    text-align: right;
+    font-size: 0.75rem;
+    color: #9ca3af;
+    margin-top: -0.5rem;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+}
+
+.row-change {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin-left: 0.5rem;
+}
+
+.card-loading {
+    padding: 2rem;
+    text-align: center;
+    color: #9ca3af;
+    font-style: italic;
+}
+
+/* 제목 스타일 */
+.trend-section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+    color: #111827;
+}
+
+.unit-info {
+    text-align: right;
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin-bottom: 1rem;
+}
+
+/* 테이블 카드 스타일 */
+.table-wrapper {
+    overflow-x: auto;
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    min-height: 520px;
+    /* 고정 높이 유지 */
+}
+
+.investor-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: right;
+    table-layout: fixed;
+    /* 흔들림 방지를 위해 고정 레이아웃 사용 */
+    min-width: 1200px;
+    /* 충분한 너비 확보로 텍스트 깨짐 방지 */
+}
+
+.investor-table th,
+.investor-table td {
+    padding: 0.875rem 0.5rem;
+    border-bottom: 1px solid #f3f4f6;
+    border-right: 1px solid #f3f4f6;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 헤더 스타일 */
+.investor-table thead th {
+    background: #334155;
+    color: #f8fafc;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* ================== 각 테이블 섹션별 정밀 너비 설정 ================== */
+
+/* 1. 투자자별 순매수 테이블 (날짜 1 + 데이터 10 = 11컬럼) */
+.trend-table-section:nth-of-type(1) .investor-table .date-col {
+    width: 110px;
+}
+
+.trend-table-section:nth-of-type(1) .investor-table th:nth-child(2),
+/* 개인 */
+.trend-table-section:nth-of-type(1) .investor-table th:nth-child(3),
+/* 외국인 */
+.trend-table-section:nth-of-type(1) .investor-table th:nth-child(4),
+/* 기관계 */
+.trend-table-section:nth-of-type(1) .investor-table th:nth-child(6) {
+    width: 10%;
+}
+
+/* 기타법인 */
+
+/* 기관 세부 6개 컬럼 (두번째 tr 기준) */
+.trend-table-section:nth-of-type(1) .investor-table thead tr:nth-child(2) th {
+    width: 8.5%;
+}
+
+/* 2. 프로그램 매매 동향 테이블 (날짜 1 + 데이터 9 = 10컬럼) */
+.trend-table-section:nth-of-type(2) .investor-table .date-col {
+    width: 110px;
+}
+
+.trend-table-section:nth-of-type(2) .investor-table thead tr:nth-child(2) th {
+    width: 10%;
+}
+
+/* 3. 증시자금동향 테이블 (날짜 1 + 데이터 10 = 11컬럼) */
+.trend-table-section:nth-of-type(3) .investor-table .date-col {
+    width: 110px;
+}
+
+.trend-table-section:nth-of-type(3) .investor-table thead tr:nth-child(2) th {
+    width: 9%;
+}
+
+/* ================================================================= */
+
+.investor-table td.date-cell {
+    text-align: center;
+    color: #6b7280;
+    background: #f9fafb;
+}
+
+/* 상승/하락 공통 컬러 클래스 (테이블 및 요약 카드 공용) */
+.up {
+    color: #ef4444 !important;
+    font-weight: 600;
+}
+
+.down {
+    color: #3b82f6 !important;
+    font-weight: 600;
+}
+
+.investor-table tr:hover {
+    background: #f8fafc;
+}
+
+/* 페이지네이션 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 2.5rem;
+}
+
+.pagination button {
+    min-width: 36px;
+    height: 36px;
+    padding: 0 0.5rem;
+    background: #ffffff;
+    border: 1px solid #d1d5db;
+    color: #374151;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.pagination button:hover:not(.active) {
+    background: #f3f4f6;
+    border-color: #9ca3af;
+}
+
+.pagination button.active {
+    background: #5a33ff;
+    border-color: #5a33ff;
+    color: #ffffff;
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pagination-nav-btn {
+    font-weight: 600;
+    padding: 0 1rem !important;
+}

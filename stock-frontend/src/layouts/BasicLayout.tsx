@@ -243,6 +243,10 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                     <span className="nav-dd-mark">–</span>
                     연기금 현황
                   </NavLink>
+                  <NavLink to="/marketTrend" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    시장 매매 동향
+                  </NavLink>
                 </div>
               )}
             </div>
