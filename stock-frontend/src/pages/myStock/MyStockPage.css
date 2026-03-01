@@ -192,6 +192,8 @@
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
+  white-space: nowrap;
+  min-width: 46px;
 }
 
 .btn-delete:hover {
@@ -253,6 +255,13 @@
   background: rgba(0, 0, 0, 0.45);
 }
 
+@media (max-width: 768px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+}
+
 .modal-body {
   width: 90%;
   max-width: 1000px;
@@ -302,6 +311,7 @@
 .col-strategy a:hover {
   background: #d1fae5;
 }
+
 /* =====================================================
    Header Actions
 ===================================================== */
@@ -310,6 +320,7 @@
   align-items: center;
   gap: 8px;
 }
+
 .btn-etf {
   padding: 6px 14px;
   border-radius: 999px;
@@ -325,6 +336,7 @@
 .btn-etf:hover {
   background: #eff6ff;
 }
+
 .btn-etf-primary {
   border-color: #2563eb;
   background: #2563eb;
@@ -334,20 +346,25 @@
 .btn-etf-primary:hover {
   background: #1e40af;
 }
+
 /* 상세 컬럼 */
 .col-detail {
   text-align: center;
   white-space: nowrap;
 }
+
 .btn-etf-outline {
   background: #ffffff;
   border: 1px solid #d1d5db;
-  color: #4f46e5;          /* 보라색 텍스트 */
+  color: #4f46e5;
+  /* 보라색 텍스트 */
   font-weight: 600;
 }
 
 .btn-etf-outline:hover {
-  background: #eef2ff;     /* 아주 연한 보라 배경 */
+  background: #eef2ff;
+  /* 아주 연한 보라 배경 */
   border-color: #4f46e5;
-  color: #4338ca;          /* hover 시 조금 진한 보라 */
+  color: #4338ca;
+  /* hover 시 조금 진한 보라 */
 }

@@ -19,7 +19,7 @@ export default function IndicatorPage() {
 
   return (
     <>
-      {/* ✅ 페이지 전용 wrapper (레이아웃 기준 고정용) */}
+      {/*  페이지 전용 wrapper (레이아웃 기준 고정용) */}
       <div className="indicator-page">
         <div className="grid-container">
           <IndicatorCard

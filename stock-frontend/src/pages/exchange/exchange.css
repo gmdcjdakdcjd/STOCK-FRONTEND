@@ -22,14 +22,14 @@
 }
 
 /* =========================
-   Card Header (🔑 안정화 완료)
+   Card Header ( 안정화 완료)
 ========================= */
 .card-header {
   display: flex;
   align-items: center;
   gap: 14px;
 
-  height: 52px;              /* 🔑 고정 기준 */
+  height: 52px;              /*  고정 기준 */
   padding: 0 14px;
 
   background: #ffffff;
@@ -38,8 +38,8 @@
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 
-  white-space: nowrap;       /* 🔑 PC에서 줄바꿈 차단 */
-  overflow: hidden;          /* 🔑 높이 흔들림 방지 */
+  white-space: nowrap;       /*  PC에서 줄바꿈 차단 */
+  overflow: hidden;          /*  높이 흔들림 방지 */
 }
 
 /* 제목 */
@@ -143,7 +143,7 @@
   .card-header {
     flex-wrap: wrap;     /* 모바일에서만 줄바꿈 */
     height: auto;
-    min-height: 52px;    /* 🔑 기준 유지 */
+    min-height: 52px;    /*  기준 유지 */
     gap: 8px;
 
     white-space: normal;
@@ -181,11 +181,11 @@ body {
   border: 1px solid #e5e7eb;
   border-radius: 12px;      /* 카드랑 통일 */
 
-  padding: 12px 18px;       /* 🔑 핵심: 상자 크기 확장 */
+  padding: 12px 18px;       /*  핵심: 상자 크기 확장 */
   font-size: 0.95rem;       /* 기존 0.9 → 0.95 */
   font-weight: 600;
 
-  min-width: 96px;          /* 🔑 가로 크기 확장 */
+  min-width: 96px;          /*  가로 크기 확장 */
   text-align: center;
 
   color: #333;

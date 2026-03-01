@@ -13,7 +13,7 @@ export default function BondPage() {
         {/* ================= 미국 ================= */}
         <BondChartCard
           title="미국 국채 금리"
-          primaryColor="rgb(30,58,138)"   // ✅ 대표 색상 (2Y)
+          primaryColor="rgb(30,58,138)"   //  대표 색상 (2Y)
           series={{
             us2y: {
               label: "미국 2년물",
@@ -41,7 +41,7 @@ export default function BondPage() {
         {/* ================= 한국 ================= */}
         <BondChartCard
           title="한국 국채 금리"
-          primaryColor="rgb(13,148,136)"  // ✅ 대표 색상 (3Y)
+          primaryColor="rgb(13,148,136)"  //  대표 색상 (3Y)
           series={{
             kr3y: {
               label: "한국 3년물",
@@ -69,7 +69,7 @@ export default function BondPage() {
         {/* ================= 일본 ================= */}
         <BondChartCard
           title="일본 국채 금리"
-          primaryColor="rgb(153,27,27)"   // ✅ 대표 색상 (2Y)
+          primaryColor="rgb(153,27,27)"   //  대표 색상 (2Y)
           series={{
             jp2y: {
               label: "일본 2년물",
@@ -97,7 +97,7 @@ export default function BondPage() {
         {/* ================= 중국 ================= */}
         <BondChartCard
           title="중국 국채 금리"
-          primaryColor="rgb(146,64,14)"   // ✅ 대표 색상 (1Y)
+          primaryColor="rgb(146,64,14)"   //  대표 색상 (1Y)
           series={{
             cn1y: {
               label: "중국 1년물",

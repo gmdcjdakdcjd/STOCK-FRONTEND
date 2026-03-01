@@ -138,7 +138,7 @@
 }
 
 /* =========================
-   Chart (⭐ 안정 패턴)
+   Chart ( 안정 패턴)
 ========================= */
 .stock-chart-card {
   display: flex;
@@ -384,7 +384,7 @@
    Input Clear Button (X)
 ========================= */
 .stock-search-input-wrap {
-  position: relative; /* ⭐ 필수 */
+  position: relative; /*  필수 */
 }
 
 .input-clear-btn {

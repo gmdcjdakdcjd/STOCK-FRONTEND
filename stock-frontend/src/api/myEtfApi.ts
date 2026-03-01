@@ -56,7 +56,7 @@ export async function deleteMyEtf(etfName: string): Promise<void> {
 }
 
 /* =========================
-   ETF 상세  ⭐ 핵심 수정
+   ETF 상세   핵심 수정
 ========================= */
 export async function fetchMyEtfDetail(
   etfName: string
@@ -64,7 +64,7 @@ export async function fetchMyEtfDetail(
   const res = await fetch(
     `/api/myetf/detail?etfName=${encodeURIComponent(etfName)}`,
     {
-      credentials: "include", // ⭐ 이거 없어서 Loading 걸렸던 거
+      credentials: "include", //  이거 없어서 Loading 걸렸던 거
     }
   );
 

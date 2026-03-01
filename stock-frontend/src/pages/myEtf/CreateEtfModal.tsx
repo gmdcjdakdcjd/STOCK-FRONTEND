@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { createMyEtf } from "../../api/myEtfApi";
 import type { MyEtfCreateRequestDTO } from "./myEtf.types";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 
 import "./CreateEtfModal.css";
 
@@ -24,7 +25,7 @@ interface SearchItem {
 interface TempItem {
   code: string;
   name: string;
-  market: "KR" | "US";   // 🔑 필수
+  market: "KR" | "US";   // 필수
   price: string;
   quantity: number;
 }
@@ -53,9 +54,13 @@ function CreateEtfModal({ onCreated }: Props) {
   const [etfDescription, setEtfDescription] = useState("");
 
   const [keyword, setKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [searchResult, setSearchResult] = useState<SearchItem[]>([]);
 
   const [tempItems, setTempItems] = useState<TempItem[]>([]);
+
+  //  배경 스크롤 방지 (팝업 열렸을 때만)
+  useLockBodyScroll(open);
 
   /* =========================
      초기화
@@ -64,6 +69,7 @@ function CreateEtfModal({ onCreated }: Props) {
     setEtfName("");
     setEtfDescription("");
     setKeyword("");
+    setSearchKeyword("");
     setSearchResult([]);
     setTempItems([]);
   };
@@ -72,15 +78,19 @@ function CreateEtfModal({ onCreated }: Props) {
      종목 검색
   ========================= */
   useEffect(() => {
-    if (!keyword.trim()) {
+    if (!searchKeyword.trim()) {
       setSearchResult([]);
       return;
     }
 
-    fetch(`/api/common/autocomplete/code?q=${encodeURIComponent(keyword)}`)
+    fetch(`/api/common/autocomplete/code?q=${encodeURIComponent(searchKeyword)}`)
       .then(res => res.json())
       .then(setSearchResult);
-  }, [keyword]);
+  }, [searchKeyword]);
+
+  const handleSearch = () => {
+    setSearchKeyword(keyword);
+  };
 
   /* =========================
      종목 추가 / 제거
@@ -100,7 +110,7 @@ function CreateEtfModal({ onCreated }: Props) {
         {
           code: item.code,
           name: item.name,
-          market: item.market,   // 🔑 추가
+          market: item.market,   // 추가
           price: item.price,
           quantity: 1
         }
@@ -173,67 +183,87 @@ function CreateEtfModal({ onCreated }: Props) {
             setOpen(false);
           }}
         >
+          {/* 실제 스크롤이 동작하는 래퍼: position:fixed 요소에서는 overflow 스크롤이
+              브라우저에 따라 제대로 동작하지 않으므로, 래퍼에서 스크롤을 처리한다 */}
           <div
-            className="modal-body"
+            className="modal-scroll-wrapper"
             onClick={e => e.stopPropagation()}
           >
-            <header className="modal-header">
-              <h3>나만의 ETF 만들기</h3>
-              <button
-                className="close-btn"
-                onClick={() => {
-                  resetForm();
-                  setOpen(false);
-                }}
-              >
-                ✕
-              </button>
-            </header>
+            <div
+              className="modal-body"
+              onClick={e => e.stopPropagation()}
+            >
+              <header className="modal-header">
+                <h3>나만의 ETF 만들기</h3>
+                <button
+                  className="close-btn"
+                  onClick={() => {
+                    resetForm();
+                    setOpen(false);
+                  }}
+                >
+                  ✕
+                </button>
+              </header>
 
-            <div className="modal-content">
-              <div className="form-section">
-                <label>ETF 이름</label>
-                <input
-                  value={etfName}
-                  onChange={e => setEtfName(e.target.value)}
-                />
+              <div className="modal-content">
+                <div className="form-section">
+                  <label>ETF 이름</label>
+                  <input
+                    value={etfName}
+                    onChange={e => setEtfName(e.target.value)}
+                  />
 
-                <label>ETF 설명</label>
-                <textarea
-                  rows={2}
-                  value={etfDescription}
-                  onChange={e => setEtfDescription(e.target.value)}
-                />
-              </div>
+                  <label>ETF 설명</label>
+                  <textarea
+                    rows={2}
+                    value={etfDescription}
+                    onChange={e => setEtfDescription(e.target.value)}
+                  />
+                </div>
 
-              <div className="divider" />
+                <div className="divider" />
 
-              <div className="etf-builder">
-                {/* 검색 */}
-                <div className="search-panel">
-                  <h4>종목 검색</h4>
+                <div className="etf-builder">
+                  {/* 검색 */}
+                  <div className="search-panel">
+                    <h4>종목 검색</h4>
 
-                  <div className="search-bar">
-                    <input
-                      className="search-input"
-                      placeholder="종목코드 또는 종목명"
-                      value={keyword}
-                      onChange={e => setKeyword(e.target.value)}
-                    />
-                    <button
-                      className="reset-btn ghost"
-                      onClick={() => {
-                        setKeyword("");
-                        setSearchResult([]);
-                      }}
-                    >
-                      X
-                    </button>
-                  </div>
+                    <div className="search-bar">
+                      <div className="search-input-wrapper">
+                        <input
+                          className="search-input"
+                          placeholder="종목코드 또는 종목명"
+                          value={keyword}
+                          onChange={e => setKeyword(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === "Enter") handleSearch();
+                          }}
+                        />
+                        {keyword && (
+                          <button
+                            className="reset-btn-inside"
+                            onClick={() => {
+                              setKeyword("");
+                              setSearchKeyword("");
+                              setSearchResult([]);
+                            }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <button
+                        className="search-action-btn"
+                        onClick={handleSearch}
+                      >
+                        검색
+                      </button>
+                    </div>
 
 
-                  <div className="search-table">
-                    <div className="search-row header">
+                    {/* 검색 테이블 헤더 - scroll 영역 밖에 위치 */}
+                    <div className="search-header">
                       <span>종목명</span>
                       <span>코드</span>
                       <span>시장</span>
@@ -241,108 +271,110 @@ function CreateEtfModal({ onCreated }: Props) {
                       <span></span>
                     </div>
 
+                    {/* 검색 결과 목록 - scroll 영역 */}
+                    <div className="search-table">
+                      {searchResult.map(r => {
+                        const isSelected = tempItems.some(
+                          i => i.code === r.code
+                        );
 
-                    {searchResult.map(r => {
-                      const isSelected = tempItems.some(
-                        i => i.code === r.code
-                      );
-
-                      return (
-                        <div
-                          key={r.code}
-                          className={`search-row ${isSelected ? "disabled" : ""}`}
-                          onClick={() => !isSelected && addItem(r)}
-                        >
-                          <span>{r.name}</span>
-                          <span>{r.code}</span>
-                          <span>{r.market}</span>
-                          <span className="right">{r.price}</span>
-                          <span className="action">
-                            {isSelected ? "추가됨" : "추가"}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 구성 종목 */}
-                <div className="selected-panel">
-                  <h4>구성 종목</h4>
-
-                  <div className="selected-list">
-                    <div className="selected-header table">
-                      <span>종목</span>
-                      <span>시장</span>
-                      <span className="right">현재가</span>
-                      <span className="center">수량</span>
-                      <span className="right">총액</span>
-                      <span></span>
+                        return (
+                          <div
+                            key={r.code}
+                            className={`search-row ${isSelected ? "disabled" : ""}`}
+                            onClick={() => !isSelected && addItem(r)}
+                          >
+                            <span>{r.name}</span>
+                            <span>{r.code}</span>
+                            <span>{r.market}</span>
+                            <span className="right">{r.price}</span>
+                            <span className="action">
+                              {isSelected ? "추가됨" : "추가"}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
+                  </div>
+
+                  {/* 구성 종목 */}
+                  <div className="selected-panel">
+                    <h4>구성 종목</h4>
+
+                    <div className="selected-list">
+                      <div className="selected-header table">
+                        <span>종목</span>
+                        <span>시장</span>
+                        <span className="right">현재가</span>
+                        <span className="center">수량</span>
+                        <span className="right">총액</span>
+                        <span></span>
+                      </div>
 
 
-                    {tempItems.map((i, idx) => (
-                      <div key={idx} className="selected-row table">
-                        <span>{i.name} ({i.code})</span>
-                        <span>{i.market}</span>
-                        <span className="right">{i.price}</span>
+                      {tempItems.map((i, idx) => (
+                        <div key={idx} className="selected-row table">
+                          <span>{i.name} ({i.code})</span>
+                          <span>{i.market}</span>
+                          <span className="right">{i.price}</span>
 
-                        <div className="qty-control">
-                          <button
-                            className="qty-btn minus"
-                            onClick={() =>
-                              setTempItems(prev =>
-                                prev.map((p, pIdx) =>
-                                  pIdx === idx && p.quantity > 1
-                                    ? { ...p, quantity: p.quantity - 1 }
-                                    : p
+                          <div className="qty-control">
+                            <button
+                              className="qty-btn minus"
+                              onClick={() =>
+                                setTempItems(prev =>
+                                  prev.map((p, pIdx) =>
+                                    pIdx === idx && p.quantity > 1
+                                      ? { ...p, quantity: p.quantity - 1 }
+                                      : p
+                                  )
                                 )
-                              )
-                            }
-                          >
-                            −
-                          </button>
-                          <span className="qty-value">{i.quantity}</span>
-                          <button
-                            className="qty-btn plus"
-                            onClick={() =>
-                              setTempItems(prev =>
-                                prev.map((p, pIdx) =>
-                                  pIdx === idx
-                                    ? { ...p, quantity: p.quantity + 1 }
-                                    : p
+                              }
+                            >
+                              −
+                            </button>
+                            <span className="qty-value">{i.quantity}</span>
+                            <button
+                              className="qty-btn plus"
+                              onClick={() =>
+                                setTempItems(prev =>
+                                  prev.map((p, pIdx) =>
+                                    pIdx === idx
+                                      ? { ...p, quantity: p.quantity + 1 }
+                                      : p
+                                  )
                                 )
-                              )
-                            }
+                              }
+                            >
+                              +
+                            </button>
+                          </div>
+
+                          <span className="right">
+                            {calcTotal(i.price, i.quantity)}
+                          </span>
+
+                          <button
+                            className="remove-btn icon"
+                            onClick={() => removeItem(idx)}
                           >
-                            +
+                            ✕
                           </button>
                         </div>
-
-                        <span className="right">
-                          {calcTotal(i.price, i.quantity)}
-                        </span>
-
-                        <button
-                          className="remove-btn icon"
-                          onClick={() => removeItem(idx)}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="modal-footer">
-              <button className="secondary-btn" onClick={() => setOpen(false)}>
-                취소
-              </button>
-              <button className="primary-btn" onClick={save}>
-                ETF 생성
-              </button>
+              <div className="modal-footer">
+                <button className="secondary-btn" onClick={() => setOpen(false)}>
+                  취소
+                </button>
+                <button className="primary-btn" onClick={save}>
+                  ETF 생성
+                </button>
+              </div>
             </div>
           </div>
         </div>

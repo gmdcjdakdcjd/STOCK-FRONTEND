@@ -29,12 +29,12 @@ table {
   width: 100%;
   font-size: 0.9rem;
   border-collapse: collapse;
-  /* ❌ table-layout: fixed 제거 */
+  /*  table-layout: fixed 제거 */
 }
 
 th,
 td {
-  padding: 6px 8px;              /* 🔑 헤더/바디 패딩 통일 */
+  padding: 6px 8px;              /*  헤더/바디 패딩 통일 */
   vertical-align: middle;        /* 세로 중앙 */
 }
 

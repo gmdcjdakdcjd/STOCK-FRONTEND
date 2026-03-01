@@ -70,7 +70,7 @@
   color: #5a33ff;
   cursor: pointer;
 
-  /* ⭐ 체감 부드러움 핵심 */
+  /*  체감 부드러움 핵심 */
   transition:
     background-color 0.25s ease,
     color 0.25s ease,

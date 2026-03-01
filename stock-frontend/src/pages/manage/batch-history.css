@@ -126,6 +126,13 @@
   z-index: 1000;
 }
 
+@media (max-width: 768px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+}
+
 .modal-body {
   background: #ffffff;
   border-radius: 14px;

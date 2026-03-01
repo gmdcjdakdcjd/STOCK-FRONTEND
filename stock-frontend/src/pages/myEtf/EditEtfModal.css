@@ -5,19 +5,29 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* overflow는 숨기고 스크롤은 내부 래퍼에서 처리 */
+  overflow: hidden;
   background: rgba(0, 0, 0, 0.45);
+}
+
+/* 실제 스크롤이 동작하는 래퍼 - overlay 전체를 채우면서 스크롤 허용 */
+.modal-scroll-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
 /* ================================
    Modal Body
 ================================ */
 .modal-body {
-  width: 92%;
-  max-width: 1200px; /* ⬅ Create와 동일 */
-  max-height: 85vh;
+  width: 1300px;
+  min-width: 1300px;
+  max-height: 90vh;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -125,7 +135,7 @@
 ================================ */
 .etf-builder {
   display: grid;
-  grid-template-columns: 4fr 6fr; /* ⬅ 핵심 */
+  grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   padding: 0.75rem 1.25rem 1.25rem;
   flex: 1;
@@ -160,26 +170,34 @@
 .search-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
 
-  padding: 6px 8px;
-  background: #f9fafb;          /* 연한 배경 */
+.search-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
+  padding: 0 10px;
 }
 
 
 .search-input {
   flex: 1;
+  height: 34px;
   background: transparent;
   border: none;
-  padding: 0.25rem 0.25rem;
   font-size: 0.85rem;
 }
 
 .search-input:focus {
   outline: none;
 }
+
 /* ================================
    Search Table (Create / Edit 공통)
 ================================ */
@@ -194,11 +212,16 @@
 .search-row {
   display: grid;
   grid-template-columns:
-    2fr    /* 종목명 */
-    1fr    /* 코드 */
-    0.8fr  /* 시장 */
-    1fr    /* 현재가 */
-    0.6fr; /* 액션 */
+    2fr
+    /* 종목명 */
+    1fr
+    /* 코드 */
+    0.8fr
+    /* 시장 */
+    1fr
+    /* 현재가 */
+    0.6fr;
+  /* 액션 */
   align-items: center;
   gap: 6px;
   padding: 0.45rem 0.35rem;
@@ -216,8 +239,33 @@
   cursor: default;
 }
 
+/* Edit 모달 검색 헤더 - CreateEtfModal과 동일한 구조 */
+.search-header {
+  display: grid;
+  grid-template-columns:
+    2fr
+    /* 종목명 */
+    1fr
+    /* 코드 */
+    0.8fr
+    /* 시장 */
+    1fr
+    /* 현재가 */
+    0.6fr;
+  /* 액션 */
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 0.35rem;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: #6b7280;
+  background: #f9fafb;
+  cursor: default;
+  border-bottom: 1px solid #e5e7eb;
+}
+
 /* Hover */
-.search-row:not(.header):hover {
+.search-row:hover {
   background: #f9fafb;
 }
 
@@ -234,27 +282,47 @@
   color: #047857;
   text-align: right;
 }
-.reset-btn.ghost {
-  width: 26px;
-  height: 26px;
 
+.reset-btn-inside {
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
   border: none;
-
-  background: #f1f5f9;
+  background: #d1d5db;
   color: #6b7280;
-
-  font-size: 0.75rem;
-  font-weight: 700;
+  font-size: 0.65rem;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.reset-btn.ghost:hover {
-  background: #e5e7eb;
+.reset-btn-inside:hover {
+  background: #9ca3af;
+  color: #fff;
+}
+
+.search-action-btn {
+  height: 36px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: none;
+  background: #5a33ff;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  white-space: nowrap;
+}
+
+.search-action-btn:hover {
+  background: #4324d6;
+}
+
+.search-action-btn:active {
+  transform: translateY(1px);
 }
 
 
@@ -306,15 +374,22 @@
 .selected-row.table {
   display: grid;
   grid-template-columns:
-    2.4fr   /* 종목 */
-    0.7fr   /* 시장 */
-    1fr     /* 현재가 */
-    0.9fr   /* 수량 */
-    1.0fr   /* 총액 */
-    0.4fr;  /* 삭제 */
+    2.4fr
+    /* 종목 */
+    0.7fr
+    /* 시장 */
+    1fr
+    /* 현재가 */
+    0.9fr
+    /* 수량 */
+    1.0fr
+    /* 총액 */
+    0.4fr;
+  /* 삭제 */
   align-items: center;
   gap: 6px;
 }
+
 .right {
   text-align: right;
 }
@@ -351,8 +426,9 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  margin-left: 6px; 
-  width: 76px;          /* ⭐ 핵심 */
+  margin-left: 6px;
+  width: 76px;
+  /*  핵심 */
   height: 24px;
 
   gap: 4px;

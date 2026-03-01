@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import "./EditEtfModal.css";
 
 interface TempItem {
@@ -48,8 +49,12 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
   const [open, setOpen] = useState(false);
   const [description, setDescription] = useState("");
   const [keyword, setKeyword] = useState("");
+  const [searchKeyword, setSearchKeyword] = useState("");
   const [searchList, setSearchList] = useState<SearchItem[]>([]);
   const [items, setItems] = useState<TempItem[]>([]);
+
+  //  배경 스크롤 방지 (팝업 열렸을 때만)
+  useLockBodyScroll(open);
 
   /* =========================
      초기 데이터 로드 (기존 ETF 종목)
@@ -67,7 +72,7 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
             code: i.code,
             name: i.name,
             market: i.market,
-            priceAtAdd: i.priceAtAdd, // 🔑 원본 가격
+            priceAtAdd: i.priceAtAdd, //  원본 가격
             quantity: i.quantity,
             originalQuantity: i.quantity,
             deleted: false,
@@ -80,12 +85,12 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
      종목 검색
   ========================= */
   useEffect(() => {
-    if (!keyword.trim()) {
+    if (!searchKeyword.trim()) {
       setSearchList([]);
       return;
     }
 
-    fetch(`/api/common/autocomplete/code?q=${encodeURIComponent(keyword)}`)
+    fetch(`/api/common/autocomplete/code?q=${encodeURIComponent(searchKeyword)}`)
       .then(res => res.json())
       .then(data =>
         setSearchList(
@@ -97,7 +102,11 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
           }))
         )
       );
-  }, [keyword]);
+  }, [searchKeyword]);
+
+  const handleSearch = () => {
+    setSearchKeyword(keyword);
+  };
 
   /* =========================
      신규 종목 추가
@@ -186,56 +195,76 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
           className="modal-overlay"
           onClick={e => e.target === e.currentTarget && setOpen(false)}
         >
-          <div className="modal-body" onClick={e => e.stopPropagation()}>
-            <header className="modal-header">
-              <div className="header-text">
-                <h3>ETF 종목 편집</h3>
-                <div className="header-notice">
-                  기존 종목의 수량은 변경할 수 없습니다. 삭제 후 재등록하세요.
-                </div>
-              </div>
-              <button className="close-btn" onClick={() => setOpen(false)}>✕</button>
-            </header>
-
-            <div className="modal-content">
-              <div className="form-section">
-                <label>ETF 이름</label>
-                <input value={etfName} readOnly />
-                <label>ETF 설명</label>
-                <textarea
-                  rows={2}
-                  value={description}
-                  onChange={e => setDescription(e.target.value)}
-                />
-              </div>
-
-              <div className="divider" />
-
-              <div className="etf-builder">
-                {/* 검색 패널 */}
-                <div className="search-panel">
-                  <h4>종목 검색</h4>
-
-                  <div className="search-bar">
-                    <input
-                      className="search-input"
-                      placeholder="종목명 또는 종목코드"
-                      value={keyword}
-                      onChange={e => setKeyword(e.target.value)}
-                    />
-                    <button
-                      className="reset-btn ghost"
-                      onClick={() => {
-                        setKeyword("");
-                        setSearchList([]);
-                      }}
-                    >
-                      X
-                    </button>
+          {/* 실제 스크롤이 동작하는 래퍼: position:fixed 요소에서는 overflow 스크롤이
+              브라우저에 따라 제대로 동작하지 않으므로, 래퍼에서 스크롤을 처리한다 */}
+          <div
+            className="modal-scroll-wrapper"
+            onClick={e => e.stopPropagation()}
+          >
+            <div className="modal-body" onClick={e => e.stopPropagation()}>
+              <header className="modal-header">
+                <div className="header-text">
+                  <h3>ETF 종목 편집</h3>
+                  <div className="header-notice">
+                    기존 종목의 수량은 변경할 수 없습니다. 삭제 후 재등록하세요.
                   </div>
+                </div>
+                <button className="close-btn" onClick={() => setOpen(false)}>✕</button>
+              </header>
 
-                  <div className="search-table">
-                    <div className="search-row header">
+              <div className="modal-content">
+                <div className="form-section">
+                  <label>ETF 이름</label>
+                  <input value={etfName} readOnly />
+                  <label>ETF 설명</label>
+                  <textarea
+                    rows={2}
+                    value={description}
+                    onChange={e => setDescription(e.target.value)}
+                  />
+                </div>
+
+                <div className="divider" />
+
+                <div className="etf-builder">
+                  {/* 검색 패널 */}
+                  <div className="search-panel">
+                    <h4>종목 검색</h4>
+
+                    <div className="search-bar">
+                      <div className="search-input-wrapper">
+                        <input
+                          className="search-input"
+                          placeholder="종목명 또는 종목코드"
+                          value={keyword}
+                          onChange={e => setKeyword(e.target.value)}
+                          onKeyDown={e => {
+                            if (e.key === "Enter") handleSearch();
+                          }}
+                        />
+                        {keyword && (
+                          <button
+                            className="reset-btn-inside"
+                            onClick={() => {
+                              setKeyword("");
+                              setSearchKeyword("");
+                              setSearchList([]);
+                            }}
+                          >
+                            ✕
+                          </button>
+                        )}
+                      </div>
+                      <button
+                        className="search-action-btn"
+                        onClick={handleSearch}
+                      >
+                        검색
+                      </button>
+                    </div>
+
+                    {/* 검색 테이블 헤더 - scroll 영역 밖에 위치 */}
+                    <div className="search-header">
                       <span>종목명</span>
                       <span>코드</span>
                       <span>시장</span>
@@ -243,119 +272,122 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
                       <span></span>
                     </div>
 
-                    {searchList.map(r => {
-                      const selected = items.some(
-                        i => i.code === r.code && !i.deleted
-                      );
+                    {/* 검색 결과 목록 - scroll 영역 */}
+                    <div className="search-table">
+                      {searchList.map(r => {
+                        const selected = items.some(
+                          i => i.code === r.code && !i.deleted
+                        );
 
-                      return (
-                        <div
-                          key={r.code}
-                          className={`search-row ${selected ? "disabled" : ""}`}
-                          onClick={() => !selected && addItem(r)}
-                        >
-                          <span>{r.name}</span>
-                          <span>{r.code}</span>
-                          <span>{r.market}</span>
-                          <span className="right">{r.price}</span>
-                          <span className="action">
-                            {selected ? "추가됨" : "추가"}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* 선택 패널 */}
-                <div className="selected-panel">
-                  <h4>구성 종목</h4>
-
-                  <div className="selected-list">
-                    <div className="selected-header table">
-                      <span>종목</span>
-                      <span>시장</span>
-                      <span className="right">편입가</span>
-                      <span className="center">수량</span>
-                      <span className="right">총액</span>
-                      <span></span>
-                    </div>
-
-                    {items.filter(i => !i.deleted).map(i => {
-                      const isNew = i.id === null;
-
-                      return (
-                        <div key={i.code} className="selected-row table">
-                          <span>{i.name} ({i.code})</span>
-                          <span>{i.market}</span>
-
-                          <span className="right">
-                            {formatPrice(i.priceAtAdd, i.market)}
-                          </span>
-
-                          <div className="qty-control">
-                            {isNew ? (
-                              <>
-                                <button
-                                  className="qty-btn minus"
-                                  onClick={() =>
-                                    setItems(prev =>
-                                      prev.map(p =>
-                                        p.code === i.code && p.quantity > 1
-                                          ? { ...p, quantity: p.quantity - 1 }
-                                          : p
-                                      )
-                                    )
-                                  }
-                                >
-                                  −
-                                </button>
-                                <span className="qty-value">{i.quantity}</span>
-                                <button
-                                  className="qty-btn plus"
-                                  onClick={() =>
-                                    setItems(prev =>
-                                      prev.map(p =>
-                                        p.code === i.code
-                                          ? { ...p, quantity: p.quantity + 1 }
-                                          : p
-                                      )
-                                    )
-                                  }
-                                >
-                                  +
-                                </button>
-                              </>
-                            ) : (
-                              <span className="fixed-qty">{i.quantity}</span>
-                            )}
-                          </div>
-
-                          <span className="right">
-                            {calcTotal(i.priceAtAdd, i.quantity, i.market)}
-                          </span>
-
-                          <button
-                            className="remove-btn icon"
-                            onClick={() => removeItem(i.code)}
+                        return (
+                          <div
+                            key={r.code}
+                            className={`search-row ${selected ? "disabled" : ""}`}
+                            onClick={() => !selected && addItem(r)}
                           >
-                            ✕
-                          </button>
-                        </div>
-                      );
-                    })}
+                            <span>{r.name}</span>
+                            <span>{r.code}</span>
+                            <span>{r.market}</span>
+                            <span className="right">{r.price}</span>
+                            <span className="action">
+                              {selected ? "추가됨" : "추가"}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* 선택 패널 */}
+                  <div className="selected-panel">
+                    <h4>구성 종목</h4>
+
+                    <div className="selected-list">
+                      <div className="selected-header table">
+                        <span>종목</span>
+                        <span>시장</span>
+                        <span className="right">편입가</span>
+                        <span className="center">수량</span>
+                        <span className="right">총액</span>
+                        <span></span>
+                      </div>
+
+                      {items.filter(i => !i.deleted).map(i => {
+                        const isNew = i.id === null;
+
+                        return (
+                          <div key={i.code} className="selected-row table">
+                            <span>{i.name} ({i.code})</span>
+                            <span>{i.market}</span>
+
+                            <span className="right">
+                              {formatPrice(i.priceAtAdd, i.market)}
+                            </span>
+
+                            <div className="qty-control">
+                              {isNew ? (
+                                <>
+                                  <button
+                                    className="qty-btn minus"
+                                    onClick={() =>
+                                      setItems(prev =>
+                                        prev.map(p =>
+                                          p.code === i.code && p.quantity > 1
+                                            ? { ...p, quantity: p.quantity - 1 }
+                                            : p
+                                        )
+                                      )
+                                    }
+                                  >
+                                    −
+                                  </button>
+                                  <span className="qty-value">{i.quantity}</span>
+                                  <button
+                                    className="qty-btn plus"
+                                    onClick={() =>
+                                      setItems(prev =>
+                                        prev.map(p =>
+                                          p.code === i.code
+                                            ? { ...p, quantity: p.quantity + 1 }
+                                            : p
+                                        )
+                                      )
+                                    }
+                                  >
+                                    +
+                                  </button>
+                                </>
+                              ) : (
+                                <span className="fixed-qty">{i.quantity}</span>
+                              )}
+                            </div>
+
+                            <span className="right">
+                              {calcTotal(i.priceAtAdd, i.quantity, i.market)}
+                            </span>
+
+                            <button
+                              className="remove-btn icon"
+                              onClick={() => removeItem(i.code)}
+                            >
+                              ✕
+                            </button>
+                          </div>
+                        );
+                      })}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <div className="modal-footer">
-              <button className="secondary-btn" onClick={() => setOpen(false)}>
-                취소
-              </button>
-              <button className="primary-btn" onClick={save}>
-                저장
-              </button>
+              <div className="modal-footer">
+                <button className="secondary-btn" onClick={() => setOpen(false)}>
+                  취소
+                </button>
+                <button className="primary-btn" onClick={save}>
+                  저장
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -363,3 +395,4 @@ export default function EditEtfModal({ etfName, onSaved }: Props) {
     </>
   );
 }
+

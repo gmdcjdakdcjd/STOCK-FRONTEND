@@ -11,7 +11,7 @@
 ================================ */
 .restore-content {
   padding: 1rem 1.25rem;
-  flex: 1;                 /* 🔑 표준 모달과 동일 */
+  flex: 1;                 /*  표준 모달과 동일 */
   overflow-y: auto;
 }
 

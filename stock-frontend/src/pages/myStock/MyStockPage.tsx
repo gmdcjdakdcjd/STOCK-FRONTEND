@@ -249,7 +249,7 @@ export default function MyStockPage() {
                     >
                         나의 ETF 가기
                     </button>
-                    
+
                     <button
                         className="btn-etf"
                         onClick={() => setShowAddToEtf(true)}
@@ -284,17 +284,17 @@ export default function MyStockPage() {
                 <div className="mystock-card-title">한국 관심 종목</div>
                 <table className="mystock-table">
                     <colgroup>
-                        <col style={{ width: "48px" }} />
-                        <col style={{ width: "100px" }} />
-                        <col style={{ width: "10px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "90px" }} />
-                        <col style={{ width: "90px" }} />
-                        <col style={{ width: "140px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "80px" }} />
+                        <col style={{ width: "48px" }} />  {/* No */}
+                        <col style={{ width: "100px" }} /> {/* 종목코드 */}
+                        <col style={{ width: "180px" }} /> {/* 종목명 */}
+                        <col style={{ width: "120px" }} /> {/* 상세보기 */}
+                        <col style={{ width: "110px" }} /> {/* 현재가 */}
+                        <col style={{ width: "110px" }} /> {/* 편입가 */}
+                        <col style={{ width: "80px" }} />  {/* +5% */}
+                        <col style={{ width: "80px" }} />  {/* +10% */}
+                        <col style={{ width: "140px" }} /> {/* 전략 */}
+                        <col style={{ width: "100px" }} /> {/* 등록일 */}
+                        <col style={{ width: "80px" }} />  {/* 삭제 */}
                     </colgroup>
 
                     <thead>
@@ -323,17 +323,17 @@ export default function MyStockPage() {
                 <div className="mystock-card-title">미국 관심 종목</div>
                 <table className="mystock-table">
                     <colgroup>
-                        <col style={{ width: "48px" }} />
-                        <col style={{ width: "100px" }} />
-                        <col style={{ width: "10px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "90px" }} />
-                        <col style={{ width: "90px" }} />
-                        <col style={{ width: "140px" }} />
-                        <col style={{ width: "110px" }} />
-                        <col style={{ width: "80px" }} />
+                        <col style={{ width: "48px" }} />  {/* No */}
+                        <col style={{ width: "100px" }} /> {/* 종목코드 */}
+                        <col style={{ width: "180px" }} /> {/* 종목명 */}
+                        <col style={{ width: "120px" }} /> {/* 상세보기 */}
+                        <col style={{ width: "110px" }} /> {/* 현재가 */}
+                        <col style={{ width: "110px" }} /> {/* 편입가 */}
+                        <col style={{ width: "80px" }} />  {/* +5% */}
+                        <col style={{ width: "80px" }} />  {/* +10% */}
+                        <col style={{ width: "140px" }} /> {/* 전략 */}
+                        <col style={{ width: "100px" }} /> {/* 등록일 */}
+                        <col style={{ width: "80px" }} />  {/* 삭제 */}
                     </colgroup>
 
                     <thead>

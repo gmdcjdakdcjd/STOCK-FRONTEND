@@ -55,7 +55,8 @@
 }
 
 .myetf-row.header:hover {
-  background: #f9fafb; /* hover 방지 */
+  background: #f9fafb;
+  /* hover 방지 */
 }
 
 /* 헤더에서는 링크/포인터/underline 전부 제거 */
@@ -87,7 +88,7 @@
   font-weight: 500;
 }
 
-/* ⭐ 데이터 행에서만 클릭 느낌 */
+/*  데이터 행에서만 클릭 느낌 */
 .myetf-row:not(.header) .col.name {
   cursor: pointer;
 }
@@ -232,6 +233,13 @@
   z-index: 1000;
 }
 
+@media (max-width: 768px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+}
+
 .modal-body {
   background: #ffffff;
   border-radius: 14px;
@@ -281,8 +289,10 @@
   margin-top: 6px;
   margin-bottom: 14px;
 }
+
 .myetf-header-actions {
   display: flex;
   align-items: center;
-  gap: 10px;   /* ← 여기 숫자만 취향대로 */
+  gap: 10px;
+  /* ← 여기 숫자만 취향대로 */
 }

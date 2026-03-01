@@ -5,19 +5,29 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* overflow는 숨기고 스크롤은 내부 래퍼에서 처리 */
+  overflow: hidden;
   background: rgba(0, 0, 0, 0.45);
+}
+
+/* 실제 스크롤이 동작하는 래퍼 - overlay 전체를 채우면서 스크롤 허용 */
+.create-etf-modal .modal-scroll-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
 }
 
 /* ================================
    Modal Body
 ================================ */
 .create-etf-modal .modal-body {
-  width: 92%;
-  max-width: 1200px;
-  max-height: 85vh;
+  width: 1300px;
+  min-width: 1300px;
+  max-height: 90vh;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   background: #ffffff;
@@ -107,7 +117,7 @@
 ================================ */
 .create-etf-modal .etf-builder {
   display: grid;
-  grid-template-columns: 4fr 6fr;
+  grid-template-columns: 1fr 1fr;
   gap: 1.25rem;
   padding: 0.75rem 1.25rem 1.25rem;
   flex: 1;
@@ -148,11 +158,7 @@
 .create-etf-modal .search-row {
   display: grid;
   grid-template-columns:
-    2fr
-    1fr
-    0.8fr
-    1fr
-    0.6fr;
+    2fr 1fr 0.8fr 1fr 0.6fr;
   align-items: center;
   gap: 6px;
   padding: 0.45rem 0.35rem;
@@ -161,15 +167,22 @@
   cursor: pointer;
 }
 
-.create-etf-modal .search-row.header {
+/* 헤더 - .search-row.header 대신 .search-header를 독립 사용하여 CSS 간섭 차단 */
+.create-etf-modal .search-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 0.8fr 1fr 0.6fr;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 0.35rem;
   font-weight: 600;
   font-size: 0.7rem;
   color: #6b7280;
   background: #f9fafb;
   cursor: default;
+  border-bottom: 1px solid #e5e7eb;
 }
 
-.create-etf-modal .search-row:not(.header):hover {
+.create-etf-modal .search-row:hover {
   background: #f9fafb;
 }
 
@@ -214,12 +227,18 @@
 .create-etf-modal .selected-row {
   display: grid;
   grid-template-columns:
-    2.4fr   /* 종목 */
-    0.6fr   /* 시장 */
-    1fr     /* 현재가 */
-    1fr     /* 수량 */
-    1.2fr   /* 총액 */
-    0.4fr;  /* 삭제 */
+    2.4fr
+    /* 종목 */
+    0.6fr
+    /* 시장 */
+    1fr
+    /* 현재가 */
+    1fr
+    /* 수량 */
+    1.2fr
+    /* 총액 */
+    0.4fr;
+  /* 삭제 */
   align-items: center;
   gap: 6px;
 }
@@ -318,44 +337,75 @@
   color: #374151;
   cursor: pointer;
 }
+
 .create-etf-modal .search-bar {
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  margin-bottom: 0.5rem;
+}
 
-  padding: 6px 8px;
-  background: #f9fafb;        /* 아주 연한 회색 */
+.create-etf-modal .search-input-wrapper {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  background: #f9fafb;
   border: 1px solid #e5e7eb;
   border-radius: 999px;
+  padding: 0 10px;
 }
 
 .create-etf-modal .search-input {
   flex: 1;
+  height: 34px;
   background: transparent;
   border: none;
+  font-size: 0.85rem;
 }
-.create-etf-modal .reset-btn.ghost {
-  width: 26px;
-  height: 26px;
 
+.create-etf-modal .reset-btn-inside {
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 50%;
   border: none;
-
-  background: #eef2f7;   /* search-bar보다 살짝 진함 */
+  background: #d1d5db;
   color: #6b7280;
-  font-size: 0.75rem;
-  font-weight: 700;
-
+  font-size: 0.65rem;
   cursor: pointer;
+  transition: all 0.15s ease;
 }
 
-.create-etf-modal .reset-btn.ghost:hover {
-  background: #e5e7eb;
+.create-etf-modal .reset-btn-inside:hover {
+  background: #9ca3af;
+  color: #fff;
 }
+
+.create-etf-modal .search-action-btn {
+  height: 36px;
+  padding: 0 1rem;
+  border-radius: 999px;
+  border: none;
+  background: #5a33ff;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.1s ease;
+  white-space: nowrap;
+}
+
+.create-etf-modal .search-action-btn:hover {
+  background: #4324d6;
+}
+
+.create-etf-modal .search-action-btn:active {
+  transform: translateY(1px);
+}
+
 .create-etf-modal .search-input:focus {
   outline: none;
 }

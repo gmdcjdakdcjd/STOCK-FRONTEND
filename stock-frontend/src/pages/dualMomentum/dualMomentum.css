@@ -52,7 +52,7 @@ table {
 th,
 td {
   padding: 6px 8px;
-  vertical-align: middle; /* ✅ 세로 중앙 정렬 */
+  vertical-align: middle; /*  세로 중앙 정렬 */
 }
 
 /* Header */
@@ -106,12 +106,12 @@ tbody tr:hover {
 =============================== */
 
 .up {
-  color: #d93025; /* 🔴 상승 */
+  color: #d93025; /*  상승 */
   font-weight: 600;
 }
 
 .down {
-  color: #1a73e8; /* 🔵 하락 */
+  color: #1a73e8; /*  하락 */
   font-weight: 600;
 }
 

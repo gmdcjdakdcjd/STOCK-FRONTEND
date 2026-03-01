@@ -57,7 +57,7 @@
 
 .latest-info {
   display: flex;
-  justify-content: center;      /* ✅ 정확히 중앙 */
+  justify-content: center;      /*  정확히 중앙 */
   align-items: center;
   gap: 14px;
   flex-wrap: wrap;
@@ -129,12 +129,12 @@
 ========================= */
 
 .up {
-  color: #d93025;   /* 🔴 상승 */
+  color: #d93025;   /*  상승 */
   font-weight: 600;
 }
 
 .down {
-  color: #1a73e8;   /* 🔵 하락 */
+  color: #1a73e8;   /*  하락 */
   font-weight: 600;
 }
 

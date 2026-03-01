@@ -1,4 +1,5 @@
 import type { MyStockDTO, PageResponseDTO } from "../../api/myStockApi";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import "./MyStockPage.css";
 
 interface Props {
@@ -14,8 +15,10 @@ export default function DeletedMyStockModal({
     onRestore,
     onPage,
 }: Props) {
+    //  배경 스크롤 방지
+    useLockBodyScroll();
 
-    // 🔐 null 방어 (핵심)
+    //  null 방어 (핵심)
     const list = result.dtoList ?? [];
     const hasData = list.length > 0;
 

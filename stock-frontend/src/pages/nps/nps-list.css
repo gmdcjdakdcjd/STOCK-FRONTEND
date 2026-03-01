@@ -30,7 +30,7 @@
 .nps-search-input-wrap input {
   width: 100%;
   height: 44px;
-  padding: 0 2.75rem 0 1rem; /* ✕ 버튼 공간 */
+  padding: 0 2.75rem 0 1rem; /*  버튼 공간 */
   border-radius: 14px;
   border: 2px solid #111;
   font-size: 1rem;
@@ -42,7 +42,7 @@
   border-color: #5a33ff;
 }
 
-/* input 내부 ✕ 버튼 */
+/* input 내부  버튼 */
 .nps-reset-inside {
   position: absolute;
   right: 0.75rem;
@@ -192,7 +192,7 @@
 .nps-search-input-wrap input {
   width: 100%;
   height: 44px;
-  padding: 0 2.75rem 0 1rem; /* ✕ 버튼 공간 */
+  padding: 0 2.75rem 0 1rem; /*  버튼 공간 */
   border-radius: 14px;
   border: 2px solid #111;
   font-size: 1rem;
@@ -204,7 +204,7 @@
   border-color: #5a33ff;
 }
 
-/* input 내부 ✕ 버튼 */
+/* input 내부  버튼 */
 .nps-reset-inside {
   position: absolute;
   right: 0.75rem;
@@ -365,7 +365,7 @@
 .stock-search-input-wrap input {
   width: 100%;
   height: 44px;
-  padding: 0 2.75rem 0 1rem; /* ✕ 버튼 공간 */
+  padding: 0 2.75rem 0 1rem; /*  버튼 공간 */
   border-radius: 14px;
   border: 2px solid #111;
   font-size: 1rem;
@@ -377,7 +377,7 @@
   border-color: #5a33ff;
 }
 
-/* input 내부 ✕ 버튼 */
+/* input 내부  버튼 */
 .stock-search-reset {
   position: absolute;
   right: 0.75rem;

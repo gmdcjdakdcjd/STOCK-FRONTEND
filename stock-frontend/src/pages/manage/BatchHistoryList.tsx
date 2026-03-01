@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { getBatchHistoryByDate } from "../../api/manageBatchApi";
 import type { BatchDateGroupDTO, BatchHistoryView } from "../../api/manageBatchApi";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 
 interface Props {
   list: BatchDateGroupDTO[];
@@ -15,6 +16,9 @@ export default function BatchHistoryList({ list }: Props) {
   const [loadingDate, setLoadingDate] = useState<string | null>(null);
   // 현재 열려있는 팝업의 날짜
   const [modalDate, setModalDate] = useState<string | null>(null);
+
+  //  배경 스크롤 방지
+  useLockBodyScroll(!!modalDate);
 
   /**
    * 상세보기 클릭 핸들러 (팝업 열기)

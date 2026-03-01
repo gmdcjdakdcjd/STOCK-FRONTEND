@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import "./RestoreEtfModal.css";
 
 interface Props {
@@ -13,6 +14,10 @@ export default function RestoreEtfModal({
   onRestored,
 }: Props) {
   const [open, setOpen] = useState(false);
+
+  //  배경 스크롤 방지 (팝업 열렸을 때만)
+  useLockBodyScroll(open);
+
   const [items, setItems] = useState<any[]>([]);
 
   const load = () => {

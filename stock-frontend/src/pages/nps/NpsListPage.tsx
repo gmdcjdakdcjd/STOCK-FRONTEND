@@ -46,7 +46,7 @@ function NpsListPage() {
         <div className="nps-search">
           <div className="nps-search-row">
 
-            {/* input + 내부 ✕ */}
+            {/* input + 내부  */}
             <div className="nps-search-input-wrap">
               <input
                 value={q}

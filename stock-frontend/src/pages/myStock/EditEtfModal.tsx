@@ -16,7 +16,7 @@ interface TempItem {
   code: string;
   name: string;
   market: "KR" | "US";
-  priceAtAdd: number | null;   // 🔑 편입가 (기존 or 현재가 스냅샷)
+  priceAtAdd: number | null;   //  편입가 (기존 or 현재가 스냅샷)
   quantity: number;
   originalQuantity?: number;
   deleted?: boolean;
@@ -90,7 +90,7 @@ export default function EditEtfModal({
             code: i.code,
             name: i.name,
             market: i.market,
-            priceAtAdd: i.priceAtAdd, // ✅ 서버에 저장된 편입가
+            priceAtAdd: i.priceAtAdd, //  서버에 저장된 편입가
             quantity: i.quantity,
             originalQuantity: i.quantity,
             deleted: false,
@@ -114,7 +114,7 @@ export default function EditEtfModal({
           code: s.code,
           name: s.name,
           market: s.market,
-          priceAtAdd: s.currentPrice, // 🔑 현재가 스냅샷
+          priceAtAdd: s.currentPrice, //  현재가 스냅샷
           quantity: 1,
         },
       ];
@@ -172,50 +172,56 @@ export default function EditEtfModal({
 
   return (
     <div className="modal-overlay" onClick={e => e.target === e.currentTarget && onClose()}>
-      <div className="modal-body" onClick={e => e.stopPropagation()}>
+      {/* 실제 스크롤이 동작하는 래퍼: position:fixed 요소에서는 overflow 스크롤이
+          브라우저에 따라 제대로 동작하지 않으므로, 래퍼에서 스크롤을 처리한다 */}
+      <div
+        className="modal-scroll-wrapper"
+        onClick={e => e.stopPropagation()}
+      >
+        <div className="modal-body" onClick={e => e.stopPropagation()}>
 
-        {/* Header */}
-        <header className="modal-header">
-          <div className="header-text">
-            <h3>ETF 종목 추가</h3>
-            <div className="header-notice">
-              기존 ETF 종목은 삭제할 수 없습니다.
-              신규로 추가한 종목만 삭제 가능합니다.
+          {/* Header */}
+          <header className="modal-header">
+            <div className="header-text">
+              <h3>ETF 종목 추가</h3>
+              <div className="header-notice">
+                기존 ETF 종목은 삭제할 수 없습니다.
+                신규로 추가한 종목만 삭제 가능합니다.
+              </div>
             </div>
-          </div>
-          <button className="close-btn" onClick={onClose}>✕</button>
-        </header>
+            <button className="close-btn" onClick={onClose}>✕</button>
+          </header>
 
-        <div className="modal-content">
-          {/* ETF Meta */}
-          <div className="form-section">
-            <label>ETF 선택</label>
-            <select
-              value={selectedEtf}
-              onChange={e => setSelectedEtf(e.target.value)}
-            >
-              {etfList.map(name => (
-                <option key={name} value={name}>{name}</option>
-              ))}
-            </select>
+          <div className="modal-content">
+            {/* ETF Meta */}
+            <div className="form-section">
+              <label>ETF 선택</label>
+              <select
+                value={selectedEtf}
+                onChange={e => setSelectedEtf(e.target.value)}
+              >
+                {etfList.map(name => (
+                  <option key={name} value={name}>{name}</option>
+                ))}
+              </select>
 
-            <label>ETF 설명</label>
-            <textarea
-              rows={2}
-              value={description}
-              onChange={e => setDescription(e.target.value)}
-            />
-          </div>
+              <label>ETF 설명</label>
+              <textarea
+                rows={2}
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+              />
+            </div>
 
-          <div className="divider" />
+            <div className="divider" />
 
-          <div className="etf-builder">
-            {/* ===== 좌측: 내 관심 종목 ===== */}
-            <div className="search-panel">
-              <h4>내 관심 종목</h4>
+            <div className="etf-builder">
+              {/* ===== 좌측: 내 관심 종목 ===== */}
+              <div className="search-panel">
+                <h4>내 관심 종목</h4>
 
-              <div className="search-table">
-                <div className="search-row header">
+                {/* 검색 테이블 헤더 - scroll 영역 밖에 위치 */}
+                <div className="search-header">
                   <span>종목명</span>
                   <span>코드</span>
                   <span>시장</span>
@@ -223,122 +229,124 @@ export default function EditEtfModal({
                   <span></span>
                 </div>
 
-                {myStocks.map(s => {
-                  const selected = items.some(
-                    it => it.code === s.code && !it.deleted
-                  );
+                <div className="search-table">
+                  {myStocks.map(s => {
+                    const selected = items.some(
+                      it => it.code === s.code && !it.deleted
+                    );
 
-                  return (
-                    <div
-                      key={s.code}
-                      className={`search-row ${selected ? "disabled" : ""}`}
-                      onClick={() => !selected && addItem(s)}
-                    >
-                      <span>{s.name}</span>
-                      <span>{s.code}</span>
-                      <span>{s.market}</span>
-                      <span className="right">
-                        {formatPrice(s.currentPrice, s.market)}
-                      </span>
-                      <span className="action">
-                        {selected ? "추가됨" : "추가"}
-                      </span>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* ===== 우측: 구성 종목 ===== */}
-            <div className="selected-panel">
-              <h4>구성 종목</h4>
-
-              <div className="selected-list">
-                <div className="selected-header table">
-                  <span>종목</span>
-                  <span>시장</span>
-                  <span className="right">편입가</span>
-                  <span className="center">수량</span>
-                  <span className="right">총액</span>
-                  <span></span>
-                </div>
-
-                {items.filter(i => !i.deleted).map(i => {
-                  const isNew = i.id === null;
-
-                  return (
-                    <div key={i.code} className="selected-row table">
-                      <span>{i.name} ({i.code})</span>
-                      <span>{i.market}</span>
-
-                      <span className="right">
-                        {formatPrice(i.priceAtAdd, i.market)}
-                      </span>
-
-                      <div className="qty-control">
-                        {isNew ? (
-                          <>
-                            <button
-                              className="qty-btn minus"
-                              onClick={() =>
-                                setItems(prev =>
-                                  prev.map(p =>
-                                    p.code === i.code && p.quantity > 1
-                                      ? { ...p, quantity: p.quantity - 1 }
-                                      : p
-                                  )
-                                )
-                              }
-                            >
-                              −
-                            </button>
-                            <span className="qty-value">{i.quantity}</span>
-                            <button
-                              className="qty-btn plus"
-                              onClick={() =>
-                                setItems(prev =>
-                                  prev.map(p =>
-                                    p.code === i.code
-                                      ? { ...p, quantity: p.quantity + 1 }
-                                      : p
-                                  )
-                                )
-                              }
-                            >
-                              +
-                            </button>
-                          </>
-                        ) : (
-                          <span className="fixed-qty">{i.quantity}</span>
-                        )}
-                      </div>
-
-                      <span className="right">
-                        {formatPrice(
-                          (i.priceAtAdd ?? 0) * i.quantity,
-                          i.market
-                        )}
-                      </span>
-
-                      <button
-                        className={`remove-btn icon ${!isNew ? "disabled" : ""}`}
-                        disabled={!isNew}
-                        onClick={() => isNew && removeItem(i.code)}
+                    return (
+                      <div
+                        key={s.code}
+                        className={`search-row ${selected ? "disabled" : ""}`}
+                        onClick={() => !selected && addItem(s)}
                       >
-                        ✕
-                      </button>
-                    </div>
-                  );
-                })}
+                        <span>{s.name}</span>
+                        <span>{s.code}</span>
+                        <span>{s.market}</span>
+                        <span className="right">
+                          {formatPrice(s.currentPrice, s.market)}
+                        </span>
+                        <span className="action">
+                          {selected ? "추가됨" : "추가"}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ===== 우측: 구성 종목 ===== */}
+              <div className="selected-panel">
+                <h4>구성 종목</h4>
+
+                <div className="selected-list">
+                  <div className="selected-header">
+                    <span>종목</span>
+                    <span>시장</span>
+                    <span className="right">편입가</span>
+                    <span className="center">수량</span>
+                    <span className="right">총액</span>
+                    <span></span>
+                  </div>
+
+                  {items.filter(i => !i.deleted).map(i => {
+                    const isNew = i.id === null;
+
+                    return (
+                      <div key={i.code} className="selected-row">
+                        <span>{i.name} ({i.code})</span>
+                        <span>{i.market}</span>
+
+                        <span className="right">
+                          {formatPrice(i.priceAtAdd, i.market)}
+                        </span>
+
+                        <div className="qty-control">
+                          {isNew ? (
+                            <>
+                              <button
+                                className="qty-btn minus"
+                                onClick={() =>
+                                  setItems(prev =>
+                                    prev.map(p =>
+                                      p.code === i.code && p.quantity > 1
+                                        ? { ...p, quantity: p.quantity - 1 }
+                                        : p
+                                    )
+                                  )
+                                }
+                              >
+                                −
+                              </button>
+                              <span className="qty-value">{i.quantity}</span>
+                              <button
+                                className="qty-btn plus"
+                                onClick={() =>
+                                  setItems(prev =>
+                                    prev.map(p =>
+                                      p.code === i.code
+                                        ? { ...p, quantity: p.quantity + 1 }
+                                        : p
+                                    )
+                                  )
+                                }
+                              >
+                                +
+                              </button>
+                            </>
+                          ) : (
+                            <span className="fixed-qty">{i.quantity}</span>
+                          )}
+                        </div>
+
+                        <span className="right">
+                          {formatPrice(
+                            (i.priceAtAdd ?? 0) * i.quantity,
+                            i.market
+                          )}
+                        </span>
+
+                        <button
+                          className={`remove-btn icon ${!isNew ? "disabled" : ""}`}
+                          disabled={!isNew}
+                          onClick={() => isNew && removeItem(i.code)}
+                        >
+                          ✕
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Footer */}
-        <div className="modal-footer">
-          <button className="secondary-btn" onClick={onClose}>취소</button>
-          <button className="primary-btn" onClick={save}>저장</button>
+          {/* Footer */}
+          <div className="modal-footer">
+            <button className="secondary-btn" onClick={onClose}>취소</button>
+            <button className="primary-btn" onClick={save}>저장</button>
+          </div>
         </div>
       </div>
     </div>

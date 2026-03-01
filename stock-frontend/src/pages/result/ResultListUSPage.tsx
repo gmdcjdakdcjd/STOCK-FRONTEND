@@ -62,13 +62,13 @@ export default function BoardListUSPage() {
         });
         setStrategyLabelMap(map);
 
-        // ✅ 핵심 수정: null 방어
+        //  핵심 수정: null 방어
         setRows(data.response.dtoList ?? []);
         setPageInfo(data.response);
       })
       .catch(() => {
         alert("미국 전략 목록을 불러오지 못했습니다.");
-        setRows([]);          // 🔒 안전 처리
+        setRows([]);          //  안전 처리
         setPageInfo(null);
       });
   }, [page, size, strategy, regDate]);

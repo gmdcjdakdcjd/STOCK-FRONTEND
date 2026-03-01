@@ -28,7 +28,7 @@ export default function BoardListKRPage() {
   const regDate = params.get("regDate") ?? "";
 
   /* =========================
-     🔑 검색 조건 state
+      검색 조건 state
      ========================= */
   const [searchStrategy, setSearchStrategy] = useState("");
   const [searchDate, setSearchDate] = useState("");
@@ -62,13 +62,13 @@ export default function BoardListKRPage() {
         });
         setStrategyLabelMap(map);
 
-        // ✅ 핵심 수정: null 방어
+        //  핵심 수정: null 방어
         setRows(data.response.dtoList ?? []);
         setPageInfo(data.response);
       })
       .catch(() => {
         alert("한국 전략 목록을 불러오지 못했습니다.");
-        setRows([]);          // 🔒 안전 장치
+        setRows([]);          //  안전 장치
         setPageInfo(null);
       });
   }, [page, size, strategy, regDate]);

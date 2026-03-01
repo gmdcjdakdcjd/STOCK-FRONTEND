@@ -13,6 +13,13 @@
   background: rgba(0, 0, 0, 0.45);
 }
 
+@media (max-width: 768px) {
+  .modal-overlay {
+    align-items: flex-start;
+    padding-top: 2rem;
+  }
+}
+
 /* ================================
    Modal Body
 ================================ */
@@ -129,7 +136,7 @@
 }
 
 /* ================================
-   Cell Alignment (⭐ 핵심 수정)
+   Cell Alignment ( 핵심 수정)
 ================================ */
 
 /* 코드 */
@@ -146,7 +153,8 @@
 .holdings-header-row .num,
 .holdings-row .num {
   display: flex;
-  justify-content: center;   /* ← 헤더 기준선 아래 정확히 */
+  justify-content: center;
+  /* ← 헤더 기준선 아래 정확히 */
   align-items: center;
 
   font-variant-numeric: tabular-nums;

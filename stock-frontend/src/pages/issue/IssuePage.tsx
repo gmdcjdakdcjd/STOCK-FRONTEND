@@ -21,7 +21,7 @@ export default function IssuePage() {
   return (
     <div className="container mt-4">
       {/* ================= KR ================= */}
-      {/* <h4 className="fw-bold mt-5">🇰🇷 한국 전략</h4> */}
+      {/* <h4 className="fw-bold mt-5"> 한국 전략</h4> */}
 
       {Object.entries(data)
         .filter(([key]) => key.endsWith("_KR"))
@@ -35,7 +35,7 @@ export default function IssuePage() {
         ))}
 
       {/* ================= US ================= */}
-      {/* <h4 className="fw-bold mt-5">🇺🇸 미국 전략</h4> */}
+      {/* <h4 className="fw-bold mt-5"> 미국 전략</h4> */}
 
       {Object.entries(data)
         .filter(([key]) => key.endsWith("_US"))

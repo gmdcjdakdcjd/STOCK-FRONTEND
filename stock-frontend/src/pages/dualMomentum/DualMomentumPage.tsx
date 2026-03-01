@@ -29,7 +29,7 @@ export default function DualMomentumPage() {
         {!loading && data && (
           <>
             {/* <h3 className="fw-bold mb-4">
-              📊 듀얼 모멘텀 전략별 결과 비교
+               듀얼 모멘텀 전략별 결과 비교
             </h3> */}
 
             {STRATEGY_ORDER

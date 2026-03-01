@@ -5,10 +5,21 @@
   position: fixed;
   inset: 0;
   z-index: 1000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  /* overflow는 숨기고 스크롤은 내부 래퍼에서 처리 */
+  overflow: hidden;
   background: rgba(0, 0, 0, 0.45);
+}
+
+/* 실제 스크롤이 동작하는 래퍼 - overlay 전체를 채우면서 스크롤 허용 */
+.modal-scroll-wrapper {
+  width: 100%;
+  height: 100%;
+  overflow-x: auto;
+  overflow-y: auto;
+  padding: 2rem 1rem;
+  box-sizing: border-box;
+  /* justify-content:center는 overflow 시 왼쪽이 잘리므로 사용하지 않음.
+     대신 modal-body에 margin:0 auto 로 가운데 정렬 처리 */
 }
 
 /* ================================
@@ -23,6 +34,8 @@
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  /* 래퍼에서 flex 센터링 대신 margin auto로 가운데 정렬 */
+  margin: 0 auto;
 }
 
 /* ================================
@@ -134,28 +147,37 @@
    Search Table (좌측)
 ================================ */
 .search-table {
-  display: flex;
-  flex-direction: column;
   flex: 1;
   overflow-y: auto;
+  border-top: 1px solid #e5e7eb;
+}
+
+.search-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 0.8fr 1fr 0.6fr;
+  align-items: center;
+  gap: 6px;
+  padding: 0.45rem 0.35rem;
+  font-weight: 600;
+  font-size: 0.7rem;
+  color: #6b7280;
+  background: #f9fafb;
+  cursor: default;
+  border-bottom: 1px solid #e5e7eb;
 }
 
 .search-row {
   display: grid;
-  grid-template-columns: 1fr 90px 60px 110px 60px;
+  grid-template-columns: 2fr 1fr 0.8fr 1fr 0.6fr;
   align-items: center;
-  padding: 0.45rem 0.25rem;
+  gap: 6px;
+  padding: 0.45rem 0.35rem;
   font-size: 0.8rem;
   border-bottom: 1px solid #f1f5f9;
   cursor: pointer;
 }
 
-.search-row.header {
-  font-size: 0.7rem;
-  font-weight: 600;
-  color: #6b7280;
-  cursor: default;
-}
+/* .search-row.header 대신 .search-header를 독립 사용하여 CSS 간섭 차단 */
 
 .search-row.disabled {
   background: #f3f4f6;
@@ -182,12 +204,25 @@
   overflow-y: auto;
 }
 
-.selected-header.table,
-.selected-row.table {
+/*  헤더 / 로우 컬럼 완전 일치 */
+.selected-header,
+.selected-row {
   display: grid;
-  grid-template-columns: 1.4fr 60px 100px 120px 120px 32px;
+  grid-template-columns:
+    2.4fr
+    /* 종목 */
+    0.6fr
+    /* 시장 */
+    1fr
+    /* 편입가 */
+    1fr
+    /* 수량 */
+    1.2fr
+    /* 총액 */
+    0.4fr;
+  /* 삭제 */
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .selected-header {
@@ -219,7 +254,8 @@
   align-items: center;
   justify-content: space-between;
 
-  width: 78px;          /* ⭐ 고정 폭 */
+  width: 78px;
+  /*  고정 폭 */
   height: 26px;
   padding: 0 6px;
 

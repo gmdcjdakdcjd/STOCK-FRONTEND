@@ -123,10 +123,10 @@
 
 .nps-search-input-wrap input {
   width: 100%;
-  padding-right: 36px; /* ✕ 버튼 자리 확보 */
+  padding-right: 36px; /*  버튼 자리 확보 */
 }
 
-/* 내부 ✕ 버튼 - soft pink */
+/* 내부  버튼 - soft pink */
 .nps-reset-inside {
   position: absolute;
   top: 50%;
