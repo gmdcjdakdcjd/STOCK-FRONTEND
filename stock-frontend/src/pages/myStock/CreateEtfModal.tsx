@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import { createMyEtf } from "../../api/myEtfApi";
 import type { MyEtfCreateRequestDTO } from "../myEtf/myEtf.types";
 
@@ -52,6 +53,9 @@ export default function CreateEtfModal({
   onClose,
   onCreated,
 }: Props) {
+  // 모달 오픈 시 배경(body) 스크롤 방지
+  useLockBodyScroll(open);
+
   if (!open) return null;
 
   const [etfName, setEtfName] = useState("");

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { useLockBodyScroll } from "../../hooks/useLockBodyScroll";
 import "./EditEtfModal.css";
 
 /* =========================
@@ -51,6 +52,9 @@ export default function EditEtfModal({
   onClose,
   onSaved,
 }: Props) {
+  // 모달 오픈 시 배경(body) 스크롤 방지
+  useLockBodyScroll(open);
+
   const [etfList, setEtfList] = useState<string[]>([]);
   const [selectedEtf, setSelectedEtf] = useState("");
 
