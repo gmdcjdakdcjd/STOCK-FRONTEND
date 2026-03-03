@@ -25,10 +25,6 @@ body,
 }
 
 /*  스크롤은 body만 담당 */
-html {
-  /* 브라우저 기본 스크롤 유지 */
-}
-
 body {
   margin: 0;
   display: flex;
@@ -274,12 +270,32 @@ body {
 ================================ */
 .footer {
   border-top: 1px solid #e5e7eb;
-  padding: 0.75rem;
-  text-align: center;
+  padding: 1.5rem 0;
   min-width: 1200px;
+  background: #f9fafb;
+}
 
-  font-size: 0.8rem;
+.footer-inner {
+  padding: 0 var(--content-padding-x);
+  display: flex;
+  justify-content: center;
+}
+
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
   color: #6b7280;
+}
+
+.footer-sep {
+  color: #d1d5db;
+  font-weight: 300;
+}
+
+.footer-contact {
+  font-weight: 500;
 }
 
 /* ===============================

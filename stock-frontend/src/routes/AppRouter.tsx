@@ -60,7 +60,7 @@ function AppRouter() {
             {/* =========================
            ROOT
            ========================= */}
-            <Route path="/" element={<Navigate to="/stockIndex" replace />} />
+            <Route path="/" element={<Navigate to="/marketTrend" replace />} />
 
             {/* =========================
            AUTH

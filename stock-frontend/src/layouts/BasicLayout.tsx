@@ -305,7 +305,17 @@ function BasicLayout({ children }: { children?: ReactNode }) {
       </main>
 
       {/* ================= FOOTER ================= */}
-      <footer className="footer">© STOCK PROJECT</footer>
+      <footer className="footer">
+        <div className="footer-inner">
+          <div className="footer-info">
+            <span className="footer-copy">© STOCK PROJECT</span>
+            <span className="footer-sep">|</span>
+            <span className="footer-contact">
+              Contact: rlfhrdyd21@gmail.com
+            </span>
+          </div>
+        </div>
+      </footer>
     </>
   );
 }
