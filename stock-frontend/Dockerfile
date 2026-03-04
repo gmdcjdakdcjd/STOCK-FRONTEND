@@ -1,30 +1,22 @@
-# =========================
-# build stage
-# =========================
-FROM node:20-alpine AS build
+# ===============================
+# Frontend (Vite - Dev)
+# ===============================
+FROM node:20-alpine
 
+# 작업 디렉토리
 WORKDIR /app
 
+# package 파일 먼저 복사 (캐시 활용)
 COPY package*.json ./
+
+# 의존성 설치
 RUN npm install
 
+# 소스 복사
 COPY . .
 
-ARG VITE_API_BASE_URL
-ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
+# Vite dev server 포트
+EXPOSE 5173
 
-RUN echo "VITE_API_BASE_URL=$VITE_API_BASE_URL"
-RUN npm run build
-
-
-# =========================
-# nginx stage
-# =========================
-FROM nginx:alpine
-
-COPY --from=build /app/dist /usr/share/nginx/html
-COPY nginx.conf /etc/nginx/conf.d/default.conf
-
-EXPOSE 80
-
-CMD ["nginx", "-g", "daemon off;"]
+# Vite dev 실행 (docker mode)
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--mode", "docker"]
