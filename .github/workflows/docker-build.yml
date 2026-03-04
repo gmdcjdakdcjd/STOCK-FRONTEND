@@ -28,7 +28,10 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ghcr.io/gmdcjdakdcjd/stock-frontend:latest ./stock-frontend
+          docker build \
+            --build-arg VITE_API_BASE_URL=/api \
+            -t ghcr.io/gmdcjdakdcjd/stock-frontend:latest \
+            ./stock-frontend
 
       - name: Push Docker Image
         run: |
