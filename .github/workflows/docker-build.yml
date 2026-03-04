@@ -27,12 +27,7 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker Image
-        run: |
-          docker build \
-            --build-arg VITE_API_BASE_URL=/api \
-            -t ghcr.io/gmdcjdakdcjd/stock-frontend:latest \
-            ./stock-frontend
+        run: docker build --build-arg VITE_API_BASE_URL=/api -t ghcr.io/gmdcjdakdcjd/stock-frontend:latest ./stock-frontend
 
       - name: Push Docker Image
-        run: |
-          docker push ghcr.io/gmdcjdakdcjd/stock-frontend:latest
+        run: docker push ghcr.io/gmdcjdakdcjd/stock-frontend:latest
