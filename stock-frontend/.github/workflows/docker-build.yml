@@ -28,7 +28,7 @@ jobs:
 
       - name: Build Docker Image
         run: |
-          docker build -t ghcr.io/gmdcjdakdcjd/stock-frontend:latest .
+          docker build -t ghcr.io/gmdcjdakdcjd/stock-frontend:latest ./stock-frontend
 
       - name: Push Docker Image
         run: |
