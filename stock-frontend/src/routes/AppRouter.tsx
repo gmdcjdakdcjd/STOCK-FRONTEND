@@ -26,6 +26,8 @@ import BatchHistoryPage from "../pages/manage/BatchHistoryPage";
 import NpsSummaryPage from "../pages/nps/NpsSummaryPage";
 import NpsListPage from "../pages/nps/NpsListPage";
 import KodexSummaryPage from "../pages/kodex/KodexSummaryPage";
+// TIGER ETF 요약 페이지 컴포넌트 임포트
+import TigerSummaryPage from "../pages/tiger/TigerSummaryPage";
 import StockSearchPage from "../pages/stock/StockSearchPage";
 import MarketCapPage from "../pages/marketCap/MarketCapPage";
 // import IndicatorPage from "../pages/indicator/IndicatorPage";
@@ -107,6 +109,8 @@ function AppRouter() {
                <Route path="/myetf/detail" element={<MyEtfDetailPage />} />
 
                <Route path="/kodex/summary" element={<KodexSummaryPage />} />
+               {/* TIGER ETF 요약 페이지 라우트 등록 */}
+               <Route path="/tiger/summary" element={<TigerSummaryPage />} />
                <Route path="/marketCap" element={<MarketCapPage />} />
                <Route path="/nps/summary" element={<NpsSummaryPage />} />
                <Route path="/nps/list" element={<NpsListPage />} />

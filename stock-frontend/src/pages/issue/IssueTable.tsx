@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import type { StrategyDetail } from "./issue.types";
 import { fetchKodexSummary, fetchKodexHoldings, type KodexEtfHolding } from "../../api/kodexApi";
+import { fetchTigerSummary, fetchTigerHoldings } from "../../api/tigerApi";
 import KodexHoldingsModal from "../kodex/KodexHoldingsModal";
 import "./issue.css";
 
@@ -27,17 +28,30 @@ export default function IssueTable({ title, list, market }: Props) {
     setShowModal(true);
     setLoading(true);
     try {
-      // 1. 이름으로 먼저 ETF 정보를 검색하여 정확한 etfId를 찾습니다.
-      const summaries = await fetchKodexSummary(row.name);
-      // 정확히 일치하는 이름을 먼저 찾고, 없으면 첫 번째 검색 결과 사용
-      const targetEtf = summaries.find(e => e.etfName === row.name) || summaries[0];
+      const isTiger = row.name.includes("TIGER");
 
-      if (targetEtf) {
-        // 2. 검색된 ETF의 고유 ID(etfId)를 사용하여 구성 종목을 가져옵니다.
-        const data = await fetchKodexHoldings(targetEtf.etfId);
-        setHoldings(data);
+      if (isTiger) {
+        // TIGER API 호출
+        const summaries = await fetchTigerSummary(row.name);
+        const targetEtf = summaries.find(e => e.etfName === row.name) || summaries[0];
+
+        if (targetEtf) {
+          const data = await fetchTigerHoldings(targetEtf.etfId);
+          setHoldings(data as any);
+        } else {
+          setHoldings([]);
+        }
       } else {
-        setHoldings([]);
+        // 기존 KODEX API 호출
+        const summaries = await fetchKodexSummary(row.name);
+        const targetEtf = summaries.find(e => e.etfName === row.name) || summaries[0];
+
+        if (targetEtf) {
+          const data = await fetchKodexHoldings(targetEtf.etfId);
+          setHoldings(data);
+        } else {
+          setHoldings([]);
+        }
       }
     } catch (err) {
       console.error(err);

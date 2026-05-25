@@ -233,7 +233,11 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                   </NavLink> */}
                   <NavLink to="/kodex/summary" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>
-                    ETF 검색
+                    KODEX ETF
+                  </NavLink>
+                  <NavLink to="/tiger/summary" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    TIGER ETF
                   </NavLink>
                   <NavLink to="/marketCap" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>

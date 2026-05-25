@@ -79,8 +79,8 @@
   overflow-y: auto;
 }
 
-/* kodex 전용 스크롤 강제 (전역 .modal-content 충돌 방지) */
-.modal-content.kodex-holdings-content {
+/* tiger 전용 스크롤 강제 (전역 .modal-content 충돌 방지) */
+.modal-content.tiger-holdings-content {
   min-height: 0;
   overflow-y: auto;
 }
@@ -101,13 +101,13 @@
 ================================ */
 
 /* header */
-.kodex-holdings-content .holdings-header-row {
+.tiger-holdings-content .holdings-header-row {
   position: sticky;
   top: 0;
   z-index: 1;
 
   display: grid;
-  grid-template-columns: 140px 1.5fr 1fr 1fr 1.2fr;
+  grid-template-columns: 140px 1.5fr 1fr 1fr;
   align-items: center;
 
   padding: 0.75rem 1rem;
@@ -120,9 +120,9 @@
 }
 
 /* row */
-.kodex-holdings-content .holdings-row {
+.tiger-holdings-content .holdings-row {
   display: grid;
-  grid-template-columns: 140px 1.5fr 1fr 1fr 1.2fr;
+  grid-template-columns: 140px 1.5fr 1fr 1fr;
   align-items: center;
 
   padding: 0.75rem 1rem;
@@ -131,7 +131,7 @@
   font-size: 0.9rem;
 }
 
-.kodex-holdings-content .holdings-row:hover {
+.tiger-holdings-content .holdings-row:hover {
   background: #f9fafb;
 }
 
@@ -140,18 +140,18 @@
 ================================ */
 
 /* 코드 */
-.kodex-holdings-content .holdings-row .code {
+.tiger-holdings-content .holdings-row .code {
   font-family: monospace;
 }
 
 /* 종목명 */
-.kodex-holdings-content .holdings-row .name {
+.tiger-holdings-content .holdings-row .name {
   font-weight: 500;
 }
 
 /* 숫자 컬럼 (헤더 + row 동일 기준) */
-.kodex-holdings-content .holdings-header-row .num,
-.kodex-holdings-content .holdings-row .num {
+.tiger-holdings-content .holdings-header-row .num,
+.tiger-holdings-content .holdings-row .num {
   display: flex;
   justify-content: center;
   /* 헤더 기준선 아래 정확히 */
