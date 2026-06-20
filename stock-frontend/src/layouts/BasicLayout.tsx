@@ -73,6 +73,15 @@ function BasicLayout({ children }: { children?: ReactNode }) {
     }
   };
 
+  /* =========================
+     게스트 로그인 처리
+     백엔드의 게스트 전용 로그인 API를 호출하여 세션을 발급받습니다.
+     로그인 실패 시에는 로그인 페이지로 이동시킵니다.
+     ========================= */
+  const handleGuestLogin = () => {
+    navigate("/login?type=guest");
+  };
+
   const toggleMenu = (key: MenuKey) => {
     setOpenMenu(prev => (prev === key ? null : key));
   };
@@ -263,11 +272,10 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                     ${!user ? "login-required" : ""}
                     ${openMenu === "mypage" ? "active" : ""}
                   `}
-                onClick={user ? () => toggleMenu("mypage") : undefined}
-                disabled={!user}
-                data-tooltip={!user ? "로그인 후 이용 가능" : undefined}
+                onClick={user ? () => toggleMenu("mypage") : handleGuestLogin}
+                data-tooltip={!user ? "클릭 시 guest 계정으로 로그인" : undefined}
               >
-                {user ? "👤 마이페이지" : "👥 게스트"}
+                {user ? "👤 마이페이지" : "👥 게스트로 체험해보기"}
                 {user && <span className="nav-caret">▾</span>}
               </button>
 

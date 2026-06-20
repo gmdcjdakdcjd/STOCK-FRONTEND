@@ -88,3 +88,27 @@
 .login-btn:hover {
   background: #1d4ed8;
 }
+
+/* ===== Switch Link ===== */
+.login-switch {
+  margin-top: 1.2rem;
+  text-align: center;
+}
+
+.switch-link {
+  font-size: 0.85rem;
+  color: #2563eb;
+  text-decoration: none;
+}
+
+.switch-link:hover {
+  text-decoration: underline;
+}
+
+/* ===== Read-only Input ===== */
+.form-group input:read-only {
+  background-color: #f3f4f6;
+  color: #6b7280;
+  cursor: not-allowed;
+  border-color: #e5e7eb;
+}
