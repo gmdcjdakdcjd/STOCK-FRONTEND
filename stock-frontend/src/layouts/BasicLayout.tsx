@@ -275,7 +275,7 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                 onClick={user ? () => toggleMenu("mypage") : handleGuestLogin}
                 data-tooltip={!user ? "클릭 시 guest 계정으로 로그인" : undefined}
               >
-                {user ? "👤 마이페이지" : "👥 게스트로 체험해보기"}
+                {user ? "👤 마이페이지" : "🚀 가입 없이 시작하기"}
                 {user && <span className="nav-caret">▾</span>}
               </button>
 
