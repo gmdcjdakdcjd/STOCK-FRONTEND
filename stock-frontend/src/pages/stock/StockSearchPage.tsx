@@ -56,9 +56,21 @@ function StockSearchPage() {
   // =====================
   const [stock, setStock] = useState<Stock | null>(null);
   const [priceList, setPriceList] = useState<PriceRow[]>([]);
+  const [chartPriceList, setChartPriceList] = useState<PriceRow[]>([]);
   const [signalList, setSignalList] = useState<SignalInfo[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // =====================
+  // Paging States
+  // =====================
+  const [page, setPage] = useState(1);
+  const [hasMore, setHasMore] = useState(true);
+  const [pagingLoading, setPagingLoading] = useState(false);
+
+  const [signalPage, setSignalPage] = useState(1);
+  const [hasMoreSignals, setHasMoreSignals] = useState(true);
+  const [signalPagingLoading, setSignalPagingLoading] = useState(false);
 
   // =====================
   // Chart
@@ -94,8 +106,15 @@ function StockSearchPage() {
     setSelectedMarket(null);
     setStock(null);
     setPriceList([]);
+    setChartPriceList([]);
     setSignalList([]);
     setError(null);
+    setPage(1);
+    setHasMore(true);
+    setPagingLoading(false);
+    setSignalPage(1);
+    setHasMoreSignals(true);
+    setSignalPagingLoading(false);
   };
 
   // =====================
@@ -166,8 +185,13 @@ function StockSearchPage() {
       }
 
       setStock(data.stock);
+      setChartPriceList(data.chartPriceList || []);
       setPriceList(data.priceList || []);
       setSignalList(data.signalList || []);
+      setPage(1);
+      setHasMore((data.priceList || []).length === 20);
+      setSignalPage(1);
+      setHasMoreSignals((data.signalList || []).length === 10);
     } catch {
       setError("검색 중 오류가 발생했습니다.");
     } finally {
@@ -176,6 +200,66 @@ function StockSearchPage() {
       setCodeAutoOpen(false);
       setActiveNameIndex(-1);
       setActiveCodeIndex(-1);
+    }
+  };
+
+  // =====================
+  // Load More Prices (API call)
+  // =====================
+  const loadMorePrices = async () => {
+    if (pagingLoading || !hasMore || !stock) return;
+
+    setPagingLoading(true);
+    const nextPage = page + 1;
+
+    try {
+      const res = await fetch(
+        `/api/stock/prices?code=${stock.code}&page=${nextPage}&size=20`
+      );
+      if (!res.ok) throw new Error();
+
+      const newPrices = await res.json();
+
+      if (newPrices.length < 20) {
+        setHasMore(false);
+      }
+
+      setPriceList(prev => [...prev, ...newPrices]);
+      setPage(nextPage);
+    } catch {
+      console.error("추가 데이터를 불러오는 데 실패했습니다.");
+    } finally {
+      setPagingLoading(false);
+    }
+  };
+
+  // =====================
+  // Load More Signals (API call)
+  // =====================
+  const loadMoreSignals = async () => {
+    if (signalPagingLoading || !hasMoreSignals || !stock) return;
+
+    setSignalPagingLoading(true);
+    const nextPage = signalPage + 1;
+
+    try {
+      const res = await fetch(
+        `/api/stock/signals?code=${stock.code}&page=${nextPage}&size=10`
+      );
+      if (!res.ok) throw new Error();
+
+      const newSignals = await res.json();
+
+      if (newSignals.length < 10) {
+        setHasMoreSignals(false);
+      }
+
+      setSignalList(prev => [...prev, ...newSignals]);
+      setSignalPage(nextPage);
+    } catch {
+      console.error("추가 시그널 데이터를 불러오는 데 실패했습니다.");
+    } finally {
+      setSignalPagingLoading(false);
     }
   };
 
@@ -420,6 +504,17 @@ function StockSearchPage() {
                 </span>
               </div>
             ))}
+            {hasMore && (
+              <div className="stock-load-more-wrap">
+                <button
+                  className="stock-load-more-btn"
+                  onClick={loadMorePrices}
+                  disabled={pagingLoading}
+                >
+                  {pagingLoading ? "불러오는 중..." : "더보기"}
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="stock-right">
@@ -444,7 +539,7 @@ function StockSearchPage() {
 
               <div className="stock-chart-container">
                 <StockSearchChart
-                  priceList={priceList}
+                  priceList={chartPriceList}
                   marketType={stock.marketType}
                   range={range}
                 />
@@ -476,6 +571,17 @@ function StockSearchPage() {
                     ))}
                   </tbody>
                 </table>
+                {hasMoreSignals && (
+                  <div className="stock-signal-load-more-wrap">
+                    <button
+                      className="stock-signal-load-more-btn"
+                      onClick={loadMoreSignals}
+                      disabled={signalPagingLoading}
+                    >
+                      {signalPagingLoading ? "불러오는 중..." : "더보기"}
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>

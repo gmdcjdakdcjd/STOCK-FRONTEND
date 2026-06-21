@@ -298,7 +298,7 @@
   min-height: 0;
 }
 
-.chart-modal-body > div {
+.chart-modal-body>div {
   height: 100%;
 }
 
@@ -312,6 +312,7 @@
   background: #fef2f2;
   color: #b91c1c;
 }
+
 /* =========================
    Autocomplete
 ========================= */
@@ -380,11 +381,13 @@
 .autocomplete-list::-webkit-scrollbar-track {
   background: transparent;
 }
+
 /* =========================
    Input Clear Button (X)
 ========================= */
 .stock-search-input-wrap {
-  position: relative; /*  필수 */
+  position: relative;
+  /*  필수 */
 }
 
 .input-clear-btn {
@@ -420,9 +423,77 @@
   background: #5a33ff;
   color: #ffffff;
 }
+
 .autocomplete-list li.active {
   background: #e0e7ff;
 }
+
 .stock-signal-table th:last-child {
   text-align: right;
+}
+
+/* =========================
+   Load More Buttons (Paging)
+========================= */
+.stock-load-more-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 1.5rem 0;
+  background: #ffffff;
+  border-top: 1px solid #e5e7eb;
+}
+
+.stock-load-more-btn {
+  padding: 8px 24px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #5a33ff;
+  background: #ffffff;
+  border: 1.5px solid #5a33ff;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.stock-load-more-btn:hover {
+  background: #5a33ff;
+  color: #ffffff;
+}
+
+.stock-load-more-btn:disabled {
+  border-color: #d1d5db;
+  color: #9ca3af;
+  background: #f3f4f6;
+  cursor: not-allowed;
+}
+
+/* Signal Load More Styles */
+.stock-signal-load-more-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 0.75rem 0;
+}
+
+.stock-signal-load-more-btn {
+  padding: 4px 16px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #4338ca;
+  background: #ffffff;
+  border: 1px solid #4338ca;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease-in-out;
+}
+
+.stock-signal-load-more-btn:hover {
+  background: #4338ca;
+  color: #ffffff;
+}
+
+.stock-signal-load-more-btn:disabled {
+  border-color: #d1d5db;
+  color: #9ca3af;
+  background: #f9fafb;
+  cursor: not-allowed;
 }
