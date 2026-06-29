@@ -23,11 +23,10 @@ const FILTER_OPTIONS: FilterOption[] = [
   { baseKey: "DAILY_TOUCH_MA60", label: "60일선 터치값", hasCurrency: true },
   { baseKey: "RSI_30_UNHEATED", label: "RSI 하단 (30 이하) 진입값", hasCurrency: false },
   { baseKey: "RSI_70_OVERHEATED", label: "RSI 상단 (70 이상) 진입값", hasCurrency: false },
-  { baseKey: "WEEKLY_52W_NEW_HIGH", label: "52주 신고가", hasCurrency: true },
-  { baseKey: "WEEKLY_52W_NEW_LOW", label: "52주 신저가", hasCurrency: true },
-  { baseKey: "WEEKLY_TOUCH_MA60", label: "주봉 60주선 터치값", hasCurrency: true },
+  // { baseKey: "WEEKLY_52W_NEW_HIGH", label: "52주 신고가", hasCurrency: true },
+  // { baseKey: "WEEKLY_52W_NEW_LOW", label: "52주 신저가", hasCurrency: true },
+  // { baseKey: "WEEKLY_TOUCH_MA60", label: "주봉 60주선 터치값", hasCurrency: true },
   { baseKey: "DAILY_TOP20_VOLUME", label: "상위 20 거래량", hasCurrency: true },
-  { baseKey: "DAILY_DROP_SPIKE", label: "급락 스파이크", hasCurrency: true },
   { baseKey: "DAILY_DROP_SPIKE", label: "급락 스파이크", hasCurrency: true },
   { baseKey: "DAILY_RISE_SPIKE", label: "급등 스파이크", hasCurrency: true },
 ];
@@ -40,7 +39,7 @@ export default function MyConditionPage() {
 
   /* 상태 관리: 체크된 필터 조건의 baseKey 목록 */
   const [checkedFilterKeys, setCheckedFilterKeys] = useState<string[]>([]);
-  
+
   /* 상태 관리: 시가총액 필터 선택 ("" | "RANK_MARKET_CAP_30" | "RANK_MARKET_CAP_100" | "RANK_MARKET_CAP_200") */
   const [marketCapFilter, setMarketCapFilter] = useState<string>("");
 
@@ -87,7 +86,7 @@ export default function MyConditionPage() {
   useEffect(() => {
     if (!useEtfFilter) return;
     setEtfLoading(true);
-    
+
     if (etfBrand === "KODEX") {
       fetchKodexSummary(etfQuery || undefined, true)
         .then((data) => {
@@ -111,7 +110,7 @@ export default function MyConditionPage() {
       setEtfHoldings(new Set());
       return;
     }
-    
+
     setEtfLoading(true);
 
     // KODEX와 TIGER 그룹으로 분류합니다.
@@ -131,10 +130,10 @@ export default function MyConditionPage() {
             .catch(() => [] as string[]);
         }
       });
-      
+
       const resultsArray = await Promise.all(promises);
       const validArrays = resultsArray.filter((arr) => Array.isArray(arr) && arr.length > 0);
-      
+
       if (validArrays.length === 0) {
         return new Set<string>();
       }
@@ -250,7 +249,7 @@ export default function MyConditionPage() {
   /* '조건 검색 실행' 버튼 클릭 시 백엔드 호출 */
   const handleRunSearch = async () => {
     const finalFilters = checkedFilterKeys.map((key) => `${key}_${market.toUpperCase()}`);
-    
+
     // 시가총액 단일 선택 필터가 지정되어 있다면 필터 목록에 결합하여 함께 전달합니다.
     if (marketCapFilter) {
       finalFilters.push(`${marketCapFilter}_${market.toUpperCase()}`);
@@ -272,7 +271,7 @@ export default function MyConditionPage() {
     try {
       /* 조립된 필터 키 목록과 선택한 ETF의 교집합 종목 코드 목록을 백엔드로 직접 전송 */
       const response = await runScreenerWithFilters(finalFilters, etfCodes);
-      
+
       if (response && response.status === "success" && Array.isArray(response.data)) {
         setResults(response.data);
       } else {
@@ -356,7 +355,7 @@ export default function MyConditionPage() {
               대상 시장 선택
             </h3>
             <p className="detail-desc">분석을 진행할 주식 시장을 선택해 주세요.</p>
-            
+
             <div style={{ display: "flex", gap: "15px" }}>
               <button
                 type="button"
@@ -386,15 +385,15 @@ export default function MyConditionPage() {
               조건 필터 체크
             </h3>
             <p className="detail-desc">적용할 주식 스크리닝 필터를 선택해 주세요 (선택한 모든 조건의 교집합 종목이 추출됩니다).</p>
-            
+
             <div className="filter-checkbox-grid">
               {FILTER_OPTIONS
                 .filter((filter) => !filter.onlyKR || market === "kr")
                 .map((filter) => {
                   const isChecked = checkedFilterKeys.includes(filter.baseKey);
                   return (
-                    <label 
-                      key={filter.baseKey} 
+                    <label
+                      key={filter.baseKey}
                       className={`filter-checkbox-label ${isChecked ? "checked" : ""}`}
                     >
                       <input
@@ -428,8 +427,8 @@ export default function MyConditionPage() {
                   { val: "RANK_MARKET_CAP_100", label: "상위 100" },
                   { val: "RANK_MARKET_CAP_200", label: "상위 200" }
                 ].map((item) => (
-                  <label 
-                    key={item.val} 
+                  <label
+                    key={item.val}
                     className={`cap-radio-label ${marketCapFilter === item.val ? "selected" : ""}`}
                   >
                     <input
@@ -458,19 +457,19 @@ export default function MyConditionPage() {
                 <div className="etf-row">
                   <span className="etf-row-label">운용사 선택:</span>
                   <button
-                      type="button"
-                      className={`btn-brand-tab ${etfBrand === "KODEX" ? "active" : ""}`}
-                      onClick={() => setEtfBrand("KODEX")}
-                    >
-                      KODEX
-                    </button>
-                    <button
-                      type="button"
-                      className={`btn-brand-tab ${etfBrand === "TIGER" ? "active" : ""}`}
-                      onClick={() => setEtfBrand("TIGER")}
-                    >
-                      TIGER
-                    </button>
+                    type="button"
+                    className={`btn-brand-tab ${etfBrand === "KODEX" ? "active" : ""}`}
+                    onClick={() => setEtfBrand("KODEX")}
+                  >
+                    KODEX
+                  </button>
+                  <button
+                    type="button"
+                    className={`btn-brand-tab ${etfBrand === "TIGER" ? "active" : ""}`}
+                    onClick={() => setEtfBrand("TIGER")}
+                  >
+                    TIGER
+                  </button>
                 </div>
 
                 {/* ETF 이름 찾기 검색창 */}
@@ -522,40 +521,40 @@ export default function MyConditionPage() {
                   </select>
                 </div>
 
-                  {/* 선택된 ETF 목록 칩 표시 */}
-                  {selectedEtfs.length > 0 && (
-                    <div style={{ display: "flex", gap: "5px", alignItems: "flex-start", flexDirection: "column" }}>
-                      <span style={{ fontSize: "0.8rem", fontWeight: "600", color: "#4b5563" }}>선택된 ETF 목록 ({selectedEtfs.length}/5):</span>
-                      <div className="etf-chips-container">
-                        {selectedEtfs.map((etf) => (
-                          <span key={etf.etfId} className="etf-chip">
-                            {etf.etfName}
-                            <button
-                              type="button"
-                              className="etf-chip-delete"
-                              onClick={() => removeEtfChip(etf.etfId)}
-                            >
-                              ✕
-                            </button>
-                          </span>
-                        ))}
-                      </div>
+                {/* 선택된 ETF 목록 칩 표시 */}
+                {selectedEtfs.length > 0 && (
+                  <div style={{ display: "flex", gap: "5px", alignItems: "flex-start", flexDirection: "column" }}>
+                    <span style={{ fontSize: "0.8rem", fontWeight: "600", color: "#4b5563" }}>선택된 ETF 목록 ({selectedEtfs.length}/5):</span>
+                    <div className="etf-chips-container">
+                      {selectedEtfs.map((etf) => (
+                        <span key={etf.etfId} className="etf-chip">
+                          {etf.etfName}
+                          <button
+                            type="button"
+                            className="etf-chip-delete"
+                            onClick={() => removeEtfChip(etf.etfId)}
+                          >
+                            ✕
+                          </button>
+                        </span>
+                      ))}
                     </div>
-                  )}
+                  </div>
+                )}
 
-                  {etfLoading && (
-                    <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>ETF 구성 종목을 불러오는 중입니다...</span>
-                  )}
-                  {!etfLoading && etfList.length === 0 && (
-                    <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>검색된 ETF가 없습니다. 운용사 선택 및 검색어를 확인하세요.</span>
-                  )}
+                {etfLoading && (
+                  <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>ETF 구성 종목을 불러오는 중입니다...</span>
+                )}
+                {!etfLoading && etfList.length === 0 && (
+                  <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>검색된 ETF가 없습니다. 운용사 선택 및 검색어를 확인하세요.</span>
+                )}
 
-                </div>
               </div>
+            </div>
 
             <div className="detail-actions" style={{ border: "none", paddingTop: 0 }}>
-              <button 
-                className="btn-run-screening" 
+              <button
+                className="btn-run-screening"
                 onClick={handleRunSearch}
                 disabled={isRunning}
               >
