@@ -17,9 +17,10 @@ export interface TigerEtfHolding {
 }
 
 
-export async function fetchTigerSummary(q?: string) {
+export async function fetchTigerSummary(q?: string, etfOnly: boolean = false) {
   const params = new URLSearchParams();
   if (q) params.append("q", q);
+  if (etfOnly) params.append("etfOnly", "true");
 
   const res = await fetch(`/api/tiger/summary?${params.toString()}`);
   if (!res.ok) throw new Error("Tiger summary fetch failed");

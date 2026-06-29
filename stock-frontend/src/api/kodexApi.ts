@@ -16,9 +16,10 @@ export interface KodexEtfHolding {
 }
 
 
-export async function fetchKodexSummary(q?: string) {
+export async function fetchKodexSummary(q?: string, etfOnly: boolean = false) {
   const params = new URLSearchParams();
   if (q) params.append("q", q);
+  if (etfOnly) params.append("etfOnly", "true");
 
   const res = await fetch(`/api/kodex/summary?${params.toString()}`);
   if (!res.ok) throw new Error("KODEX summary fetch failed");

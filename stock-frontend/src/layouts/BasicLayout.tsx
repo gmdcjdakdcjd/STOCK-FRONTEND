@@ -292,6 +292,11 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                     내 관심 종목
                   </NavLink>
 
+                  <NavLink to="/stock/myCondition" onClick={closeMenu}>
+                    <span className="nav-dd-mark">–</span>
+                    나만의 조건식
+                  </NavLink>
+
                   {isAdmin && (
                     <NavLink to="/manage/batch/history" onClick={closeMenu}>
                       <span className="nav-dd-mark">–</span>

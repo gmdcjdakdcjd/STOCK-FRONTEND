@@ -41,6 +41,7 @@ import PhysicalPage from "../pages/physical/physicalPage";
    MY STOCK
    ========================= */
 import MyStockPage from "../pages/myStock/MyStockPage";
+import MyConditionPage from "../pages/myCondition/MyConditionPage";
 
 /* =========================
    MY ETF 
@@ -101,6 +102,7 @@ function AppRouter() {
               ========================= */}
                <Route path="/stock/searchStock" element={<StockSearchPage />} />
                <Route path="/stock/myStock" element={<MyStockPage />} />
+               <Route path="/stock/myCondition" element={<MyConditionPage />} />
 
                {/* =========================
               MY ETF
