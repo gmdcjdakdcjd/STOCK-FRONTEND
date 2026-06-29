@@ -50,8 +50,8 @@ export default function MyConditionPage() {
   /* 상태 관리: 테이블에서 다중 선택된 종목 코드 리스트 (사용되지 않아 임시 주석 처리) */
   // const [checkedCodes, setCheckedCodes] = useState<string[]>([]);
 
-  /* 상태 관리: 로그인 인증 완료 여부 */
-  const [authenticated, setAuthenticated] = useState<boolean>(false);
+  /* 상태 관리: 로그인 인증 완료 여부 (사용되지 않아 임시 주석 처리) */
+  // const [authenticated, setAuthenticated] = useState<boolean>(false);
 
   /* 상태 관리: 스크리닝 실행 로딩 여부 */
   const [isRunning, setIsRunning] = useState<boolean>(false);
@@ -59,7 +59,7 @@ export default function MyConditionPage() {
   /* 상태 관리: 에러 발생 메시지 */
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-  /* 컴포넌트 마운트 시 유저 인증 세션 체크 */
+  /* 컴포넌트 마운트 시 유저 인증 세션 체크 (사용되지 않아 임시 주석 처리)
   useEffect(() => {
     fetch("/api/auth/me", { credentials: "include" })
       .then((res) => {
@@ -69,6 +69,7 @@ export default function MyConditionPage() {
       .then(() => setAuthenticated(true))
       .catch(() => setAuthenticated(false));
   }, []);
+  */
 
   /* ========================================================
      특정 ETF 구성 종목 필터링용 상태 및 훅 정의
@@ -193,7 +194,7 @@ export default function MyConditionPage() {
     setMarket(newMarket);
     setCheckedFilterKeys([]);
     setResults([]);
-    setCheckedCodes([]);
+    // setCheckedCodes([]);
     setErrorMessage(null);
     setMarketCapFilter("");
     setEtfBrand("KODEX");
