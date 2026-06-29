@@ -47,8 +47,8 @@ export default function MyConditionPage() {
   /* 상태 관리: 백엔드로부터 응답받은 스크리닝 결과 종목 리스트 */
   const [results, setResults] = useState<any[]>([]);
 
-  /* 상태 관리: 테이블에서 다중 선택된 종목 코드 리스트 */
-  const [checkedCodes, setCheckedCodes] = useState<string[]>([]);
+  /* 상태 관리: 테이블에서 다중 선택된 종목 코드 리스트 (사용되지 않아 임시 주석 처리) */
+  // const [checkedCodes, setCheckedCodes] = useState<string[]>([]);
 
   /* 상태 관리: 로그인 인증 완료 여부 */
   const [authenticated, setAuthenticated] = useState<boolean>(false);
@@ -232,17 +232,19 @@ export default function MyConditionPage() {
     }
   };
 
-  /* 결과 테이블 개별 종목 선택 토글 */
+  /* 결과 테이블 개별 종목 선택 토글 (사용되지 않아 임시 주석 처리)
   const toggleOneCode = (code: string) => {
     setCheckedCodes((prev) =>
       prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
     );
   };
+  */
 
-  /* 결과 테이블 전체 종목 선택 토글 */
+  /* 결과 테이블 전체 종목 선택 토글 (사용되지 않아 임시 주석 처리)
   const toggleAllCodes = (checked: boolean) => {
     setCheckedCodes(checked ? results.map((r) => r.code) : []);
   };
+  */
 
   /* '조건 검색 실행' 버튼 클릭 시 백엔드 호출 */
   const handleRunSearch = async () => {
@@ -264,7 +266,7 @@ export default function MyConditionPage() {
     setIsRunning(true);
     setErrorMessage(null);
     setResults([]);
-    setCheckedCodes([]);
+    // setCheckedCodes([]);
 
     try {
       /* 조립된 필터 키 목록과 선택한 ETF의 교집합 종목 코드 목록을 백엔드로 직접 전송 */
@@ -282,7 +284,7 @@ export default function MyConditionPage() {
     }
   };
 
-  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하는 함수 */
+  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하는 함수 (사용되지 않아 임시 주석 처리)
   const handleAddMyStock = () => {
     if (!authenticated) {
       alert("로그인 후 이용 가능합니다.");
@@ -317,6 +319,7 @@ export default function MyConditionPage() {
       })
       .catch(() => alert("관심 종목 등록에 실패했습니다. 로그인 상태를 다시 확인해 주세요."));
   };
+  */
 
   /* 시장 선택에 맞춘 필터 조건 라벨명을 얻는 헬퍼 함수 */
   const getFilterLabel = (filter: FilterOption) => {
