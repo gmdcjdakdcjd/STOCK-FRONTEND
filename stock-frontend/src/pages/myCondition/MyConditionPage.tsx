@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { runScreenerWithFilters } from "../../api/screenerApi";
 import { fetchKodexSummary, fetchKodexHoldings } from "../../api/kodexApi";
 import { fetchTigerSummary, fetchTigerHoldings } from "../../api/tigerApi";
+import { useLoading } from "../../contexts/LoadingContext";
 import "./MyConditionPage.css";
 import "../result/result-detail.css"; // ResultDetail 공통 테이블 스타일을 재사용합니다.
 
@@ -33,6 +34,7 @@ const FILTER_OPTIONS: FilterOption[] = [
 
 export default function MyConditionPage() {
   const navigate = useNavigate();
+  const { showLoading, hideLoading } = useLoading();
 
   /* 상태 관리: 현재 선택한 시장 (kr: 한국 시장, us: 미국 시장) */
   const [market, setMarket] = useState<"kr" | "us">("kr");
@@ -264,6 +266,7 @@ export default function MyConditionPage() {
     }
 
     setIsRunning(true);
+    showLoading(`${market.toUpperCase()} 시장 조건 스크리닝을 실행 중입니다...`);
     setErrorMessage(null);
     setResults([]);
     // setCheckedCodes([]);
@@ -281,6 +284,7 @@ export default function MyConditionPage() {
       setErrorMessage(err.message || "스크리닝 연동 중 오류가 발생했습니다.");
     } finally {
       setIsRunning(false);
+      hideLoading();
     }
   };
 

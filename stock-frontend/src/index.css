@@ -69,3 +69,57 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+
+/* =====================================================
+   화면 전체 로딩 오버레이 & 스피너 스타일 (공통)
+   ===================================================== */
+.loading-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(15, 23, 42, 0.6); /* 반투명 다크 배경 */
+  backdrop-filter: blur(4px); /* 배경 흐림 효과 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* 화면 최상위 고정 */
+  pointer-events: all; /* 모든 클릭 차단 */
+}
+
+.loading-spinner-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  background: #ffffff;
+  padding: 30px 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.loading-spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid #e2e8f0;
+  border-top-color: #3b82f6;
+  border-radius: 50%;
+  animation: loading-spin 1s linear infinite;
+}
+
+.loading-text {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #1e293b;
+}
+
+@keyframes loading-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
