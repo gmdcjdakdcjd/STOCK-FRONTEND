@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import React, { createContext, useContext, useState } from "react";
+import type { ReactNode } from "react";
 
 // 전역 로딩 컨텍스트의 인터페이스를 정의합니다.
 interface LoadingContextType {
