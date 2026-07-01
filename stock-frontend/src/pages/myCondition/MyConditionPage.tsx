@@ -670,12 +670,13 @@ export default function MyConditionPage() {
     setShowUnsavedChangesConfirm(false); // 모달 닫기
     const today = new Date().toISOString().substring(0, 10);
     const suffix = market === "kr" ? "_KR" : "_US";
+    const targetStrategyName = (activeConditionName || "나만의 조건식").trim().replace(/_(KR|US)$/i, "");
     const payload = results
       .filter((r) => checkedCodes.includes(r.code))
       .map((r) => ({
         code: r.code,
         name: r.name,
-        strategyName: (activeConditionName || "나만의 조건식").trim().replace(/_(KR|US)$/i, "") + suffix,
+        strategyName: targetStrategyName + suffix,
         priceAtAdd: r.currentPrice,
         memo: today,
       }));
@@ -688,7 +689,7 @@ export default function MyConditionPage() {
     })
       .then((res) => {
         if (!res.ok) throw new Error();
-        showToast("선택한 종목들이 내 관심 종목에 추가되었습니다.", "success");
+        showToast(`선택한 종목들이 '${targetStrategyName}' 조건명으로 관심 종목에 추가되었습니다.`, "success");
         setCheckedCodes([]);
       })
       .catch((err) => {
@@ -709,13 +710,8 @@ export default function MyConditionPage() {
       return;
     }
 
-    // 불러온 조건식이 존재하고, 필터 조건 등에 변경사항(Dirty)이 감지된 상황인 경우 커스텀 확인 모달 노출
-    if (activeConditionId !== null && isConditionDirty()) {
-      setShowUnsavedChangesConfirm(true);
-      return;
-    }
-
-    executeAddMyStock();
+    // 변경 사항 유무와 관계없이 무조건 커스텀 컨펌 모달을 노출하여 사용자 승인을 받음
+    setShowUnsavedChangesConfirm(true);
   };
 
 
@@ -1517,7 +1513,8 @@ export default function MyConditionPage() {
         isOpen={showUnsavedChangesConfirm}
         onClose={() => setShowUnsavedChangesConfirm(false)}
         onConfirm={executeAddMyStock}
-        conditionName={activeConditionName.trim().replace(/_(KR|US)$/i, "")}
+        conditionName={(activeConditionName || "나만의 조건식").trim().replace(/_(KR|US)$/i, "")}
+        isDirty={activeConditionId !== null && isConditionDirty()}
       />
 
       {/* 세련된 토스트(Toast) 팝업 알림 */}
