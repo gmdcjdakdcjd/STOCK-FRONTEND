@@ -126,3 +126,45 @@ export async function deleteScreenerCondition(id: number): Promise<any> {
 
   return res.json();
 }
+
+/**
+ * 로그인한 사용자가 삭제해 둔(비활성 상태인) 모든 조건식 목록을 백엔드로부터 가져옵니다.
+ * /api/mycondition/deleted-list 경로를 사용합니다.
+ */
+export async function getDeletedScreenerConditions(): Promise<any> {
+  const res = await fetch(`${CONDITION_URL}/deleted-list`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(errorText || "삭제된 조건식 목록을 불러오는데 실패했습니다.");
+  }
+
+  return res.json();
+}
+
+/**
+ * 삭제된 조건식을 복구(활성화)합니다.
+ * /api/mycondition/restore/{id} 경로를 사용합니다.
+ */
+export async function restoreScreenerCondition(id: number): Promise<any> {
+  const res = await fetch(`${CONDITION_URL}/restore/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+  });
+
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(errorText || "조건식 복구에 실패했습니다.");
+  }
+
+  return res.json();
+}

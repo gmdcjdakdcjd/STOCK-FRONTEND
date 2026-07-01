@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { runScreenerWithFilters, saveScreenerCondition, getScreenerConditions, deleteScreenerCondition } from "../../api/screenerApi";
+import { runScreenerWithFilters, saveScreenerCondition, getScreenerConditions, deleteScreenerCondition, getDeletedScreenerConditions, restoreScreenerCondition } from "../../api/screenerApi";
 import { fetchKodexSummary, fetchKodexHoldings } from "../../api/kodexApi";
 import { fetchTigerSummary, fetchTigerHoldings } from "../../api/tigerApi";
 import EtfSearchModal from "./EtfSearchModal";
 import ConditionSaveModal from "./ConditionSaveModal";
 import ConditionListModal from "./ConditionListModal";
+import ConditionRestoreModal from "./ConditionRestoreModal";
 import "./MyConditionPage.css";
 import "../result/result-detail.css"; // ResultDetail 공통 테이블 스타일을 재사용합니다.
 
@@ -80,9 +81,38 @@ export default function MyConditionPage() {
   /* 저장된 조건식 불러오기 모달 상태 및 목록 데이터 */
   const [isListModalOpen, setIsListModalOpen] = useState<boolean>(false);
   const [savedConditions, setSavedConditions] = useState<any[]>([]);
+  /* 삭제된 조건식 복구 모달 상태 및 목록 데이터 */
+  const [isRestoreModalOpen, setIsRestoreModalOpen] = useState<boolean>(false);
+  const [deletedConditions, setDeletedConditions] = useState<any[]>([]);
   /* 현재 불러와서 수정/적용 중인 조건식의 정보 (null이면 새로 저장 모드) */
   const [activeConditionId, setActiveConditionId] = useState<number | null>(null);
   const [activeConditionName, setActiveConditionName] = useState<string>("");
+  /* 상태 관리: 불러온 당시 혹은 저장 완료 시점의 원본 조건 상태 스냅샷 (변경 감지용) */
+  const [originalConditionSnapshot, setOriginalConditionSnapshot] = useState<{
+    filters: string[];
+    marketCapFilter: string;
+    selectedEtfs: { etfId: string; etfName: string }[];
+  } | null>(null);
+
+  /* 변경 사항(Dirty) 감지 헬퍼 함수 */
+  const isConditionDirty = () => {
+    if (activeConditionId === null || !originalConditionSnapshot) return false;
+
+    // 1. 현재 화면의 지표 필터와 스냅샷 비교 (정렬하여 비교)
+    const currentFilters = [...checkedFilterKeys].sort();
+    const originalFilters = [...originalConditionSnapshot.filters].sort();
+    if (JSON.stringify(currentFilters) !== JSON.stringify(originalFilters)) return true;
+
+    // 2. 시가총액 필터 비교
+    if (marketCapFilter !== originalConditionSnapshot.marketCapFilter) return true;
+
+    // 3. ETF 필터 비교
+    const currentEtfIds = selectedEtfs.map(e => e.etfId).sort();
+    const originalEtfIds = originalConditionSnapshot.selectedEtfs.map(e => e.etfId).sort();
+    if (JSON.stringify(currentEtfIds) !== JSON.stringify(originalEtfIds)) return true;
+
+    return false;
+  };
   /* 화면에 표시할 세련된 토스트(Toast) 팝업 알림 상태 */
   const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
 
@@ -103,6 +133,20 @@ export default function MyConditionPage() {
       .then(() => setAuthenticated(true))
       .catch(() => setAuthenticated(false));
   }, []);
+
+  // 브라우저 탭 닫기 / 새로고침 시 저장되지 않은 변경사항이 있으면 경고 표시
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isConditionDirty()) {
+        e.preventDefault();
+        e.returnValue = ""; // 현대 브라우저에서 경고창을 띄우기 위한 조치
+      }
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [checkedFilterKeys, marketCapFilter, selectedEtfs, originalConditionSnapshot, activeConditionId]);
 
   /* ETF 요약 목록 조회 API 훅 */
   useEffect(() => {
@@ -229,6 +273,7 @@ export default function MyConditionPage() {
       // 불러온 조건식 정보 초기화 (가드 역할)
       setActiveConditionId(null);
       setActiveConditionName("");
+      setOriginalConditionSnapshot(null); // 변경 감지 스냅샷 초기화
 
       showToast("분석 대상 시장이 전환되어 모든 필터와 활성 조건식이 초기화되었습니다.", "info");
     }
@@ -249,6 +294,7 @@ export default function MyConditionPage() {
     setErrorMessage(null);
     setActiveConditionId(null);
     setActiveConditionName("");
+    setOriginalConditionSnapshot(null); // 변경 감지 스냅샷 초기화
     showToast("모든 분석 조건이 초기화되었습니다.", "info");
   };
 
@@ -307,6 +353,13 @@ export default function MyConditionPage() {
       // 수정된 이름 반영 (내부 전역 변수에는 접미사가 부착된 오리지널 명칭을 저장)
       setActiveConditionName(finalName);
 
+      // 수정 완료 후 변경감지용 스냅샷 갱신
+      setOriginalConditionSnapshot({
+        filters: checkedFilterKeys,
+        marketCapFilter: marketCapFilter,
+        selectedEtfs: selectedEtfs,
+      });
+
       setIsSaveModalOpen(false); // 모달 닫기
     } catch (err: any) {
       console.error("조건식 저장 중 오류 발생:", err);
@@ -316,6 +369,12 @@ export default function MyConditionPage() {
 
   /* 백엔드에 저장된 내 조건식 리스트를 조회해 모달을 엽니다. */
   const handleLoadConditions = () => {
+    // 수정 중인 상황에서 저장하지 않고 불러오기를 시도할 경우 경고 알림
+    if (isConditionDirty()) {
+      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 불러오시겠습니까?")) {
+        return;
+      }
+    }
     getScreenerConditions()
       .then((data) => {
         setSavedConditions(data || []);
@@ -396,6 +455,13 @@ export default function MyConditionPage() {
       setEtfHoldings(new Set());
     }
 
+    // 불러오기가 성공적으로 세팅되었을 때 원본 변경 감지용 스냅샷 저장
+    setOriginalConditionSnapshot({
+      filters: restoredKeys,
+      marketCapFilter: restoredMarketCap,
+      selectedEtfs: cond.selectedEtfs || [],
+    });
+
     // 5. 복원된 로컬 변수들을 즉시 취합하여 백엔드 스크리닝 자동 실행
     setIsRunning(true);
     setResults([]);
@@ -425,7 +491,7 @@ export default function MyConditionPage() {
 
   /* 저장되어 있는 특정 조건식을 삭제 처리합니다. */
   const handleDeleteCondition = (id: number) => {
-    if (!window.confirm("이 조건식을 영구 삭제하시겠습니까?")) {
+    if (!window.confirm("이 조건식을 삭제하시겠습니까?")) {
       return;
     }
 
@@ -441,6 +507,61 @@ export default function MyConditionPage() {
       .catch((err) => {
         console.error("조건식 삭제 오류:", err);
         showToast("조건식 삭제 실패: " + err.message, "error");
+      });
+  };
+
+  /* 삭제되어 있는 내 조건식 리스트를 조회해 복구 모달을 엽니다. */
+  const handleLoadDeletedConditions = () => {
+    // 수정 중인 상황에서 저장하지 않고 복구 리스트 열기를 시도할 경우 경고 알림
+    if (isConditionDirty()) {
+      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 복구 창을 여시겠습니까?")) {
+        return;
+      }
+    }
+    getDeletedScreenerConditions()
+      .then((data) => {
+        setDeletedConditions(data || []);
+        setIsRestoreModalOpen(true);
+      })
+      .catch((err) => {
+        console.error("삭제된 조건식 목록 조회 오류:", err);
+        alert("삭제된 조건식 목록을 불러오는 중 오류가 발생했습니다: " + err.message);
+      });
+  };
+
+  /* 변경사항을 감지하여 저장하지 않고 내 관심 종목으로 이동하려 할 때 경고를 주는 헬퍼 이동 함수 */
+  const handleGoToMyStock = () => {
+    if (isConditionDirty()) {
+      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 내 관심 종목으로 이동하시겠습니까?")) {
+        return;
+      }
+    }
+    navigate("/stock/myStock");
+  };
+
+  /* 삭제된 특정 조건식을 복구(활성화) 처리합니다. */
+  const handleRestoreCondition = (id: number, name: string) => {
+    if (!window.confirm(`"${name.replace(/_(KR|US)$/i, "")}" 조건식을 복구하시겠습니까?`)) {
+      return;
+    }
+
+    restoreScreenerCondition(id)
+      .then(() => {
+        showToast("조건식이 성공적으로 복구되었습니다.", "success");
+        // 삭제된 목록 갱신
+        return getDeletedScreenerConditions();
+      })
+      .then((data) => {
+        setDeletedConditions(data || []);
+        // 활성 조건식 목록도 갱신하여 불러오기 창에 즉시 나타나도록 함
+        return getScreenerConditions();
+      })
+      .then((data) => {
+        setSavedConditions(data || []);
+      })
+      .catch((err) => {
+        console.error("조건식 복구 오류:", err);
+        showToast("조건식 복구 실패: " + err.message, "error");
       });
   };
 
@@ -569,39 +690,77 @@ export default function MyConditionPage() {
             원하는 투자 조건들을 선택하고 여러 조건들을 동시에 만족하는 교집합 종목들을 추출합니다.
           </p>
         </div>
-        <button
-          type="button"
-          className="btn-load-conditions"
-          onClick={handleLoadConditions}
-          style={{
-            padding: "10px 18px",
-            fontSize: "0.875rem",
-            fontWeight: "700",
-            borderRadius: "10px",
-            border: "1px solid #4f46e5",
-            background: "#eff6ff",
-            color: "#4f46e5",
-            cursor: "pointer",
-            transition: "all 0.2s",
-            display: "flex",
-            alignItems: "center",
-            gap: "6px",
-            boxShadow: "0 2px 4px rgba(79, 70, 229, 0.05)"
-          }}
-          onMouseOver={(e) => {
-            e.currentTarget.style.background = "#4f46e5";
-            e.currentTarget.style.color = "#ffffff";
-          }}
-          onMouseOut={(e) => {
-            e.currentTarget.style.background = "#eff6ff";
-            e.currentTarget.style.color = "#4f46e5";
-          }}
-        >
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
-          </svg>
-          내 조건식 불러오기
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+          <button
+            type="button"
+            className="btn-load-conditions"
+            onClick={handleLoadConditions}
+            style={{
+              padding: "10px 18px",
+              fontSize: "0.875rem",
+              fontWeight: "700",
+              borderRadius: "10px",
+              border: "1px solid #4f46e5",
+              background: "#eff6ff",
+              color: "#4f46e5",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              boxShadow: "0 2px 4px rgba(79, 70, 229, 0.05)"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#4f46e5";
+              e.currentTarget.style.color = "#ffffff";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#eff6ff";
+              e.currentTarget.style.color = "#4f46e5";
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+            </svg>
+            내 조건식 불러오기
+          </button>
+          <button
+            type="button"
+            className="btn-restore-conditions"
+            onClick={handleLoadDeletedConditions}
+            style={{
+              padding: "10px 18px",
+              fontSize: "0.875rem",
+              fontWeight: "700",
+              borderRadius: "10px",
+              border: "1px solid #10b981",
+              background: "#ecfdf5",
+              color: "#10b981",
+              cursor: "pointer",
+              transition: "all 0.2s",
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
+              boxShadow: "0 2px 4px rgba(16, 185, 129, 0.05)"
+            }}
+            onMouseOver={(e) => {
+              e.currentTarget.style.background = "#10b981";
+              e.currentTarget.style.color = "#ffffff";
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.background = "#ecfdf5";
+              e.currentTarget.style.color = "#10b981";
+            }}
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="3 6 5 6 21 6" />
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
+              <line x1="10" y1="11" x2="10" y2="17" />
+              <line x1="14" y1="11" x2="14" y2="17" />
+            </svg>
+            삭제된 조건식 복구
+          </button>
+        </div>
       </div>
 
       <div className="mycondition-content" style={{ gridTemplateColumns: "1fr" }}>
@@ -1043,7 +1202,7 @@ export default function MyConditionPage() {
                       <button
                         type="button"
                         className="btn-outline-pill"
-                        onClick={() => navigate("/stock/myStock")}
+                        onClick={handleGoToMyStock}
                         style={{ padding: "6px 12px", fontSize: "0.8rem" }}
                       >
                         ⭐ 내 종목 보러가기
@@ -1217,6 +1376,15 @@ export default function MyConditionPage() {
         conditions={savedConditions}
         onApply={handleApplyCondition}
         onDelete={handleDeleteCondition}
+        filterOptions={FILTER_OPTIONS}
+      />
+
+      {/* 삭제된 조건식 복구 관리 모달 팝업 */}
+      <ConditionRestoreModal
+        isOpen={isRestoreModalOpen}
+        onClose={() => setIsRestoreModalOpen(false)}
+        conditions={deletedConditions}
+        onRestore={handleRestoreCondition}
         filterOptions={FILTER_OPTIONS}
       />
 
