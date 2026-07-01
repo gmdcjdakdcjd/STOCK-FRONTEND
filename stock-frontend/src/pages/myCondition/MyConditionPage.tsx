@@ -444,19 +444,7 @@ export default function MyConditionPage() {
       });
   };
 
-  /* ETF 칩 추가 함수 (최대 5개 제한) */
-  const addEtfChip = (etfId: string, etfName: string) => {
-    if (!etfId) return;
-    if (selectedEtfs.some((item) => item.etfId === etfId)) {
-      alert("이미 선택된 ETF입니다.");
-      return;
-    }
-    if (selectedEtfs.length >= 5) {
-      alert("ETF는 최대 5개까지만 선택 가능합니다.");
-      return;
-    }
-    setSelectedEtfs([...selectedEtfs, { etfId, etfName }]);
-  };
+
 
   /* ETF 칩 제거 함수 */
   const removeEtfChip = (etfId: string) => {
