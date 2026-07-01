@@ -24,7 +24,13 @@ export type ScreenerResultDTO = {
 };
 */
 
-const BASE_URL = "/api/screener";
+const SCREENER_URL = "/api/screener";
+
+/**
+ * 배포 환경에서 nginx가 /api/screener/** 전체를 FastAPI로 라우팅하기 때문에,
+ * 조건식 CRUD는 /api/mycondition/** 경로(Spring Boot 전용)를 사용합니다.
+ */
+const CONDITION_URL = "/api/mycondition";
 
 /* =====================================================
    API 함수 구현
@@ -35,7 +41,7 @@ const BASE_URL = "/api/screener";
  * Spring Boot는 이 필터 배열을 받아서 FastAPI 서버로 연동하게 됩니다.
  */
 export async function runScreenerWithFilters(filters: string[], codes: string[] = [], market: string = "kr"): Promise<any> {
-  const res = await fetch(`${BASE_URL}/run`, {
+  const res = await fetch(`${SCREENER_URL}/run`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -53,6 +59,7 @@ export async function runScreenerWithFilters(filters: string[], codes: string[] 
 
 /**
  * 사용자가 조합한 스크리너 조건식을 백엔드 데이터베이스에 영구 저장합니다.
+ * /api/mycondition/save 경로를 사용합니다 (nginx FastAPI 라우팅 충돌 회피).
  */
 export async function saveScreenerCondition(
   name: string,
@@ -61,11 +68,12 @@ export async function saveScreenerCondition(
   selectedEtfs: { etfId: string; etfName: string }[],
   id?: number | null
 ): Promise<any> {
-  const res = await fetch(`${BASE_URL}/conditions/save`, {
+  const res = await fetch(`${CONDITION_URL}/save`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify({ id, name, market, filters, selectedEtfs }),
   });
 
@@ -79,13 +87,15 @@ export async function saveScreenerCondition(
 
 /**
  * 로그인한 사용자가 저장한 모든 조건식 목록을 백엔드로부터 가져옵니다.
+ * /api/mycondition/list 경로를 사용합니다 (nginx FastAPI 라우팅 충돌 회피).
  */
 export async function getScreenerConditions(): Promise<any> {
-  const res = await fetch(`${BASE_URL}/conditions/list`, {
+  const res = await fetch(`${CONDITION_URL}/list`, {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
-    }
+    },
+    credentials: "include",
   });
 
   if (!res.ok) {
@@ -98,13 +108,15 @@ export async function getScreenerConditions(): Promise<any> {
 
 /**
  * 저장된 조건식을 영구 삭제합니다.
+ * /api/mycondition/delete/{id} 경로를 사용합니다 (nginx FastAPI 라우팅 충돌 회피).
  */
 export async function deleteScreenerCondition(id: number): Promise<any> {
-  const res = await fetch(`${BASE_URL}/conditions/delete/${id}`, {
+  const res = await fetch(`${CONDITION_URL}/delete/${id}`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-    }
+    },
+    credentials: "include",
   });
 
   if (!res.ok) {
