@@ -30,9 +30,9 @@ const FILTER_OPTIONS: FilterOption[] = [
   { baseKey: "RSI_70_OVERHEATED", label: "RSI 상단 (70 이상) 진입값", hasCurrency: false },
   { baseKey: "WEEKLY_52W_NEW_HIGH", label: "52주 신고가", hasCurrency: true },
   { baseKey: "WEEKLY_52W_NEW_LOW", label: "52주 신저가", hasCurrency: true },
-  { baseKey: "DAILY_TOP20_VOLUME", label: "상위 20 거래량", hasCurrency: true },
   { baseKey: "DAILY_DROP_SPIKE", label: "급락 스파이크", hasCurrency: true },
   { baseKey: "DAILY_RISE_SPIKE", label: "급등 스파이크", hasCurrency: true },
+  { baseKey: "DAILY_TOP20_VOLUME", label: "상위 20 거래량", hasCurrency: true },
 ];
 
 export default function MyConditionPage() {
