@@ -102,6 +102,20 @@ export default function MyStockPage() {
     const [showDeleted, setShowDeleted] = useState(false);
     const [showCreateEtf, setShowCreateEtf] = useState(false);
     const [showAddToEtf, setShowAddToEtf] = useState(false);
+    const [hasEtf, setHasEtf] = useState<boolean>(false);
+
+    // 사용자가 소유한 ETF 목록이 존재하는지 초기 로드 확인
+    useEffect(() => {
+        fetch("/api/myetf/list?page=1&size=1")
+            .then(res => res.json())
+            .then(data => {
+                const dtoList = data && data.dtoList ? data.dtoList : [];
+                setHasEtf(dtoList.length > 0);
+            })
+            .catch(() => {
+                setHasEtf(false);
+            });
+    }, []);
 
     /* =========================
        Load
@@ -317,8 +331,17 @@ export default function MyStockPage() {
                     </button>
 
                     <button
-                        className="btn-etf"
-                        onClick={() => setShowAddToEtf(true)}
+                        className={`btn-etf ${!hasEtf ? "disabled" : ""}`}
+                        onClick={() => hasEtf && setShowAddToEtf(true)}
+                        disabled={!hasEtf}
+                        title={!hasEtf ? "생성된 ETF가 없습니다" : undefined}
+                        style={!hasEtf ? {
+                            cursor: "not-allowed",
+                            opacity: 0.6,
+                            backgroundColor: "#e2e8f0",
+                            color: "#94a3b8",
+                            borderColor: "#cbd5e1"
+                        } : undefined}
                     >
                         기존 ETF 추가
                     </button>
@@ -450,7 +473,10 @@ export default function MyStockPage() {
                     ]}
 
                     onClose={() => setShowCreateEtf(false)}
-                    onCreated={() => setShowCreateEtf(false)}
+                    onCreated={() => {
+                        setShowCreateEtf(false);
+                        setHasEtf(true); // ETF가 생성되었으므로 활성화 처리
+                    }}
                 />
             )}
 

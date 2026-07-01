@@ -20,6 +20,7 @@ interface Props {
   myStocks: MyStockItem[];
   onClose: () => void;
   onCreated: () => void;
+  leftPanelTitle?: string;
 }
 
 /**  화면 전용 상태 */
@@ -52,6 +53,7 @@ export default function CreateEtfModal({
   myStocks,
   onClose,
   onCreated,
+  leftPanelTitle,
 }: Props) {
   // 모달 오픈 시 배경(body) 스크롤 방지
   useLockBodyScroll(open);
@@ -174,9 +176,9 @@ export default function CreateEtfModal({
             <div className="divider" />
 
             <div className="etf-builder">
-              {/* 좌측: 내 관심 종목 */}
+              {/* 좌측: 내 관심 종목 혹은 포착 종목 */}
               <div className="search-panel">
-                <h4>내 관심 종목</h4>
+                <h4>{leftPanelTitle || "내 관심 종목"}</h4>
 
                 {/* 검색 테이블 헤더 - scroll 영역 밖에 위치 */}
                 <div className="search-header">

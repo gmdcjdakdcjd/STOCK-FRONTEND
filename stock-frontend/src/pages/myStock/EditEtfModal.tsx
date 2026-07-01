@@ -28,6 +28,7 @@ interface Props {
   myStocks: MyStockItem[];
   onClose: () => void;
   onSaved: () => void;
+  leftPanelTitle?: string;
 }
 
 /* =========================
@@ -51,6 +52,7 @@ export default function EditEtfModal({
   myStocks,
   onClose,
   onSaved,
+  leftPanelTitle,
 }: Props) {
   // 모달 오픈 시 배경(body) 스크롤 방지
   useLockBodyScroll(open);
@@ -70,11 +72,20 @@ export default function EditEtfModal({
     fetch("/api/myetf/list?page=1&size=100")
       .then(res => res.json())
       .then(data => {
-        const names = data.dtoList.map((e: any) => e.etfName);
+        // data가 없거나 dtoList가 비어있는 경우 null-safe하게 처리
+        const dtoList = data && data.dtoList ? data.dtoList : [];
+        const names = dtoList.map((e: any) => e.etfName);
         setEtfList(names);
         if (names.length > 0) {
           setSelectedEtf(names[0]);
+        } else {
+          setSelectedEtf("");
         }
+      })
+      .catch(err => {
+        console.error("ETF 목록 로드 중 오류가 발생했습니다:", err);
+        setEtfList([]);
+        setSelectedEtf("");
       });
   }, [open]);
 
@@ -137,6 +148,10 @@ export default function EditEtfModal({
      저장
 ========================= */
   const save = () => {
+    if (!selectedEtf) {
+      alert("선택된 ETF가 없습니다. 기존 ETF를 생성한 후 다시 이용해 주세요.");
+      return;
+    }
     const invalid = items.filter(
       i =>
         i.id !== null &&
@@ -197,32 +212,60 @@ export default function EditEtfModal({
           </header>
 
           <div className="modal-content">
-            {/* ETF Meta */}
-            <div className="form-section">
-              <label>ETF 선택</label>
-              <select
-                value={selectedEtf}
-                onChange={e => setSelectedEtf(e.target.value)}
-              >
-                {etfList.map(name => (
-                  <option key={name} value={name}>{name}</option>
-                ))}
-              </select>
+            {etfList.length === 0 ? (
+              <div className="empty-etf-alert" style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                padding: "60px 20px",
+                textAlign: "center",
+                gap: "14px"
+              }}>
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+                <h4 style={{ margin: 0, color: "#1e293b", fontSize: "1.1rem", fontWeight: "700" }}>등록된 기존 ETF가 없습니다</h4>
+                <p style={{ margin: 0, color: "#64748b", fontSize: "0.875rem", lineHeight: "1.6" }}>
+                  기존 ETF에 종목을 추가하기 전에,<br />
+                  먼저 '신규 ETF 생성'을 진행하여 새로운 ETF를 등록해 주세요.
+                </p>
+              </div>
+            ) : (
+              <>
+                {/* ETF Meta */}
+                <div className="form-section">
+                  <div className="form-group">
+                    <label>ETF 선택</label>
+                    <select
+                      value={selectedEtf}
+                      onChange={e => setSelectedEtf(e.target.value)}
+                    >
+                      {etfList.map(name => (
+                        <option key={name} value={name}>{name}</option>
+                      ))}
+                    </select>
+                  </div>
 
-              <label>ETF 설명</label>
-              <textarea
-                rows={2}
-                value={description}
-                onChange={e => setDescription(e.target.value)}
-              />
-            </div>
+                  <div className="form-group">
+                    <label>ETF 설명</label>
+                    <textarea
+                      rows={2}
+                      value={description}
+                      onChange={e => setDescription(e.target.value)}
+                      placeholder="ETF의 투자 전략이나 특징을 입력하세요."
+                    />
+                  </div>
+                </div>
 
             <div className="divider" />
 
             <div className="etf-builder">
-              {/* ===== 좌측: 내 관심 종목 ===== */}
+              {/* ===== 좌측: 내 관심 종목 혹은 포착 종목 ===== */}
               <div className="search-panel">
-                <h4>내 관심 종목</h4>
+                <h4>{leftPanelTitle || "내 관심 종목"}</h4>
 
                 {/* 검색 테이블 헤더 - scroll 영역 밖에 위치 */}
                 <div className="search-header">
@@ -344,12 +387,14 @@ export default function EditEtfModal({
                 </div>
               </div>
             </div>
-          </div>
+          </>
+        )}
+      </div>
 
           {/* Footer */}
           <div className="modal-footer">
             <button className="secondary-btn" onClick={onClose}>취소</button>
-            <button className="primary-btn" onClick={save}>저장</button>
+            <button className="primary-btn" onClick={save} disabled={etfList.length === 0}>저장</button>
           </div>
         </div>
       </div>

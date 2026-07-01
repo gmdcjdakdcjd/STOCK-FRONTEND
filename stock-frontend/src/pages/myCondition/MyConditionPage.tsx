@@ -3,10 +3,13 @@ import { useNavigate } from "react-router-dom";
 import { runScreenerWithFilters, saveScreenerCondition, getScreenerConditions, deleteScreenerCondition, getDeletedScreenerConditions, restoreScreenerCondition } from "../../api/screenerApi";
 import { fetchKodexSummary, fetchKodexHoldings } from "../../api/kodexApi";
 import { fetchTigerSummary, fetchTigerHoldings } from "../../api/tigerApi";
+import { getMyStockKR, getMyStockUS } from "../../api/myStockApi"; // 관심종목 로드 API 임포트
 import EtfSearchModal from "./EtfSearchModal";
 import ConditionSaveModal from "./ConditionSaveModal";
 import ConditionListModal from "./ConditionListModal";
 import ConditionRestoreModal from "./ConditionRestoreModal";
+import CreateEtfModal from "../myStock/CreateEtfModal"; // ETF 생성 모달 임포트
+import EditEtfModal from "../myStock/EditEtfModal"; // ETF 수정 모달 임포트
 import "./MyConditionPage.css";
 import "../result/result-detail.css"; // ResultDetail 공통 테이블 스타일을 재사용합니다.
 
@@ -84,6 +87,11 @@ export default function MyConditionPage() {
   /* 삭제된 조건식 복구 모달 상태 및 목록 데이터 */
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState<boolean>(false);
   const [deletedConditions, setDeletedConditions] = useState<any[]>([]);
+  /* ETF 관리 3개 액션 관련 상태 선언 */
+  const [showCreateEtf, setShowCreateEtf] = useState<boolean>(false);
+  const [showAddToEtf, setShowAddToEtf] = useState<boolean>(false);
+  const [hasEtf, setHasEtf] = useState<boolean>(false);
+  const [myStocks, setMyStocks] = useState<any[]>([]);
   /* 현재 불러와서 수정/적용 중인 조건식의 정보 (null이면 새로 저장 모드) */
   const [activeConditionId, setActiveConditionId] = useState<number | null>(null);
   const [activeConditionName, setActiveConditionName] = useState<string>("");
@@ -133,6 +141,44 @@ export default function MyConditionPage() {
       .then(() => setAuthenticated(true))
       .catch(() => setAuthenticated(false));
   }, []);
+
+  // 사용자가 소유한 ETF 목록이 존재하는지 초기 로드 확인
+  useEffect(() => {
+    fetch("/api/myetf/list?page=1&size=1")
+      .then(res => res.json())
+      .then(data => {
+        const dtoList = data && data.dtoList ? data.dtoList : [];
+        setHasEtf(dtoList.length > 0);
+      })
+      .catch(() => {
+        setHasEtf(false);
+      });
+  }, []);
+
+  // 로그인한 사용자의 관심 종목 목록(MyStock)을 불러와서 모달용 데이터 구성
+  useEffect(() => {
+    if (authenticated) {
+      Promise.all([getMyStockKR(1), getMyStockUS(1)])
+        .then(([krRes, usRes]) => {
+          const krItems = (krRes?.dtoList || []).map((s: any) => ({
+            code: s.code,
+            name: s.name,
+            market: "KR" as const,
+            currentPrice: s.currentPrice,
+          }));
+          const usItems = (usRes?.dtoList || []).map((s: any) => ({
+            code: s.code,
+            name: s.name,
+            market: "US" as const,
+            currentPrice: s.currentPrice,
+          }));
+          setMyStocks([...krItems, ...usItems]);
+        })
+        .catch((err) => {
+          console.error("내 관심 종목 로드 중 오류:", err);
+        });
+    }
+  }, [authenticated]);
 
   // 브라우저 탭 닫기 / 새로고침 시 저장되지 않은 변경사항이 있으면 경고 표시
   useEffect(() => {
@@ -539,6 +585,17 @@ export default function MyConditionPage() {
     navigate("/stock/myStock");
   };
 
+  /* ETF 가기 핸들러 (Dirty Check 포함) */
+  const handleGoToMyEtf = () => {
+    if (isConditionDirty()) {
+      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 나의 ETF 화면으로 이동하시겠습니까?")) {
+        return;
+      }
+    }
+    navigate("/myetf/list");
+  };
+
+
   /* 삭제된 특정 조건식을 복구(활성화) 처리합니다. */
   const handleRestoreCondition = (id: number, name: string) => {
     if (!window.confirm(`"${name.replace(/_(KR|US)$/i, "")}" 조건식을 복구하시겠습니까?`)) {
@@ -679,6 +736,14 @@ export default function MyConditionPage() {
     }
     return filter.label;
   };
+
+  /* ETF 필터 선택 여부에 따라 교집합 필터링된 최종 포착 종목 목록을 컴포넌트 레벨에서 계산 */
+  const displayedResults = (Array.isArray(results) ? results : []).filter((r) => {
+    if (useEtfFilter && selectedEtfs.length > 0) {
+      return etfHoldings.has(r.code);
+    }
+    return true;
+  });
 
   return (
     <div className="mycondition-container">
@@ -1177,17 +1242,7 @@ export default function MyConditionPage() {
           </div>
 
           {/* 3단계: 스크리닝 포착 종목 목록 카드 (관심종목 추가 기능 버튼들은 임시 제거) */}
-          {(() => {
-            /* ETF 필터 선택 여부에 따라 교집합 필터링된 최종 목록을 생성합니다. results가 배열인지 안전 검사를 수행합니다. */
-            const displayedResults = (Array.isArray(results) ? results : []).filter((r) => {
-              if (useEtfFilter && selectedEtfs.length > 0) {
-                return etfHoldings.has(r.code);
-              }
-              return true;
-            });
-
-            return (
-              <div className="result-card" style={{ marginTop: "15px" }}>
+          <div className="result-card" style={{ marginTop: "15px" }}>
                 <div className="result-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
                   <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
                     <span>포착 종목 목록 (전체 {displayedResults.length}개)</span>
@@ -1197,27 +1252,74 @@ export default function MyConditionPage() {
                       </span>
                     )}
                   </div>
-                  {activeConditionId !== null && (
-                    <div className="detail-header-actions" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                      <button
-                        type="button"
-                        className="btn-outline-pill"
-                        onClick={handleGoToMyStock}
-                        style={{ padding: "6px 12px", fontSize: "0.8rem" }}
-                      >
-                        ⭐ 내 종목 보러가기
-                      </button>
+                  
+                  <div className="detail-header-actions" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                    {activeConditionId !== null && (
+                      <>
+                        <button
+                          type="button"
+                          className="btn-outline-pill"
+                          onClick={handleGoToMyStock}
+                          style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                        >
+                          ⭐ 내 종목 보러가기
+                        </button>
 
-                      <button
-                        type="button"
-                        className="btn-primary-pill"
-                        onClick={handleAddMyStock}
-                        style={{ padding: "6px 12px", fontSize: "0.8rem" }}
-                      >
-                        📌 선택 종목 추가
-                      </button>
-                    </div>
-                  )}
+                        <button
+                          type="button"
+                          className="btn-primary-pill"
+                          onClick={handleAddMyStock}
+                          style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                        >
+                          📌 선택 종목 추가
+                        </button>
+
+                        {/* 시각적 구분 수직 막대 추가 */}
+                        <span
+                          style={{
+                            width: "1px",
+                            height: "16px",
+                            backgroundColor: "#cbd5e1",
+                            margin: "0 4px",
+                            alignSelf: "center"
+                          }}
+                        />
+                      </>
+                    )}
+
+                    <button
+                      type="button"
+                      className="btn-outline-pill"
+                      onClick={handleGoToMyEtf}
+                      style={{ padding: "6px 12px", fontSize: "0.8rem", fontWeight: "600" }}
+                    >
+                      나의 ETF 가기
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-outline-pill"
+                      disabled={!hasEtf}
+                      title={!hasEtf ? "생성된 ETF가 없습니다" : undefined}
+                      onClick={() => hasEtf && setShowAddToEtf(true)}
+                      style={{
+                        padding: "6px 12px",
+                        fontSize: "0.8rem",
+                        fontWeight: "600",
+                        opacity: !hasEtf ? 0.5 : 1,
+                        cursor: !hasEtf ? "not-allowed" : "pointer"
+                      }}
+                    >
+                      기존 ETF 추가
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-primary-pill"
+                      onClick={() => setShowCreateEtf(true)}
+                      style={{ padding: "6px 12px", fontSize: "0.8rem", fontWeight: "600" }}
+                    >
+                      신규 ETF 생성
+                    </button>
+                  </div>
                 </div>
 
                 {activeConditionId === null && (
@@ -1329,8 +1431,6 @@ export default function MyConditionPage() {
                   </table>
                 </div>
               </div>
-            );
-          })()}
 
         </div>
       </div>
@@ -1387,6 +1487,40 @@ export default function MyConditionPage() {
         onRestore={handleRestoreCondition}
         filterOptions={FILTER_OPTIONS}
       />
+
+      {/* ETF 생성 및 기존 수정 모달 팝업 추가 연동 */}
+      {showCreateEtf && (
+        <CreateEtfModal
+          open={showCreateEtf}
+          myStocks={displayedResults.map(r => ({
+            code: r.code,
+            name: r.name,
+            market: (r.market || market).toUpperCase() as "KR" | "US",
+            currentPrice: r.currentPrice || null,
+          }))}
+          leftPanelTitle="스크리닝 포착 종목"
+          onClose={() => setShowCreateEtf(false)}
+          onCreated={() => {
+            setShowCreateEtf(false);
+            setHasEtf(true);
+          }}
+        />
+      )}
+
+      {showAddToEtf && (
+        <EditEtfModal
+          open={showAddToEtf}
+          myStocks={displayedResults.map(r => ({
+            code: r.code,
+            name: r.name,
+            market: (r.market || market).toUpperCase() as "KR" | "US",
+            currentPrice: r.currentPrice || null,
+          }))}
+          leftPanelTitle="스크리닝 포착 종목"
+          onClose={() => setShowAddToEtf(false)}
+          onSaved={() => setShowAddToEtf(false)}
+        />
+      )}
 
       {/* 세련된 토스트(Toast) 팝업 알림 */}
       {toast && (
