@@ -4,13 +4,16 @@
 .modal-overlay {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  z-index: 1200; /* Z-Index 1200으로 격상 */
 
   display: flex;
   align-items: center;
   justify-content: center;
 
-  background: rgba(0, 0, 0, 0.45);
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
+  animation: modalFadeIn 0.2s ease-out forwards;
 }
 
 @media (max-width: 768px) {
@@ -34,9 +37,11 @@
   min-height: 0;
   overflow: hidden;
 
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+  background: #ffffff;
+  border-radius: 18px; /* 모서리 둥글기 18px로 통일 */
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 
+              0 10px 10px -5px rgba(15, 23, 42, 0.04); /* 그림자 패턴 통일 */
+  animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* ================================
@@ -174,4 +179,31 @@
 
 .modal-content::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* ================================
+   Keyframes (Premium Easing Animation)
+================================ */
+@keyframes modalFadeIn {
+  from {
+    background-color: rgba(15, 23, 42, 0);
+    backdrop-filter: blur(0px);
+    -webkit-backdrop-filter: blur(0px);
+  }
+  to {
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    transform: translateY(15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

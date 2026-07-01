@@ -47,11 +47,13 @@ export const LoadingProvider: React.FC<{ children: ReactNode }> = ({ children })
       window.fetch = async (...args) => {
         const url = typeof args[0] === "string" ? args[0] : (args[0] as Request).url || "";
 
-        // 로그인 여부 체크(/api/auth/me) 및 자동완성 검색 API는 오버레이 로딩 대상에서 제외합니다.
+        // 로그인 여부 체크(/api/auth/me), 자동완성 검색 및 KODEX/TIGER 관련 API는 오버레이 로딩 대상에서 제외합니다.
         const isSilent =
           url.includes("/api/auth/me") ||
           url.includes("/autocomplete/") ||
-          url.includes("/api/common/autocomplete");
+          url.includes("/api/common/autocomplete") ||
+          url.includes("/api/kodex/") ||
+          url.includes("/api/tiger/");
 
         if (!isSilent) {
           activeRequests++;

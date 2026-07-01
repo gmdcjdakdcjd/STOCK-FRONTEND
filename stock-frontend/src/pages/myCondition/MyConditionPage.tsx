@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { runScreenerWithFilters } from "../../api/screenerApi";
+import { runScreenerWithFilters, saveScreenerCondition, getScreenerConditions, deleteScreenerCondition } from "../../api/screenerApi";
 import { fetchKodexSummary, fetchKodexHoldings } from "../../api/kodexApi";
 import { fetchTigerSummary, fetchTigerHoldings } from "../../api/tigerApi";
+import EtfSearchModal from "./EtfSearchModal";
+import ConditionSaveModal from "./ConditionSaveModal";
+import ConditionListModal from "./ConditionListModal";
 import "./MyConditionPage.css";
 import "../result/result-detail.css"; // ResultDetail 공통 테이블 스타일을 재사용합니다.
 
@@ -46,29 +49,17 @@ export default function MyConditionPage() {
   /* 상태 관리: 백엔드로부터 응답받은 스크리닝 결과 종목 리스트 */
   const [results, setResults] = useState<any[]>([]);
 
-  /* 상태 관리: 테이블에서 다중 선택된 종목 코드 리스트 (사용되지 않아 임시 주석 처리) */
-  // const [checkedCodes, setCheckedCodes] = useState<string[]>([]);
+  /* 상태 관리: 테이블에서 다중 선택된 종목 코드 리스트 */
+  const [checkedCodes, setCheckedCodes] = useState<string[]>([]);
 
-  /* 상태 관리: 로그인 인증 완료 여부 (사용되지 않아 임시 주석 처리) */
-  // const [authenticated, setAuthenticated] = useState<boolean>(false);
+  /* 상태 관리: 로그인 인증 완료 여부 */
+  const [authenticated, setAuthenticated] = useState<boolean>(false);
 
   /* 상태 관리: 스크리닝 실행 로딩 여부 */
   const [isRunning, setIsRunning] = useState<boolean>(false);
 
   /* 상태 관리: 에러 발생 메시지 */
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-
-  /* 컴포넌트 마운트 시 유저 인증 세션 체크 (사용되지 않아 임시 주석 처리)
-  useEffect(() => {
-    fetch("/api/auth/me", { credentials: "include" })
-      .then((res) => {
-        if (!res.ok) throw new Error();
-        return res.json();
-      })
-      .then(() => setAuthenticated(true))
-      .catch(() => setAuthenticated(false));
-  }, []);
-  */
 
   /* ========================================================
      특정 ETF 구성 종목 필터링용 상태 및 훅 정의
@@ -81,6 +72,37 @@ export default function MyConditionPage() {
   const [selectedEtfs, setSelectedEtfs] = useState<{ etfId: string; etfName: string }[]>([]);
   const [etfHoldings, setEtfHoldings] = useState<Set<string>>(new Set());
   const [etfLoading, setEtfLoading] = useState<boolean>(false);
+  /* ETF 다중 선택 검색 모달 팝업의 활성화 상태 */
+  const [isEtfModalOpen, setIsEtfModalOpen] = useState<boolean>(false);
+  /* 조건 저장 모달 팝업의 활성화 상태 및 저장할 조건식 이름 */
+  const [isSaveModalOpen, setIsSaveModalOpen] = useState<boolean>(false);
+  const [saveConditionName, setSaveConditionName] = useState<string>("");
+  /* 저장된 조건식 불러오기 모달 상태 및 목록 데이터 */
+  const [isListModalOpen, setIsListModalOpen] = useState<boolean>(false);
+  const [savedConditions, setSavedConditions] = useState<any[]>([]);
+  /* 현재 불러와서 수정/적용 중인 조건식의 정보 (null이면 새로 저장 모드) */
+  const [activeConditionId, setActiveConditionId] = useState<number | null>(null);
+  const [activeConditionName, setActiveConditionName] = useState<string>("");
+  /* 화면에 표시할 세련된 토스트(Toast) 팝업 알림 상태 */
+  const [toast, setToast] = useState<{ message: string; type: "success" | "error" | "info" } | null>(null);
+
+  const showToast = (message: string, type: "success" | "error" | "info" = "success") => {
+    setToast({ message, type });
+    setTimeout(() => {
+      setToast(null);
+    }, 3000);
+  };
+
+  /* 로그인 상태 확인 API 훅 */
+  useEffect(() => {
+    fetch("/api/auth/me", { credentials: "include" })
+      .then((res) => {
+        if (!res.ok) throw new Error();
+        return res.json();
+      })
+      .then(() => setAuthenticated(true))
+      .catch(() => setAuthenticated(false));
+  }, []);
 
   /* ETF 요약 목록 조회 API 훅 */
   useEffect(() => {
@@ -190,11 +212,31 @@ export default function MyConditionPage() {
 
   /* 시장이 바뀔 때 기존 선택 정보 및 결과 데이터 초기화 */
   const handleMarketChange = (newMarket: "kr" | "us") => {
-    setMarket(newMarket);
+    if (market !== newMarket) {
+      setMarket(newMarket);
+      setCheckedFilterKeys([]);
+      setResults([]);
+      setCheckedCodes([]);
+      setErrorMessage(null);
+      setMarketCapFilter("");
+      setEtfBrand("KODEX");
+      setEtfQuery("");
+      setEtfSearchInput("");
+      setEtfList([]);
+      setSelectedEtfs([]);
+      setEtfHoldings(new Set());
+
+      // 불러온 조건식 정보 초기화 (가드 역할)
+      setActiveConditionId(null);
+      setActiveConditionName("");
+
+      showToast("분석 대상 시장이 전환되어 모든 필터와 활성 조건식이 초기화되었습니다.", "info");
+    }
+  };
+
+  /* 선택된 모든 조건 필터 및 검색 결과 초기화 함수 */
+  const handleResetFilters = () => {
     setCheckedFilterKeys([]);
-    setResults([]);
-    // setCheckedCodes([]);
-    setErrorMessage(null);
     setMarketCapFilter("");
     setEtfBrand("KODEX");
     setEtfQuery("");
@@ -202,6 +244,204 @@ export default function MyConditionPage() {
     setEtfList([]);
     setSelectedEtfs([]);
     setEtfHoldings(new Set());
+    setResults([]);
+    setCheckedCodes([]);
+    setErrorMessage(null);
+    setActiveConditionId(null);
+    setActiveConditionName("");
+    showToast("모든 분석 조건이 초기화되었습니다.", "info");
+  };
+
+  /* 현재 활성화된 스크리닝 조건들을 저장하기 위해 이름 입력 및 요약 팝업 모달을 띄우는 함수 */
+  const handleSaveConditions = () => {
+    const finalFilters = checkedFilterKeys.map((key) => `${key}_${market.toUpperCase()}`);
+    if (marketCapFilter) {
+      finalFilters.push(`${marketCapFilter}_${market.toUpperCase()}`);
+    }
+
+    // 저장할 조건이 전혀 없는 상황을 밸리데이션 검사
+    if (finalFilters.length === 0 && selectedEtfs.length === 0) {
+      alert("저장할 조건이 없습니다. 최소 한 개 이상의 조건 혹은 ETF 필터를 설정해 주세요.");
+      return;
+    }
+
+    if (activeConditionId && activeConditionName) {
+      // 이미 불러온 조건식을 수정하는 모드인 경우 (사용자용 입력창에는 접미사를 떼고 보여줌)
+      setSaveConditionName(activeConditionName.replace(/_(KR|US)$/i, ""));
+    } else {
+      // 새로운 조건식으로 신규 저장하는 모드인 경우
+      const today = new Date();
+      const dateStr = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
+      setSaveConditionName("나만의 조건식_" + dateStr);
+    }
+    setIsSaveModalOpen(true);
+  };
+
+  /* 저장 완료 실행 버튼 클릭 시 호출되는 최종 콜백 핸들러 (실제 백엔드 API 연동 완료) */
+  const handleConfirmSave = async () => {
+    if (!saveConditionName.trim()) {
+      alert("조건식 이름은 필수 입력 항목입니다.");
+      return;
+    }
+
+    const cleanName = saveConditionName.trim().replace(/_(KR|US)$/i, "");
+    const finalName = cleanName + (market === "kr" ? "_KR" : "_US");
+
+    const finalFilters = checkedFilterKeys.map((key) => `${key}_${market.toUpperCase()}`);
+    if (marketCapFilter) {
+      finalFilters.push(`${marketCapFilter}_${market.toUpperCase()}`);
+    }
+
+    try {
+      // 백엔드 API 호출 실행 (마지막 파라미터로 activeConditionId 전달하여 수정/저장 분기)
+      await saveScreenerCondition(
+        finalName,
+        market,
+        finalFilters,
+        selectedEtfs,
+        activeConditionId
+      );
+
+      showToast(`"${cleanName}" 조건식이 성공적으로 ${activeConditionId ? "수정" : "저장"}되었습니다.`, "success");
+
+      // 수정된 이름 반영 (내부 전역 변수에는 접미사가 부착된 오리지널 명칭을 저장)
+      setActiveConditionName(finalName);
+
+      setIsSaveModalOpen(false); // 모달 닫기
+    } catch (err: any) {
+      console.error("조건식 저장 중 오류 발생:", err);
+      showToast("조건식 저장 실패: " + err.message, "error");
+    }
+  };
+
+  /* 백엔드에 저장된 내 조건식 리스트를 조회해 모달을 엽니다. */
+  const handleLoadConditions = () => {
+    getScreenerConditions()
+      .then((data) => {
+        setSavedConditions(data || []);
+        setIsListModalOpen(true);
+      })
+      .catch((err) => {
+        console.error("조건식 목록 조회 오류:", err);
+        alert("조건식 목록을 불러오는 중 오류가 발생했습니다: " + err.message);
+      });
+  };
+
+  /* 불러온 특정 조건식을 현재 필터들에 복원/바인딩 처리하고 자동 스크리닝을 실행합니다. */
+  const handleApplyCondition = async (cond: any) => {
+    // 1. 활성 조건식 ID 및 이름 상태 연동 (수정 모드로 진입 보장)
+    setActiveConditionId(cond.id);
+    setActiveConditionName(cond.name);
+
+    // 2. 시장 설정 복원
+    setMarket(cond.market);
+
+    // 3. 스크리닝 필터 및 시가총액 복원
+    const restoredKeys: string[] = [];
+    let restoredMarketCap = "";
+
+    if (cond.filters) {
+      cond.filters.forEach((fullKey: string) => {
+        // 끝의 _KR 또는 _US 서픽스 제거
+        const baseKey = fullKey.replace(/_(KR|US)$/i, "");
+        if (baseKey.startsWith("RANK_MARKET_CAP")) {
+          restoredMarketCap = baseKey;
+        } else {
+          restoredKeys.push(baseKey);
+        }
+      });
+    }
+
+    setCheckedFilterKeys(restoredKeys);
+    setMarketCapFilter(restoredMarketCap);
+
+    // 4. ETF 및 홀딩스 종목 복원
+    const holdingsSet = new Set<string>();
+    if (cond.market === "kr" && cond.selectedEtfs && cond.selectedEtfs.length > 0) {
+      setSelectedEtfs(cond.selectedEtfs);
+      setEtfLoading(true);
+      try {
+        let isFirst = true;
+
+        for (const etf of cond.selectedEtfs) {
+          const fetchFunc = etf.etfId.startsWith("TIGER") || etf.etfName.includes("TIGER")
+            ? fetchTigerHoldings
+            : fetchKodexHoldings;
+
+          const rawHoldings = await fetchFunc(etf.etfId);
+          // 각 홀딩 객체(TigerEtfHolding 또는 KodexEtfHolding)에서 stockCode 문자열만 추출하여 매핑합니다.
+          const cleanCodes = rawHoldings.map((item: any) => item.stockCode);
+          const currentHoldings = new Set<string>(cleanCodes);
+
+          if (isFirst) {
+            currentHoldings.forEach(code => holdingsSet.add(code));
+            isFirst = false;
+          } else {
+            // 교집합 교정
+            holdingsSet.forEach(code => {
+              if (!currentHoldings.has(code)) {
+                holdingsSet.delete(code);
+              }
+            });
+          }
+        }
+        setEtfHoldings(holdingsSet);
+      } catch (err) {
+        console.error("ETF 종목 리스트 복원 중 오류:", err);
+      } finally {
+        setEtfLoading(false);
+      }
+    } else {
+      setSelectedEtfs([]);
+      setEtfHoldings(new Set());
+    }
+
+    // 5. 복원된 로컬 변수들을 즉시 취합하여 백엔드 스크리닝 자동 실행
+    setIsRunning(true);
+    setResults([]);
+    setErrorMessage(null);
+    setIsListModalOpen(false); // 리스트 모달 사전 닫기
+
+    try {
+      const finalFilters = restoredKeys.map((key) => `${key}_${cond.market.toUpperCase()}`);
+      if (restoredMarketCap) {
+        finalFilters.push(`${restoredMarketCap}_${cond.market.toUpperCase()}`);
+      }
+
+      const etfCodes = cond.selectedEtfs && cond.selectedEtfs.length > 0 ? Array.from(holdingsSet) : [];
+
+      // API를 호출하여 즉각 검색 실행
+      const searchRes = await runScreenerWithFilters(finalFilters, etfCodes, cond.market);
+      setResults(searchRes || []);
+      showToast(`"${cond.name}" 조건식이 적용되었습니다.\n검색버튼을 눌러주세요`, "success");
+    } catch (err: any) {
+      console.error("조건식 불러온 후 자동 스크리닝 실행 실패:", err);
+      setErrorMessage(err.message || "조건식 불러오기 복원 후 자동 스크리닝 실행에 실패했습니다.");
+      showToast("조건식 적용 후 자동 검색 실패", "error");
+    } finally {
+      setIsRunning(false);
+    }
+  };
+
+  /* 저장되어 있는 특정 조건식을 삭제 처리합니다. */
+  const handleDeleteCondition = (id: number) => {
+    if (!window.confirm("이 조건식을 영구 삭제하시겠습니까?")) {
+      return;
+    }
+
+    deleteScreenerCondition(id)
+      .then(() => {
+        showToast("조건식이 삭제되었습니다.", "success");
+        // 목록 갱신
+        return getScreenerConditions();
+      })
+      .then((data) => {
+        setSavedConditions(data || []);
+      })
+      .catch((err) => {
+        console.error("조건식 삭제 오류:", err);
+        showToast("조건식 삭제 실패: " + err.message, "error");
+      });
   };
 
   /* ETF 칩 추가 함수 (최대 5개 제한) */
@@ -232,19 +472,17 @@ export default function MyConditionPage() {
     }
   };
 
-  /* 결과 테이블 개별 종목 선택 토글 (사용되지 않아 임시 주석 처리)
+  /* 결과 테이블 개별 종목 선택 토글 */
   const toggleOneCode = (code: string) => {
     setCheckedCodes((prev) =>
       prev.includes(code) ? prev.filter((c) => c !== code) : [...prev, code]
     );
   };
-  */
 
-  /* 결과 테이블 전체 종목 선택 토글 (사용되지 않아 임시 주석 처리)
-  const toggleAllCodes = (checked: boolean) => {
-    setCheckedCodes(checked ? results.map((r) => r.code) : []);
+  /* 결과 테이블 전체 종목 선택 토글 */
+  const toggleAllCodes = (checked: boolean, codes: string[]) => {
+    setCheckedCodes(checked ? codes : []);
   };
-  */
 
   /* '조건 검색 실행' 버튼 클릭 시 백엔드 호출 */
   const handleRunSearch = async () => {
@@ -258,7 +496,7 @@ export default function MyConditionPage() {
     const etfCodes = selectedEtfs.length > 0 ? Array.from(etfHoldings) : [];
 
     // 조건 필터도 없고 ETF 선택 목록도 비어 있는 경우 조회를 방지합니다.
-    if (finalFilters.length === 0 && etfCodes.length === 0) {
+    if (finalFilters.length === 0 && selectedEtfs.length === 0) {
       alert("최소 한 개 이상의 조건을 선택하거나 ETF 필터를 추가해 주세요.");
       return;
     }
@@ -266,11 +504,11 @@ export default function MyConditionPage() {
     setIsRunning(true);
     setErrorMessage(null);
     setResults([]);
-    // setCheckedCodes([]);
+    setCheckedCodes([]);
 
     try {
       /* 조립된 필터 키 목록과 선택한 ETF의 교집합 종목 코드 목록을 백엔드로 직접 전송 */
-      const response = await runScreenerWithFilters(finalFilters, etfCodes);
+      const response = await runScreenerWithFilters(finalFilters, etfCodes, market);
 
       if (response && response.status === "success" && Array.isArray(response.data)) {
         setResults(response.data);
@@ -284,42 +522,46 @@ export default function MyConditionPage() {
     }
   };
 
-  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하는 함수 (사용되지 않아 임시 주석 처리)
+  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하는 함수 */
   const handleAddMyStock = () => {
     if (!authenticated) {
-      alert("로그인 후 이용 가능합니다.");
+      showToast("로그인 후 이용 가능합니다.", "error");
       return;
     }
 
     if (checkedCodes.length === 0) {
-      alert("선택된 종목이 없습니다.");
+      showToast("선택된 종목이 없습니다.", "info");
       return;
     }
 
     const today = new Date().toISOString().substring(0, 10);
+    const suffix = market === "kr" ? "_KR" : "_US";
     const payload = results
       .filter((r) => checkedCodes.includes(r.code))
       .map((r) => ({
         code: r.code,
         name: r.name,
-        strategyName: "나만의 조건식",
+        strategyName: (activeConditionName || "나만의 조건식").trim().replace(/_(KR|US)$/i, "") + suffix,
         priceAtAdd: r.currentPrice,
-        memo: `${today} 포착`,
+        memo: today,
       }));
 
     fetch("/api/mystock/add", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
+      body: JSON.stringify(payload),
     })
       .then((res) => {
         if (!res.ok) throw new Error();
-        alert("선택한 종목들이 내 관심 종목에 추가되었습니다.");
+        showToast("선택한 종목들이 내 관심 종목에 추가되었습니다.", "success");
         setCheckedCodes([]);
       })
-      .catch(() => alert("관심 종목 등록에 실패했습니다. 로그인 상태를 다시 확인해 주세요."));
+      .catch((err) => {
+        console.error("관심 종목 등록 오류:", err);
+        showToast("관심 종목 등록에 실패했습니다. 로그인 상태를 다시 확인해 주세요.", "error");
+      });
   };
-  */
 
   /* 시장 선택에 맞춘 필터 조건 라벨명을 얻는 헬퍼 함수 */
   const getFilterLabel = (filter: FilterOption) => {
@@ -332,11 +574,46 @@ export default function MyConditionPage() {
   return (
     <div className="mycondition-container">
       {/* 상단 타이틀 영역 */}
-      <div className="mycondition-header">
-        <h1 className="mycondition-title">나만의 조건식</h1>
-        <p className="mycondition-subtitle">
-          원하는 투자 조건들을 선택하고 여러 조건들을 동시에 만족하는 교집합 종목들을 추출합니다.
-        </p>
+      <div className="mycondition-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px" }}>
+        <div>
+          <h1 className="mycondition-title">나만의 조건식</h1>
+          <p className="mycondition-subtitle" style={{ margin: 0 }}>
+            원하는 투자 조건들을 선택하고 여러 조건들을 동시에 만족하는 교집합 종목들을 추출합니다.
+          </p>
+        </div>
+        <button
+          type="button"
+          className="btn-load-conditions"
+          onClick={handleLoadConditions}
+          style={{
+            padding: "10px 18px",
+            fontSize: "0.875rem",
+            fontWeight: "700",
+            borderRadius: "10px",
+            border: "1px solid #4f46e5",
+            background: "#eff6ff",
+            color: "#4f46e5",
+            cursor: "pointer",
+            transition: "all 0.2s",
+            display: "flex",
+            alignItems: "center",
+            gap: "6px",
+            boxShadow: "0 2px 4px rgba(79, 70, 229, 0.05)"
+          }}
+          onMouseOver={(e) => {
+            e.currentTarget.style.background = "#4f46e5";
+            e.currentTarget.style.color = "#ffffff";
+          }}
+          onMouseOut={(e) => {
+            e.currentTarget.style.background = "#eff6ff";
+            e.currentTarget.style.color = "#4f46e5";
+          }}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+          </svg>
+          내 조건식 불러오기
+        </button>
       </div>
 
       <div className="mycondition-content" style={{ gridTemplateColumns: "1fr" }}>
@@ -505,46 +782,25 @@ export default function MyConditionPage() {
                         onKeyDown={(e) => {
                           if (e.key === "Enter") {
                             setEtfQuery(etfSearchInput);
+                            setIsEtfModalOpen(true);
                           }
                         }}
                       />
                       <button
                         type="button"
                         className="btn-etf-search"
-                        onClick={() => setEtfQuery(etfSearchInput)}
+                        onClick={() => {
+                          setEtfQuery(etfSearchInput);
+                          setIsEtfModalOpen(true);
+                        }}
                       >
                         찾기
                       </button>
                     </div>
 
-                    {/* 불러온 ETF 선택 셀렉트 박스 */}
-                    <div className="etf-row">
-                      <span className="etf-row-label">ETF 선택:</span>
-                      <select
-                        value=""
-                        className="etf-select-dropdown"
-                        onChange={(e) => {
-                          const val = e.target.value;
-                          if (val) {
-                            const targetOption = etfList.find((item) => item.etfId === val);
-                            if (targetOption) {
-                              addEtfChip(val, targetOption.etfName);
-                            }
-                          }
-                        }}
-                      >
-                        <option value="">-- 필터링할 ETF를 검색 및 선택해 주세요 (최대 5개) --</option>
-                        {etfList.map((item) => (
-                          <option key={item.etfId} value={item.etfId}>
-                            [{item.etfId}] {item.etfName}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-
                     {/* 선택된 ETF 목록 칩 표시 */}
                     {selectedEtfs.length > 0 && (
-                      <div style={{ display: "flex", gap: "5px", alignItems: "flex-start", flexDirection: "column" }}>
+                      <div style={{ display: "flex", gap: "5px", alignItems: "flex-start", flexDirection: "column", marginTop: "4px" }}>
                         <span style={{ fontSize: "0.8rem", fontWeight: "600", color: "#4b5563" }}>선택된 ETF 목록 ({selectedEtfs.length}/5):</span>
                         <div className="etf-chips-container">
                           {selectedEtfs.map((etf) => (
@@ -563,23 +819,210 @@ export default function MyConditionPage() {
                       </div>
                     )}
 
-                    {etfLoading && (
-                      <span style={{ fontSize: "0.8rem", color: "#6b7280" }}>ETF 구성 종목을 불러오는 중입니다...</span>
-                    )}
-                    {!etfLoading && etfList.length === 0 && (
-                      <span style={{ fontSize: "0.8rem", color: "#9ca3af" }}>검색된 ETF가 없습니다. 운용사 선택 및 검색어를 확인하세요.</span>
-                    )}
-
                   </div>
                 </div>
               </>
             )}
 
-            <div className="detail-actions" style={{ border: "none", paddingTop: 0 }}>
+            {/* 현재 선택된 조건 요약 패널 */}
+            <div
+              className="selected-summary-panel"
+              style={{
+                background: "#f8fafc",
+                border: "1px solid #e2e8f0",
+                borderRadius: "14px",
+                padding: "18px 22px",
+                marginTop: "20px",
+                marginBottom: "20px",
+                boxShadow: "inset 0 2px 4px 0 rgba(0, 0, 0, 0.01)"
+              }}
+            >
+              <h4 style={{ margin: "0 0 12px 0", fontSize: "0.925rem", fontWeight: "700", color: "#334155", display: "flex", alignItems: "center", gap: "6px" }}>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563eb" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14" />
+                  <polyline points="22 4 12 14.01 9 11.01" />
+                </svg>
+                현재 선택된 분석 조건 요약
+              </h4>
+
+              <div style={{ display: "flex", flexWrap: "wrap", gap: "8px" }}>
+                {/* 대상 시장 표시 칩 */}
+                <span className="summary-chip market-chip" style={{ background: "#e0f2fe", border: "1px solid #bae6fd", color: "#0369a1", fontSize: "0.8rem", fontWeight: "700", padding: "6px 12px", borderRadius: "8px", display: "inline-flex", alignItems: "center" }}>
+                  시장: {market === "kr" ? "국내 시장 (KR)" : "미국 시장 (US)"}
+                </span>
+
+                {/* 시가총액 조건 표시 칩 (삭제 버튼 포함) */}
+                {market === "kr" && marketCapFilter && (
+                  <span className="summary-chip cap-chip" style={{ background: "#fef3c7", border: "1px solid #fde68a", color: "#b45309", fontSize: "0.8rem", fontWeight: "700", padding: "6px 12px", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    시총: {[
+                      { val: "RANK_MARKET_CAP_30", label: "상위 30위" },
+                      { val: "RANK_MARKET_CAP_100", label: "상위 100위" },
+                      { val: "RANK_MARKET_CAP_200", label: "상위 200" }
+                    ].find(item => item.val === marketCapFilter)?.label || "적용 안 함"}
+                    <button
+                      type="button"
+                      onClick={() => setMarketCapFilter("")}
+                      style={{ border: "none", background: "transparent", color: "#b45309", cursor: "pointer", fontSize: "0.75rem", display: "inline-flex", padding: 0, alignItems: "center", fontWeight: "700" }}
+                      title="시가총액 조건 해제"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+
+                {/* 선택한 스크리닝 필터 조건들 표시 (삭제 버튼 포함) */}
+                {checkedFilterKeys.map(key => {
+                  const filterOpt = FILTER_OPTIONS.find(f => f.baseKey === key);
+                  if (!filterOpt) return null;
+                  return (
+                    <span
+                      key={key}
+                      className="summary-chip filter-chip"
+                      style={{
+                        background: "#f1f5f9",
+                        border: "1px solid #e2e8f0",
+                        color: "#475569",
+                        fontSize: "0.8rem",
+                        fontWeight: "600",
+                        padding: "6px 12px",
+                        borderRadius: "8px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px"
+                      }}
+                    >
+                      {getFilterLabel(filterOpt)}
+                      <button
+                        type="button"
+                        onClick={() => setCheckedFilterKeys(prev => prev.filter(k => k !== key))}
+                        style={{ border: "none", background: "transparent", color: "#94a3b8", cursor: "pointer", fontSize: "0.75rem", display: "inline-flex", padding: 0, alignItems: "center", fontWeight: "700" }}
+                        title="조건 해제"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  );
+                })}
+
+                {/* 선택한 ETF 필터들 표시 (삭제 버튼 포함) */}
+                {market === "kr" && selectedEtfs.map(etf => (
+                  <span
+                    key={etf.etfId}
+                    className="summary-chip etf-summary-chip"
+                    style={{
+                      background: "#eff6ff",
+                      border: "1px solid #dbeafe",
+                      color: "#1e40af",
+                      fontSize: "0.8rem",
+                      fontWeight: "600",
+                      padding: "6px 12px",
+                      borderRadius: "8px",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}
+                  >
+                    ETF: {etf.etfName}
+                    <button
+                      type="button"
+                      onClick={() => removeEtfChip(etf.etfId)}
+                      style={{ border: "none", background: "transparent", color: "#60a5fa", cursor: "pointer", fontSize: "0.75rem", display: "inline-flex", padding: 0, alignItems: "center", fontWeight: "700" }}
+                      title="ETF 필터 해제"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                ))}
+
+                {/* 아무것도 선택하지 않은 경우의 예외 안내 표시 */}
+                {checkedFilterKeys.length === 0 && (!marketCapFilter || market !== "kr") && (selectedEtfs.length === 0 || market !== "kr") && (
+                  <span style={{ fontSize: "0.825rem", color: "#94a3b8", fontWeight: "500", padding: "4px 0" }}>
+                    아직 선택된 분석 조건이 없습니다. 위에서 조건을 선택해 주세요.
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="detail-actions" style={{ border: "none", paddingTop: 0, display: "flex", gap: "10px" }}>
+              <button
+                type="button"
+                className="btn-reset-screening"
+                onClick={handleResetFilters}
+                style={{
+                  flex: "0 0 160px",
+                  padding: "14px",
+                  fontSize: "1.05rem",
+                  fontWeight: "700",
+                  borderRadius: "12px",
+                  border: "1px solid #cbd5e1",
+                  background: "#ffffff",
+                  color: "#475569",
+                  cursor: "pointer",
+                  transition: "all 0.25s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = "#f1f5f9";
+                  e.currentTarget.style.color = "#1e293b";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = "#ffffff";
+                  e.currentTarget.style.color = "#475569";
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67" />
+                </svg>
+                조건 초기화
+              </button>
+
+              <button
+                type="button"
+                className="btn-save-screening"
+                onClick={handleSaveConditions}
+                style={{
+                  flex: "0 0 160px",
+                  padding: "14px",
+                  fontSize: "1.05rem",
+                  fontWeight: "700",
+                  borderRadius: "12px",
+                  border: "1px solid #4f46e5",
+                  background: "#ffffff",
+                  color: "#4f46e5",
+                  cursor: "pointer",
+                  transition: "all 0.25s ease",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "6px",
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = "#eff6ff";
+                  e.currentTarget.style.borderColor = "#2563eb";
+                  e.currentTarget.style.color = "#2563eb";
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = "#ffffff";
+                  e.currentTarget.style.borderColor = "#4f46e5";
+                  e.currentTarget.style.color = "#4f46e5";
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z" />
+                  <polyline points="17 21 17 13 7 13 7 21" />
+                  <polyline points="7 3 7 8 15 8" />
+                </svg>
+                {activeConditionId ? "조건 수정" : "조건 저장"}
+              </button>
+
               <button
                 className="btn-run-screening"
                 onClick={handleRunSearch}
                 disabled={isRunning}
+                style={{ flex: 1 }}
               >
                 {isRunning ? "조건 만족 종목 스크리닝 중..." : `${market.toUpperCase()} 시장 조건 검색 실행`}
               </button>
@@ -599,17 +1042,68 @@ export default function MyConditionPage() {
             return (
               <div className="result-card" style={{ marginTop: "15px" }}>
                 <div className="result-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                  <span>포착 종목 목록 (전체 {displayedResults.length}개)</span>
-                  {displayedResults.length > 200 && (
-                    <span style={{ fontSize: "0.8rem", color: "#f59e0b", fontWeight: "normal" }}>
-                      * 렌더링 성능 유지를 위해 상위 200개 종목만 표에 출력됩니다.
-                    </span>
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                    <span>포착 종목 목록 (전체 {displayedResults.length}개)</span>
+                    {displayedResults.length > 200 && (
+                      <span style={{ fontSize: "0.8rem", color: "#f59e0b", fontWeight: "normal" }}>
+                        * 상위 200개 종목만 표에 출력됩니다.
+                      </span>
+                    )}
+                  </div>
+                  {activeConditionId !== null && (
+                    <div className="detail-header-actions" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                      <button
+                        type="button"
+                        className="btn-outline-pill"
+                        onClick={() => navigate("/stock/myStock")}
+                        style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                      >
+                        ⭐ 내 종목 보러가기
+                      </button>
+
+                      <button
+                        type="button"
+                        className="btn-primary-pill"
+                        onClick={handleAddMyStock}
+                        style={{ padding: "6px 12px", fontSize: "0.8rem" }}
+                      >
+                        📌 선택 종목 추가
+                      </button>
+                    </div>
                   )}
                 </div>
+
+                {activeConditionId === null && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "10px",
+                      background: "#eff6ff",
+                      border: "1px solid #bfdbfe",
+                      color: "#1e40af",
+                      padding: "12px 16px",
+                      borderRadius: "8px",
+                      fontSize: "0.85rem",
+                      fontWeight: "500",
+                      marginBottom: "15px",
+                    }}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                      <circle cx="12" cy="12" r="10" />
+                      <line x1="12" y1="16" x2="12" y2="12" />
+                      <line x1="12" y1="8" x2="12.01" y2="8" />
+                    </svg>
+                    <span>
+                      상단의 <strong>'내 조건식 불러오기'</strong>를 통해 조건식을 불러오시면, 출력된 종목들을 선택하여 내 <strong>관심종목에 등록</strong>할 수 있습니다.
+                    </span>
+                  </div>
+                )}
 
                 <div className="result-table-wrapper" style={{ overflowX: "auto" }}>
                   <table className="detail-table align-table" style={{ width: "100%" }}>
                     <colgroup>
+                      {activeConditionId !== null && <col style={{ width: "48px" }} />}
                       <col style={{ width: "120px" }} />
                       <col style={{ width: "20%" }} />
                       <col style={{ width: "120px" }} />
@@ -619,6 +1113,15 @@ export default function MyConditionPage() {
                     </colgroup>
                     <thead>
                       <tr>
+                        {activeConditionId !== null && (
+                          <th className="col-check" style={{ textAlign: "center" }}>
+                            <input
+                              type="checkbox"
+                              checked={displayedResults.length > 0 && checkedCodes.length === displayedResults.length}
+                              onChange={(e) => toggleAllCodes(e.target.checked, displayedResults.map(r => r.code))}
+                            />
+                          </th>
+                        )}
                         <th className="col-code">종목코드</th>
                         <th className="col-name">종목명</th>
                         <th className="col-detail"></th>
@@ -630,13 +1133,13 @@ export default function MyConditionPage() {
                     <tbody>
                       {isRunning ? (
                         <tr>
-                          <td colSpan={6} style={{ textAlign: "center", padding: "40px 0", color: "#6b7280" }}>
+                          <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#6b7280" }}>
                             조건에 부합하는 종목을 실시간으로 스크리닝 중입니다. 잠시만 기다려 주세요.
                           </td>
                         </tr>
                       ) : displayedResults.length === 0 ? (
                         <tr>
-                          <td colSpan={6} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>
+                          <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>
                             {errorMessage ? "에러가 발생하여 조회가 중단되었습니다." : "상단의 필터를 선택하고 실행 버튼을 눌러 스크리닝된 종목 리스트를 확인하세요."}
                           </td>
                         </tr>
@@ -644,6 +1147,15 @@ export default function MyConditionPage() {
                         /* 대용량 데이터로 인한 React 렌더링 정지(Unresponsive)를 방지하기 위해 최대 200개로 슬라이스하여 매핑합니다. */
                         displayedResults.slice(0, 200).map((r) => (
                           <tr key={r.code}>
+                            {activeConditionId !== null && (
+                              <td className="col-check" style={{ textAlign: "center" }}>
+                                <input
+                                  type="checkbox"
+                                  checked={checkedCodes.includes(r.code)}
+                                  onChange={() => toggleOneCode(r.code)}
+                                />
+                              </td>
+                            )}
                             <td className="col-code" style={{ fontFamily: "monospace" }}>{r.code}</td>
                             <td className="col-name" style={{ fontWeight: 600 }}>{r.name}</td>
                             <td className="col-detail">
@@ -675,6 +1187,96 @@ export default function MyConditionPage() {
 
         </div>
       </div>
+
+      {/* ETF 검색 결과 다중 선택 모달 팝업 */}
+      <EtfSearchModal
+        isOpen={isEtfModalOpen}
+        onClose={() => setIsEtfModalOpen(false)}
+        onConfirm={(tempEtfs) => {
+          setSelectedEtfs(tempEtfs);
+          setIsEtfModalOpen(false);
+        }}
+        etfBrand={etfBrand}
+        setEtfBrand={setEtfBrand}
+        etfSearchInput={etfSearchInput}
+        setEtfSearchInput={setEtfSearchInput}
+        etfQuery={etfQuery}
+        setEtfQuery={setEtfQuery}
+        etfList={etfList}
+        etfLoading={etfLoading}
+        selectedEtfs={selectedEtfs}
+      />
+
+      {/* 조건 저장 및 선택된 조건 요약 확인 모달 팝업 */}
+      <ConditionSaveModal
+        isOpen={isSaveModalOpen}
+        onClose={() => setIsSaveModalOpen(false)}
+        conditionName={saveConditionName}
+        setConditionName={setSaveConditionName}
+        onSave={handleConfirmSave}
+        market={market}
+        checkedFilterKeys={checkedFilterKeys}
+        marketCapFilter={marketCapFilter}
+        selectedEtfs={selectedEtfs}
+        filterOptions={FILTER_OPTIONS}
+        isEditMode={!!activeConditionId}
+      />
+
+      {/* 저장된 조건식 목록 및 불러오기/삭제 관리 모달 팝업 */}
+      <ConditionListModal
+        isOpen={isListModalOpen}
+        onClose={() => setIsListModalOpen(false)}
+        conditions={savedConditions}
+        onApply={handleApplyCondition}
+        onDelete={handleDeleteCondition}
+        filterOptions={FILTER_OPTIONS}
+      />
+
+      {/* 세련된 토스트(Toast) 팝업 알림 */}
+      {toast && (
+        <div
+          className="toast-popup-container"
+          style={{
+            position: "fixed",
+            top: "30px",
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 1500,
+            background: "#ffffff",
+            border: toast.type === "success" ? "1px solid #10b981" : toast.type === "error" ? "1px solid #ef4444" : "1px solid #3b82f6",
+            borderLeftWidth: "6px",
+            borderRadius: "10px",
+            padding: "14px 20px",
+            boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05)",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+            animation: "toastSlideDown 0.3s ease-out",
+            minWidth: "320px"
+          }}
+        >
+          {toast.type === "success" && (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <polyline points="20 6 9 17 4 12" />
+            </svg>
+          )}
+          {toast.type === "error" && (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg>
+          )}
+          {toast.type === "info" && (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="16" x2="12" y2="12" />
+              <line x1="12" y1="8" x2="12.01" y2="8" />
+            </svg>
+          )}
+          <span style={{ fontSize: "0.875rem", fontWeight: "700", color: "#334155", whiteSpace: "pre-line" }}>{toast.message}</span>
+        </div>
+      )}
     </div>
   );
 }

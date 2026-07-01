@@ -1,0 +1,286 @@
+/* =====================================================
+   ConditionSaveModal Premium Style Guide
+===================================================== */
+
+/* 1. 모달 전체 오버레이 */
+.save-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: saveModalFadeIn 0.2s ease-out;
+}
+
+/* 2. 모달 컨테이너 */
+.save-modal-body {
+  width: 90%;
+  max-width: 520px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 
+              0 10px 10px -5px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  animation: saveModalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes saveModalFadeIn {
+  from {
+    background-color: rgba(15, 23, 42, 0);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes saveModalSlideUp {
+  from {
+    transform: translateY(15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 3. 모달 헤더 */
+.save-modal-header {
+  padding: 18px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.save-modal-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.save-modal-close-btn {
+  border: none;
+  background: none;
+  font-size: 1.2rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.15s;
+}
+
+.save-modal-close-btn:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+/* 4. 모달 콘텐츠 */
+.save-modal-content {
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 이름 입력 그룹 */
+.save-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-input-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.save-name-input {
+  padding: 10px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  outline: none;
+  background-color: #ffffff;
+  transition: all 0.2s;
+  color: #0f172a;
+}
+
+.save-name-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+}
+
+/* 조건 요약 카드 */
+.save-summary-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.save-summary-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #475569;
+}
+
+.save-summary-card {
+  background-color: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.save-summary-row {
+  display: flex;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  align-items: center;
+}
+
+.save-summary-row.align-start {
+  align-items: flex-start;
+  padding-top: 4px;
+}
+
+.summary-label {
+  font-weight: 700;
+  color: #475569;
+  width: 115px;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.summary-value {
+  font-weight: 600;
+}
+
+/* 요약 패널 내 칩 공통 스타일 */
+.summary-chip-style, 
+.summary-list-item {
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 11px;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.2;
+  transition: all 0.15s ease;
+  user-select: none;
+}
+
+.summary-chip-style:hover,
+.summary-list-item:hover {
+  transform: translateY(-1px);
+}
+
+/* 카테고리별 칩 색상 바인딩 */
+.market-chip {
+  background-color: #eff6ff;
+  border: 1px solid #bfdbfe;
+  color: #1e40af;
+}
+
+.cap-chip {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.filter-chip-style {
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.etf-chip-style {
+  background-color: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+}
+
+/* 리스트 아이템 컴포넌트 */
+.summary-list-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  flex-direction: row;
+  gap: 8px;
+  flex: 1;
+}
+
+.summary-list-empty {
+  font-size: 0.775rem;
+  color: #94a3b8;
+  font-weight: 500;
+  background-color: #f8fafc;
+  padding: 4px 10px;
+  border-radius: 6px;
+  border: 1px dashed #cbd5e1;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* 5. 모달 푸터 액션 */
+.save-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid #f1f5f9;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  background-color: #ffffff;
+}
+
+.save-cancel-btn {
+  padding: 10px 20px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.save-cancel-btn:hover {
+  background-color: #f1f5f9;
+  color: #1e293b;
+}
+
+.save-submit-btn {
+  padding: 10px 24px;
+  font-size: 0.875rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  background-color: #4f46e5;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.2);
+  transition: all 0.15s;
+}
+
+.save-submit-btn:hover {
+  background-color: #4338ca;
+  box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
+  transform: translateY(-1px);
+}

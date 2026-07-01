@@ -20,8 +20,67 @@ import "./MyStockPage.css";
 ========================= */
 const fmt = (
     v: number | null | undefined,
-    suffix = ""
-) => (v != null ? `${v.toLocaleString()}${suffix}` : "-");
+    suffix = "",
+    isUS = false
+) => {
+    if (v == null) return "-";
+    if (isUS) {
+        return `${v.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}${suffix}`;
+    }
+    return `${v.toLocaleString()}${suffix}`;
+};
+
+const cleanStrategyName = (name: string | null | undefined) => {
+    if (!name) return "-";
+    return name.replace(/_(KR|US)$/i, "");
+};
+
+const roundToTwo = (num: number) => {
+    return Math.round((num + Number.EPSILON) * 100) / 100;
+};
+
+const PRESET_STRATEGIES = new Set([
+    "DAILY_120D_NEW_HIGH_KR",
+    "DAILY_120D_NEW_LOW_KR",
+    "DAILY_BB_LOWER_TOUCH_KR",
+    "DAILY_BB_UPPER_TOUCH_KR",
+    "DAILY_TOUCH_MA60_KR",
+    "RSI_30_UNHEATED_KR",
+    "RSI_70_OVERHEATED_KR",
+    "WEEKLY_52W_NEW_HIGH_KR",
+    "WEEKLY_52W_NEW_LOW_KR",
+    "WEEKLY_TOUCH_MA60_KR",
+    "DUAL_MOMENTUM_1M_KR",
+    "DUAL_MOMENTUM_3M_KR",
+    "DUAL_MOMENTUM_6M_KR",
+    "DUAL_MOMENTUM_1Y_KR",
+    "DAILY_TOP20_VOLUME_KR",
+    "DAILY_DROP_SPIKE_KR",
+    "DAILY_RISE_SPIKE_KR",
+
+    "DAILY_120D_NEW_HIGH_US",
+    "DAILY_120D_NEW_LOW_US",
+    "DAILY_BB_LOWER_TOUCH_US",
+    "DAILY_BB_UPPER_TOUCH_US",
+    "DAILY_TOUCH_MA60_US",
+    "RSI_30_UNHEATED_US",
+    "RSI_70_OVERHEATED_US",
+    "WEEKLY_52W_NEW_HIGH_US",
+    "WEEKLY_52W_NEW_LOW_US",
+    "WEEKLY_TOUCH_MA60_US",
+    "DUAL_MOMENTUM_1M_US",
+    "DUAL_MOMENTUM_3M_US",
+    "DUAL_MOMENTUM_6M_US",
+    "DUAL_MOMENTUM_1Y_US",
+    "DAILY_DROP_SPIKE_US",
+    "DAILY_RISE_SPIKE_US",
+    "DAILY_TOP20_VOLUME_US"
+]);
+
+const isPresetStrategy = (name: string | null | undefined): boolean => {
+    if (!name) return false;
+    return PRESET_STRATEGIES.has(name);
+};
 
 export default function MyStockPage() {
     const navigate = useNavigate();
@@ -107,20 +166,23 @@ export default function MyStockPage() {
         }
 
         return result.dtoList.map((s, i) => {
+            const cur = s.currentPrice != null ? roundToTwo(s.currentPrice) : null;
+            const add = s.priceAtAdd != null ? roundToTwo(s.priceAtAdd) : null;
+
             const rowClass =
-                s.currentPrice != null && s.priceAtAdd != null
-                    ? s.currentPrice > s.priceAtAdd
+                cur != null && add != null
+                    ? cur > add
                         ? "row-profit"
-                        : s.currentPrice < s.priceAtAdd
+                        : cur < add
                             ? "row-loss"
                             : ""
                     : "";
 
             const priceClass =
-                s.currentPrice != null && s.priceAtAdd != null
-                    ? s.currentPrice > s.priceAtAdd
+                cur != null && add != null
+                    ? cur > add
                         ? "price-up"
-                        : s.currentPrice < s.priceAtAdd
+                        : cur < add
                             ? "price-down"
                             : "price-same"
                     : "price-same";
@@ -152,30 +214,34 @@ export default function MyStockPage() {
 
                     <td className={`col-num ${priceClass}`}>
                         {isKR
-                            ? fmt(s.currentPrice, " 원")
-                            : fmt(s.currentPrice, " $")}
+                            ? fmt(s.currentPrice, " 원", false)
+                            : fmt(s.currentPrice, " $", true)}
                     </td>
 
                     <td className="col-num">
                         {isKR
-                            ? fmt(s.priceAtAdd, " 원")
-                            : fmt(s.priceAtAdd, " $")}
+                            ? fmt(s.priceAtAdd, " 원", false)
+                            : fmt(s.priceAtAdd, " $", true)}
                     </td>
 
                     <td className="col-num">
                         {isKR
-                            ? fmt(s.targetPrice5, " 원")
-                            : fmt(s.targetPrice5, " $")}
+                            ? fmt(s.targetPrice5, " 원", false)
+                            : fmt(s.targetPrice5, " $", true)}
                     </td>
 
                     <td className="col-num">
                         {isKR
-                            ? fmt(s.targetPrice10, " 원")
-                            : fmt(s.targetPrice10, " $")}
+                            ? fmt(s.targetPrice10, " 원", false)
+                            : fmt(s.targetPrice10, " $", true)}
                     </td>
 
                     <td className="col-strategy">
-                        <a href={strategyUrl}>{s.strategyName}</a>
+                        {isPresetStrategy(s.strategyName) ? (
+                            <a href={strategyUrl}>{cleanStrategyName(s.strategyName)}</a>
+                        ) : (
+                            <span className="strategy-badge">{cleanStrategyName(s.strategyName)}</span>
+                        )}
                     </td>
 
                     <td className="col-date">

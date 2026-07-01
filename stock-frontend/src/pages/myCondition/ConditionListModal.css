@@ -1,0 +1,308 @@
+/* =====================================================
+   ConditionListModal Premium Style Guide
+===================================================== */
+
+/* 1. 모달 전체 오버레이 */
+.list-modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(15, 23, 42, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  animation: listModalFadeIn 0.2s ease-out;
+}
+
+/* 2. 모달 컨테이너 */
+.list-modal-body {
+  width: 90%;
+  max-width: 660px;
+  background-color: #ffffff;
+  border-radius: 18px;
+  box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.1), 
+              0 10px 10px -5px rgba(15, 23, 42, 0.04);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  max-height: 85vh;
+  animation: listModalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes listModalFadeIn {
+  from {
+    background-color: rgba(15, 23, 42, 0);
+    backdrop-filter: blur(0px);
+  }
+  to {
+    background-color: rgba(15, 23, 42, 0.45);
+    backdrop-filter: blur(8px);
+  }
+}
+
+@keyframes listModalSlideUp {
+  from {
+    transform: translateY(15px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 3. 모달 헤더 */
+.list-modal-header {
+  padding: 20px 24px;
+  border-bottom: 1px solid #f1f5f9;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.header-title-area {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.list-modal-title {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #0f172a;
+  letter-spacing: -0.02em;
+}
+
+.list-modal-subtitle {
+  font-size: 0.825rem;
+  color: #64748b;
+  font-weight: 500;
+}
+
+.list-modal-close-btn {
+  border: none;
+  background: none;
+  font-size: 1.25rem;
+  color: #94a3b8;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.15s;
+}
+
+.list-modal-close-btn:hover {
+  background-color: #f1f5f9;
+  color: #334155;
+}
+
+/* 4. 모달 콘텐츠 */
+.list-modal-content {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+  background-color: #f8fafc;
+  max-height: 520px;
+}
+
+/* 스크롤바 커스터마이징 */
+.list-modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.list-modal-content::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.list-modal-content::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1;
+  border-radius: 3px;
+}
+
+/* 빈 상태 표시 */
+.list-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.list-empty-state svg {
+  margin-bottom: 16px;
+}
+
+.empty-text {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #475569;
+  margin: 0 0 6px 0;
+}
+
+.empty-subtext {
+  font-size: 0.825rem;
+  color: #94a3b8;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* 그리드 리스트 카드 컨테이너 */
+.conditions-grid-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* 개별 카드 */
+.condition-item-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  transition: all 0.2s ease;
+}
+
+.condition-item-card:hover {
+  border-color: #cbd5e1;
+  box-shadow: 0 6px 12px -2px rgba(15, 23, 42, 0.04), 
+              0 3px 6px -3px rgba(15, 23, 42, 0.02);
+  transform: translateY(-1px);
+}
+
+.card-main-info {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1;
+}
+
+.card-title-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-item-name {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+/* 시장 구분 뱃지 */
+.card-market-badge {
+  font-size: 0.725rem;
+  font-weight: 800;
+  padding: 2px 8px;
+  border-radius: 6px;
+  line-height: 1.2;
+}
+
+.card-market-badge.kr-badge {
+  background-color: #e0f2fe;
+  color: #0369a1;
+}
+
+.card-market-badge.us-badge {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+/* 가로 칩 배치 영역 */
+.card-chips-summary {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.summary-badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 6px;
+  line-height: 1.2;
+}
+
+.summary-badge.cap-badge {
+  background-color: #fffbeb;
+  border: 1px solid #fde68a;
+  color: #b45309;
+}
+
+.summary-badge.filter-badge {
+  background-color: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  color: #475569;
+}
+
+.summary-badge.etf-badge {
+  background-color: #f5f3ff;
+  border: 1px solid #ddd6fe;
+  color: #6d28d9;
+}
+
+.summary-badge.empty-badge {
+  background-color: #f8fafc;
+  border: 1px dashed #cbd5e1;
+  color: #94a3b8;
+}
+
+/* 날짜 표시 */
+.card-item-date {
+  font-size: 0.775rem;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+/* 카드 우측 액션 버튼 그룹 */
+.card-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.apply-condition-btn {
+  padding: 9px 18px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  background-color: #4f46e5;
+  color: #ffffff;
+  cursor: pointer;
+  box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.15);
+  transition: all 0.15s;
+}
+
+.apply-condition-btn:hover {
+  background-color: #4338ca;
+  box-shadow: 0 8px 12px -2px rgba(79, 70, 229, 0.25);
+}
+
+.delete-condition-btn {
+  padding: 9px 16px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1.2;
+}
+
+.delete-condition-btn:hover {
+  background-color: #fee2e2;
+  border-color: #fca5a5;
+  color: #ef4444;
+}

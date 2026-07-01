@@ -469,3 +469,17 @@
   font-weight: 700;
   color: #0f172a;
 }
+
+/* =====================================================
+   Toast Slide Animation
+===================================================== */
+@keyframes toastSlideDown {
+  from {
+    transform: translate(-50%, -20px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
