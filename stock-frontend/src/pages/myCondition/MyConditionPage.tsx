@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { runScreenerWithFilters, saveScreenerCondition, getScreenerConditions, deleteScreenerCondition, getDeletedScreenerConditions, restoreScreenerCondition } from "../../api/screenerApi";
 import { fetchKodexSummary, fetchKodexHoldings } from "../../api/kodexApi";
 import { fetchTigerSummary, fetchTigerHoldings } from "../../api/tigerApi";
-import { getMyStockKR, getMyStockUS } from "../../api/myStockApi"; // 관심종목 로드 API 임포트
 import EtfSearchModal from "./EtfSearchModal";
 import ConditionSaveModal from "./ConditionSaveModal";
 import ConditionListModal from "./ConditionListModal";
@@ -91,7 +90,6 @@ export default function MyConditionPage() {
   const [showCreateEtf, setShowCreateEtf] = useState<boolean>(false);
   const [showAddToEtf, setShowAddToEtf] = useState<boolean>(false);
   const [hasEtf, setHasEtf] = useState<boolean>(false);
-  const [myStocks, setMyStocks] = useState<any[]>([]);
   /* 현재 불러와서 수정/적용 중인 조건식의 정보 (null이면 새로 저장 모드) */
   const [activeConditionId, setActiveConditionId] = useState<number | null>(null);
   const [activeConditionName, setActiveConditionName] = useState<string>("");
@@ -155,30 +153,7 @@ export default function MyConditionPage() {
       });
   }, []);
 
-  // 로그인한 사용자의 관심 종목 목록(MyStock)을 불러와서 모달용 데이터 구성
-  useEffect(() => {
-    if (authenticated) {
-      Promise.all([getMyStockKR(1), getMyStockUS(1)])
-        .then(([krRes, usRes]) => {
-          const krItems = (krRes?.dtoList || []).map((s: any) => ({
-            code: s.code,
-            name: s.name,
-            market: "KR" as const,
-            currentPrice: s.currentPrice,
-          }));
-          const usItems = (usRes?.dtoList || []).map((s: any) => ({
-            code: s.code,
-            name: s.name,
-            market: "US" as const,
-            currentPrice: s.currentPrice,
-          }));
-          setMyStocks([...krItems, ...usItems]);
-        })
-        .catch((err) => {
-          console.error("내 관심 종목 로드 중 오류:", err);
-        });
-    }
-  }, [authenticated]);
+
 
   // 브라우저 탭 닫기 / 새로고침 시 저장되지 않은 변경사항이 있으면 경고 표시
   useEffect(() => {
