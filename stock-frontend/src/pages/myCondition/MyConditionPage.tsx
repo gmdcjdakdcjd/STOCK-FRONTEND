@@ -9,6 +9,7 @@ import ConditionListModal from "./ConditionListModal";
 import ConditionRestoreModal from "./ConditionRestoreModal";
 import CreateEtfModal from "../myStock/CreateEtfModal"; // ETF 생성 모달 임포트
 import EditEtfModal from "../myStock/EditEtfModal"; // ETF 수정 모달 임포트
+import UnsavedChangesConfirmModal from "./UnsavedChangesConfirmModal";
 import "./MyConditionPage.css";
 import "../result/result-detail.css"; // ResultDetail 공통 테이블 스타일을 재사용합니다.
 
@@ -86,10 +87,11 @@ export default function MyConditionPage() {
   /* 삭제된 조건식 복구 모달 상태 및 목록 데이터 */
   const [isRestoreModalOpen, setIsRestoreModalOpen] = useState<boolean>(false);
   const [deletedConditions, setDeletedConditions] = useState<any[]>([]);
-  /* ETF 관리 3개 액션 관련 상태 선언 */
   const [showCreateEtf, setShowCreateEtf] = useState<boolean>(false);
   const [showAddToEtf, setShowAddToEtf] = useState<boolean>(false);
   const [hasEtf, setHasEtf] = useState<boolean>(false);
+  /* 변경사항 미저장 알림 커스텀 컨펌 모달 상태 */
+  const [showUnsavedChangesConfirm, setShowUnsavedChangesConfirm] = useState<boolean>(false);
   /* 현재 불러와서 수정/적용 중인 조건식의 정보 (null이면 새로 저장 모드) */
   const [activeConditionId, setActiveConditionId] = useState<number | null>(null);
   const [activeConditionName, setActiveConditionName] = useState<string>("");
@@ -663,18 +665,9 @@ export default function MyConditionPage() {
     }
   };
 
-  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하는 함수 */
-  const handleAddMyStock = () => {
-    if (!authenticated) {
-      showToast("로그인 후 이용 가능합니다.", "error");
-      return;
-    }
-
-    if (checkedCodes.length === 0) {
-      showToast("선택된 종목이 없습니다.", "info");
-      return;
-    }
-
+  /* 실질적으로 백엔드 관심종목 추가 API를 호출하는 헬퍼 함수 */
+  const executeAddMyStock = () => {
+    setShowUnsavedChangesConfirm(false); // 모달 닫기
     const today = new Date().toISOString().substring(0, 10);
     const suffix = market === "kr" ? "_KR" : "_US";
     const payload = results
@@ -703,6 +696,29 @@ export default function MyConditionPage() {
         showToast("관심 종목 등록에 실패했습니다. 로그인 상태를 다시 확인해 주세요.", "error");
       });
   };
+
+  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하는 함수 */
+  const handleAddMyStock = () => {
+    if (!authenticated) {
+      showToast("로그인 후 이용 가능합니다.", "error");
+      return;
+    }
+
+    if (checkedCodes.length === 0) {
+      showToast("선택된 종목이 없습니다.", "info");
+      return;
+    }
+
+    // 불러온 조건식이 존재하고, 필터 조건 등에 변경사항(Dirty)이 감지된 상황인 경우 커스텀 확인 모달 노출
+    if (activeConditionId !== null && isConditionDirty()) {
+      setShowUnsavedChangesConfirm(true);
+      return;
+    }
+
+    executeAddMyStock();
+  };
+
+
 
   /* 시장 선택에 맞춘 필터 조건 라벨명을 얻는 헬퍼 함수 */
   const getFilterLabel = (filter: FilterOption) => {
@@ -1218,194 +1234,194 @@ export default function MyConditionPage() {
 
           {/* 3단계: 스크리닝 포착 종목 목록 카드 (관심종목 추가 기능 버튼들은 임시 제거) */}
           <div className="result-card" style={{ marginTop: "15px" }}>
-                <div className="result-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
-                  <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                    <span>포착 종목 목록 (전체 {displayedResults.length}개)</span>
-                    {displayedResults.length > 200 && (
-                      <span style={{ fontSize: "0.8rem", color: "#f59e0b", fontWeight: "normal" }}>
-                        * 상위 200개 종목만 표에 출력됩니다.
-                      </span>
-                    )}
-                  </div>
-                  
-                  <div className="detail-header-actions" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                    {activeConditionId !== null && (
-                      <>
-                        <button
-                          type="button"
-                          className="btn-outline-pill"
-                          onClick={handleGoToMyStock}
-                          style={{ padding: "6px 12px", fontSize: "0.8rem" }}
-                        >
-                          ⭐ 내 종목 보러가기
-                        </button>
+            <div className="result-card-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+                <span>포착 종목 목록 (전체 {displayedResults.length}개)</span>
+                {displayedResults.length > 200 && (
+                  <span style={{ fontSize: "0.8rem", color: "#f59e0b", fontWeight: "normal" }}>
+                    * 상위 200개 종목만 표에 출력됩니다.
+                  </span>
+                )}
+              </div>
 
-                        <button
-                          type="button"
-                          className="btn-primary-pill"
-                          onClick={handleAddMyStock}
-                          style={{ padding: "6px 12px", fontSize: "0.8rem" }}
-                        >
-                          📌 선택 종목 추가
-                        </button>
-
-                        {/* 시각적 구분 수직 막대 추가 */}
-                        <span
-                          style={{
-                            width: "1px",
-                            height: "16px",
-                            backgroundColor: "#cbd5e1",
-                            margin: "0 4px",
-                            alignSelf: "center"
-                          }}
-                        />
-                      </>
-                    )}
-
+              <div className="detail-header-actions" style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                {activeConditionId !== null && (
+                  <>
                     <button
                       type="button"
                       className="btn-outline-pill"
-                      onClick={handleGoToMyEtf}
-                      style={{ padding: "6px 12px", fontSize: "0.8rem", fontWeight: "600" }}
+                      onClick={handleGoToMyStock}
+                      style={{ padding: "6px 12px", fontSize: "0.8rem" }}
                     >
-                      나의 ETF 가기
+                      ⭐ 내 종목 보러가기
                     </button>
-                    <button
-                      type="button"
-                      className="btn-outline-pill"
-                      disabled={!hasEtf}
-                      title={!hasEtf ? "생성된 ETF가 없습니다" : undefined}
-                      onClick={() => hasEtf && setShowAddToEtf(true)}
-                      style={{
-                        padding: "6px 12px",
-                        fontSize: "0.8rem",
-                        fontWeight: "600",
-                        opacity: !hasEtf ? 0.5 : 1,
-                        cursor: !hasEtf ? "not-allowed" : "pointer"
-                      }}
-                    >
-                      기존 ETF 추가
-                    </button>
+
                     <button
                       type="button"
                       className="btn-primary-pill"
-                      onClick={() => setShowCreateEtf(true)}
-                      style={{ padding: "6px 12px", fontSize: "0.8rem", fontWeight: "600" }}
+                      onClick={handleAddMyStock}
+                      style={{ padding: "6px 12px", fontSize: "0.8rem" }}
                     >
-                      신규 ETF 생성
+                      📌 선택 종목 추가
                     </button>
-                  </div>
-                </div>
 
-                {activeConditionId === null && (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "10px",
-                      background: "#eff6ff",
-                      border: "1px solid #bfdbfe",
-                      color: "#1e40af",
-                      padding: "12px 16px",
-                      borderRadius: "8px",
-                      fontSize: "0.85rem",
-                      fontWeight: "500",
-                      marginBottom: "15px",
-                    }}
-                  >
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
-                      <circle cx="12" cy="12" r="10" />
-                      <line x1="12" y1="16" x2="12" y2="12" />
-                      <line x1="12" y1="8" x2="12.01" y2="8" />
-                    </svg>
-                    <span>
-                      상단의 <strong>'내 조건식 불러오기'</strong>를 통해 조건식을 불러오시면, 출력된 종목들을 선택하여 내 <strong>관심종목에 등록</strong>할 수 있습니다.
-                    </span>
-                  </div>
+                    {/* 시각적 구분 수직 막대 추가 */}
+                    <span
+                      style={{
+                        width: "1px",
+                        height: "16px",
+                        backgroundColor: "#cbd5e1",
+                        margin: "0 4px",
+                        alignSelf: "center"
+                      }}
+                    />
+                  </>
                 )}
 
-                <div className="result-table-wrapper" style={{ overflowX: "auto" }}>
-                  <table className="detail-table align-table" style={{ width: "100%" }}>
-                    <colgroup>
-                      {activeConditionId !== null && <col style={{ width: "48px" }} />}
-                      <col style={{ width: "120px" }} />
-                      <col style={{ width: "20%" }} />
-                      <col style={{ width: "120px" }} />
-                      <col style={{ width: "150px" }} />
-                      <col style={{ width: "125px" }} />
-                      <col style={{ width: "125px" }} />
-                    </colgroup>
-                    <thead>
-                      <tr>
+                <button
+                  type="button"
+                  className="btn-outline-pill"
+                  onClick={handleGoToMyEtf}
+                  style={{ padding: "6px 12px", fontSize: "0.8rem", fontWeight: "600" }}
+                >
+                  나의 ETF 가기
+                </button>
+                <button
+                  type="button"
+                  className="btn-outline-pill"
+                  disabled={!hasEtf}
+                  title={!hasEtf ? "생성된 ETF가 없습니다" : undefined}
+                  onClick={() => hasEtf && setShowAddToEtf(true)}
+                  style={{
+                    padding: "6px 12px",
+                    fontSize: "0.8rem",
+                    fontWeight: "600",
+                    opacity: !hasEtf ? 0.5 : 1,
+                    cursor: !hasEtf ? "not-allowed" : "pointer"
+                  }}
+                >
+                  기존 ETF 추가
+                </button>
+                <button
+                  type="button"
+                  className="btn-primary-pill"
+                  onClick={() => setShowCreateEtf(true)}
+                  style={{ padding: "6px 12px", fontSize: "0.8rem", fontWeight: "600" }}
+                >
+                  신규 ETF 생성
+                </button>
+              </div>
+            </div>
+
+            {activeConditionId === null && (
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "10px",
+                  background: "#eff6ff",
+                  border: "1px solid #bfdbfe",
+                  color: "#1e40af",
+                  padding: "12px 16px",
+                  borderRadius: "8px",
+                  fontSize: "0.85rem",
+                  fontWeight: "500",
+                  marginBottom: "15px",
+                }}
+              >
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                <span>
+                  상단의 <strong>'내 조건식 불러오기'</strong>를 통해 조건식을 불러오시면, 출력된 종목들을 선택하여 내 <strong>관심종목에 등록</strong>할 수 있습니다.
+                </span>
+              </div>
+            )}
+
+            <div className="result-table-wrapper" style={{ overflowX: "auto" }}>
+              <table className="detail-table align-table" style={{ width: "100%" }}>
+                <colgroup>
+                  {activeConditionId !== null && <col style={{ width: "48px" }} />}
+                  <col style={{ width: "120px" }} />
+                  <col style={{ width: "20%" }} />
+                  <col style={{ width: "120px" }} />
+                  <col style={{ width: "150px" }} />
+                  <col style={{ width: "125px" }} />
+                  <col style={{ width: "125px" }} />
+                </colgroup>
+                <thead>
+                  <tr>
+                    {activeConditionId !== null && (
+                      <th className="col-check" style={{ textAlign: "center" }}>
+                        <input
+                          type="checkbox"
+                          checked={displayedResults.length > 0 && checkedCodes.length === displayedResults.length}
+                          onChange={(e) => toggleAllCodes(e.target.checked, displayedResults.map(r => r.code))}
+                        />
+                      </th>
+                    )}
+                    <th className="col-code">종목코드</th>
+                    <th className="col-name">종목명</th>
+                    <th className="col-detail"></th>
+                    <th className="col-num">현재가(종가)</th>
+                    <th className="col-num">고가</th>
+                    <th className="col-num">저가</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {isRunning ? (
+                    <tr>
+                      <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#6b7280" }}>
+                        조건에 부합하는 종목을 실시간으로 스크리닝 중입니다. 잠시만 기다려 주세요.
+                      </td>
+                    </tr>
+                  ) : displayedResults.length === 0 ? (
+                    <tr>
+                      <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>
+                        {errorMessage ? "에러가 발생하여 조회가 중단되었습니다." : "상단의 필터를 선택하고 실행 버튼을 눌러 스크리닝된 종목 리스트를 확인하세요."}
+                      </td>
+                    </tr>
+                  ) : (
+                    /* 대용량 데이터로 인한 React 렌더링 정지(Unresponsive)를 방지하기 위해 최대 200개로 슬라이스하여 매핑합니다. */
+                    displayedResults.slice(0, 200).map((r) => (
+                      <tr key={r.code}>
                         {activeConditionId !== null && (
-                          <th className="col-check" style={{ textAlign: "center" }}>
+                          <td className="col-check" style={{ textAlign: "center" }}>
                             <input
                               type="checkbox"
-                              checked={displayedResults.length > 0 && checkedCodes.length === displayedResults.length}
-                              onChange={(e) => toggleAllCodes(e.target.checked, displayedResults.map(r => r.code))}
+                              checked={checkedCodes.includes(r.code)}
+                              onChange={() => toggleOneCode(r.code)}
                             />
-                          </th>
+                          </td>
                         )}
-                        <th className="col-code">종목코드</th>
-                        <th className="col-name">종목명</th>
-                        <th className="col-detail"></th>
-                        <th className="col-num">현재가(종가)</th>
-                        <th className="col-num">고가</th>
-                        <th className="col-num">저가</th>
+                        <td className="col-code" style={{ fontFamily: "monospace" }}>{r.code}</td>
+                        <td className="col-name" style={{ fontWeight: 600 }}>{r.name}</td>
+                        <td className="col-detail">
+                          <button
+                            className="detail-link-btn"
+                            onClick={() => navigate(`/stock/searchStock?code=${encodeURIComponent(r.code)}&name=${encodeURIComponent(r.name)}`)}
+                          >
+                            종목상세
+                          </button>
+                        </td>
+                        <td className="col-num">
+                          {r.currentPrice ? `${r.currentPrice.toLocaleString()} ${market === "kr" ? "원" : "$"}` : "-"}
+                        </td>
+                        <td className="col-num">
+                          {r.high ? `${r.high.toLocaleString()} ${market === "kr" ? "원" : "$"}` : "-"}
+                        </td>
+                        <td className="col-num">
+                          {r.low ? `${r.low.toLocaleString()} ${market === "kr" ? "원" : "$"}` : "-"}
+                        </td>
                       </tr>
-                    </thead>
-                    <tbody>
-                      {isRunning ? (
-                        <tr>
-                          <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#6b7280" }}>
-                            조건에 부합하는 종목을 실시간으로 스크리닝 중입니다. 잠시만 기다려 주세요.
-                          </td>
-                        </tr>
-                      ) : displayedResults.length === 0 ? (
-                        <tr>
-                          <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>
-                            {errorMessage ? "에러가 발생하여 조회가 중단되었습니다." : "상단의 필터를 선택하고 실행 버튼을 눌러 스크리닝된 종목 리스트를 확인하세요."}
-                          </td>
-                        </tr>
-                      ) : (
-                        /* 대용량 데이터로 인한 React 렌더링 정지(Unresponsive)를 방지하기 위해 최대 200개로 슬라이스하여 매핑합니다. */
-                        displayedResults.slice(0, 200).map((r) => (
-                          <tr key={r.code}>
-                            {activeConditionId !== null && (
-                              <td className="col-check" style={{ textAlign: "center" }}>
-                                <input
-                                  type="checkbox"
-                                  checked={checkedCodes.includes(r.code)}
-                                  onChange={() => toggleOneCode(r.code)}
-                                />
-                              </td>
-                            )}
-                            <td className="col-code" style={{ fontFamily: "monospace" }}>{r.code}</td>
-                            <td className="col-name" style={{ fontWeight: 600 }}>{r.name}</td>
-                            <td className="col-detail">
-                              <button
-                                className="detail-link-btn"
-                                onClick={() => navigate(`/stock/searchStock?code=${encodeURIComponent(r.code)}&name=${encodeURIComponent(r.name)}`)}
-                              >
-                                종목상세
-                              </button>
-                            </td>
-                            <td className="col-num">
-                              {r.currentPrice ? `${r.currentPrice.toLocaleString()} ${market === "kr" ? "원" : "$"}` : "-"}
-                            </td>
-                            <td className="col-num">
-                              {r.high ? `${r.high.toLocaleString()} ${market === "kr" ? "원" : "$"}` : "-"}
-                            </td>
-                            <td className="col-num">
-                              {r.low ? `${r.low.toLocaleString()} ${market === "kr" ? "원" : "$"}` : "-"}
-                            </td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                    ))
+                  )}
+                </tbody>
+              </table>
+            </div>
+          </div>
 
         </div>
       </div>
@@ -1496,6 +1512,13 @@ export default function MyConditionPage() {
           onSaved={() => setShowAddToEtf(false)}
         />
       )}
+
+      <UnsavedChangesConfirmModal
+        isOpen={showUnsavedChangesConfirm}
+        onClose={() => setShowUnsavedChangesConfirm(false)}
+        onConfirm={executeAddMyStock}
+        conditionName={activeConditionName.trim().replace(/_(KR|US)$/i, "")}
+      />
 
       {/* 세련된 토스트(Toast) 팝업 알림 */}
       {toast && (
