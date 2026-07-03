@@ -64,17 +64,67 @@ const ConditionRestoreModal: React.FC<ConditionRestoreModalProps> = ({
               {conditions.map((cond) => {
                 // 시가총액 조건과 일반 조건 필터 파싱 분리
                 const capFilter = cond.filters?.find((f: string) => f.startsWith("RANK_MARKET_CAP"));
-                const normalFilters = cond.filters?.filter((f: string) => !f.startsWith("RANK_MARKET_CAP")) || [];
+                const volFilter = cond.filters?.find((f: string) => f.startsWith("RANK_VOLUME"));
+                const amtFilter = cond.filters?.find((f: string) => f.startsWith("RANK_AMOUNT"));
+                const priceChangeFilter = cond.filters?.find((f: string) => f.startsWith("PRICE_CHANGE"));
+                const normalFilters = cond.filters?.filter((f: string) => !f.startsWith("RANK_MARKET_CAP") && !f.startsWith("RANK_VOLUME") && !f.startsWith("RANK_AMOUNT") && !f.startsWith("PRICE_CHANGE")) || [];
                 
                 let capLabel = "";
                 if (capFilter) {
                   const cleanCap = capFilter.replace(/_(KR|US)$/i, "");
                   const matched = [
+                    { val: "RANK_MARKET_CAP_10", label: "시총 상위 10위" },
                     { val: "RANK_MARKET_CAP_30", label: "시총 상위 30위" },
+                    { val: "RANK_MARKET_CAP_50", label: "시총 상위 50위" },
                     { val: "RANK_MARKET_CAP_100", label: "시총 상위 100위" },
                     { val: "RANK_MARKET_CAP_200", label: "시총 상위 200위" },
                   ].find((item) => item.val === cleanCap);
                   capLabel = matched ? matched.label : "";
+                }
+
+                let volLabel = "";
+                if (volFilter) {
+                  const cleanVol = volFilter.replace(/_(KR|US)$/i, "");
+                  const matched = [
+                    { val: "RANK_VOLUME_10", label: "거래량 상위 10위" },
+                    { val: "RANK_VOLUME_20", label: "거래량 상위 20위" },
+                    { val: "RANK_VOLUME_30", label: "거래량 상위 30위" },
+                    { val: "RANK_VOLUME_40", label: "거래량 상위 40위" },
+                    { val: "RANK_VOLUME_50", label: "거래량 상위 50위" },
+                  ].find((item) => item.val === cleanVol);
+                  volLabel = matched ? matched.label : "";
+                }
+
+                let amtLabel = "";
+                if (amtFilter) {
+                  const cleanAmt = amtFilter.replace(/_(KR|US)$/i, "");
+                  const matched = (cond.market === "kr"
+                    ? [
+                        { val: "AMOUNT_STAGE_1", label: "거래대금 100억 미만" },
+                        { val: "AMOUNT_STAGE_2", label: "거래대금 100억~500억" },
+                        { val: "AMOUNT_STAGE_3", label: "거래대금 500억~1,000억" },
+                        { val: "AMOUNT_STAGE_4", label: "거래대금 1,000억~3,000억" },
+                        { val: "AMOUNT_STAGE_5", label: "거래대금 3,000억 이상" },
+                      ]
+                    : [
+                        { val: "AMOUNT_STAGE_1", label: "거래대금 1억$ 미만 (약 1,300억)" },
+                        { val: "AMOUNT_STAGE_2", label: "거래대금 1억$ ~ 5억$ (약 1,300억 ~ 6,500억)" },
+                        { val: "AMOUNT_STAGE_3", label: "거래대금 5억$ ~ 10억$ (약 6,500억 ~ 1.3조)" },
+                        { val: "AMOUNT_STAGE_4", label: "거래대금 10억$ ~ 30억$ (약 1.3조 ~ 3.9조)" },
+                        { val: "AMOUNT_STAGE_5", label: "거래대금 30억$ 이상 (약 3.9조)" },
+                      ]
+                  ).find((item) => item.val === cleanAmt);
+                  amtLabel = matched ? matched.label : "";
+                }
+
+                let priceChangeLabel = "";
+                if (priceChangeFilter) {
+                  const cleanPriceChange = priceChangeFilter.replace(/_(KR|US)$/i, "");
+                  const matched = [
+                    { val: "PRICE_CHANGE_UP", label: "상승 종목" },
+                    { val: "PRICE_CHANGE_DOWN", label: "하락 종목" }
+                  ].find((item) => item.val === cleanPriceChange);
+                  priceChangeLabel = matched ? matched.label : "";
                 }
 
                 return (
@@ -96,6 +146,24 @@ const ConditionRestoreModal: React.FC<ConditionRestoreModalProps> = ({
                           </span>
                         )}
                         
+                        {volLabel && (
+                          <span className="summary-badge cap-badge" style={{ background: "#e0f2fe", border: "1px solid #bae6fd", color: "#0369a1" }}>
+                            {volLabel}
+                          </span>
+                        )}
+                        
+                        {amtLabel && (
+                          <span className="summary-badge cap-badge" style={{ background: "#faf5ff", border: "1px solid #e9d5ff", color: "#6b21a8" }}>
+                            {amtLabel}
+                          </span>
+                        )}
+                        
+                        {priceChangeLabel && (
+                          <span className="summary-badge cap-badge" style={{ background: "#fee2e2", border: "1px solid #fca5a5", color: "#991b1b" }}>
+                            {priceChangeLabel}
+                          </span>
+                        )}
+                        
                         {normalFilters.map((fKey: string, idx: number) => (
                           <span key={idx} className="summary-badge filter-badge">
                             {getFilterLabel(fKey)}
@@ -108,7 +176,7 @@ const ConditionRestoreModal: React.FC<ConditionRestoreModalProps> = ({
                           </span>
                         ))}
 
-                        {(!capLabel && normalFilters.length === 0 && (!cond.selectedEtfs || cond.selectedEtfs.length === 0)) && (
+                        {(!capLabel && !volLabel && !amtLabel && !priceChangeLabel && normalFilters.length === 0 && (!cond.selectedEtfs || cond.selectedEtfs.length === 0)) && (
                           <span className="summary-badge empty-badge">설정된 지표 없음</span>
                         )}
                       </div>

@@ -18,6 +18,13 @@ export type MyStockDTO = {
   targetPrice10: number;
   memo?: string;
 
+  buyTargetPrice1?: number | null;
+  buyTargetPrice2?: number | null;
+  buyTargetPrice3?: number | null;
+  sellTargetPrice1?: number | null;
+  sellTargetPrice2?: number | null;
+  sellTargetPrice3?: number | null;
+
   createdAt: string;
   updatedAt?: string;
 
@@ -178,6 +185,32 @@ export async function restoreMyStock(id: number) {
 
   if (!res.ok) {
     throw new Error("관심종목 복구 실패");
+  }
+
+  return res.json();
+}
+
+/**
+ * 관심종목 목표가 정보 수정
+ */
+export async function updateMyStockTargets(id: number, targets: {
+  buyTargetPrice1: number | null;
+  buyTargetPrice2: number | null;
+  buyTargetPrice3: number | null;
+  sellTargetPrice1: number | null;
+  sellTargetPrice2: number | null;
+  sellTargetPrice3: number | null;
+}) {
+  const res = await fetch(`${BASE_URL}/update-targets/${id}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(targets),
+  });
+
+  if (!res.ok) {
+    throw new Error("목표가 수정 실패");
   }
 
   return res.json();

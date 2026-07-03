@@ -14,6 +14,9 @@ interface ConditionSaveModalProps {
   market: "kr" | "us";
   checkedFilterKeys: string[];
   marketCapFilter: string;
+  volumeFilter: string;
+  amountFilter: string;
+  priceChangeFilter: string;
   selectedEtfs: { etfId: string; etfName: string }[];
   /* 필터 조건의 한글 라벨명을 획득하기 위한 맵용 헬퍼 데이터 */
   filterOptions: { baseKey: string; label: string }[];
@@ -30,6 +33,9 @@ const ConditionSaveModal: React.FC<ConditionSaveModalProps> = ({
   market,
   checkedFilterKeys,
   marketCapFilter,
+  volumeFilter,
+  amountFilter,
+  priceChangeFilter,
   selectedEtfs,
   filterOptions,
   isEditMode = false,
@@ -70,7 +76,7 @@ const ConditionSaveModal: React.FC<ConditionSaveModalProps> = ({
               value={conditionName}
               onChange={(e) => setConditionName(e.target.value)}
               placeholder="예: 반도체 120일 신고가 조건식"
-              maxLength={40}
+              maxLength={20}
             />
           </div>
 
@@ -92,10 +98,66 @@ const ConditionSaveModal: React.FC<ConditionSaveModalProps> = ({
                   <span className="summary-label">시가총액 범위:</span>
                   <span className="summary-value cap-text summary-chip-style cap-chip">
                     {[
+                      { val: "RANK_MARKET_CAP_10", label: "상위 10위 이내" },
                       { val: "RANK_MARKET_CAP_30", label: "상위 30위 이내" },
+                      { val: "RANK_MARKET_CAP_50", label: "상위 50위 이내" },
                       { val: "RANK_MARKET_CAP_100", label: "상위 100위 이내" },
                       { val: "RANK_MARKET_CAP_200", label: "상위 200위 이내" },
                     ].find((item) => item.val === marketCapFilter)?.label || "적용 안 함"}
+                  </span>
+                </div>
+              )}
+
+              {/* 거래량 조건 (KR, US 모두 해당될 수 있음) */}
+              {volumeFilter && (
+                <div className="save-summary-row">
+                  <span className="summary-label">거래량 범위:</span>
+                  <span className="summary-value cap-text summary-chip-style cap-chip" style={{ background: "#e0f2fe", border: "1px solid #bae6fd", color: "#0369a1" }}>
+                    {[
+                      { val: "RANK_VOLUME_10", label: "상위 10위 이내" },
+                      { val: "RANK_VOLUME_20", label: "상위 20위 이내" },
+                      { val: "RANK_VOLUME_30", label: "상위 30위 이내" },
+                      { val: "RANK_VOLUME_40", label: "상위 40위 이내" },
+                      { val: "RANK_VOLUME_50", label: "상위 50위 이내" },
+                    ].find((item) => item.val === volumeFilter)?.label || "적용 안 함"}
+                  </span>
+                </div>
+              )}
+
+              {/* 거래대금 조건 (KR, US 모두 해당될 수 있음) */}
+              {amountFilter && (
+                <div className="save-summary-row">
+                  <span className="summary-label">거래대금 범위:</span>
+                  <span className="summary-value cap-text summary-chip-style cap-chip" style={{ background: "#faf5ff", border: "1px solid #e9d5ff", color: "#6b21a8" }}>
+                    {(market === "kr"
+                      ? [
+                          { val: "AMOUNT_STAGE_1", label: "100억 원 미만" },
+                          { val: "AMOUNT_STAGE_2", label: "100억 원 ~ 500억 원" },
+                          { val: "AMOUNT_STAGE_3", label: "500억 원 ~ 1,000억 원" },
+                          { val: "AMOUNT_STAGE_4", label: "1,000억 원 ~ 3,000억 원" },
+                          { val: "AMOUNT_STAGE_5", label: "3,000억 원 이상" },
+                        ]
+                      : [
+                          { val: "AMOUNT_STAGE_1", label: "1억$ 미만 (약 1,300억)" },
+                          { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$ (약 1,300억 ~ 6,500억)" },
+                          { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$ (약 6,500억 ~ 1.3조)" },
+                          { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$ (약 1.3조 ~ 3.9조)" },
+                          { val: "AMOUNT_STAGE_5", label: "3억$ 이상 (약 3.9조)" },
+                        ]
+                    ).find((item) => item.val === amountFilter)?.label || "적용 안 함"}
+                  </span>
+                </div>
+              )}
+
+              {/* 가격 변동 조건 (KR, US 모두 해당될 수 있음) */}
+              {priceChangeFilter && (
+                <div className="save-summary-row">
+                  <span className="summary-label">가격 변동:</span>
+                  <span className="summary-value cap-text summary-chip-style cap-chip" style={{ background: "#fee2e2", border: "1px solid #fca5a5", color: "#991b1b" }}>
+                    {[
+                      { val: "PRICE_CHANGE_UP", label: "상승 종목" },
+                      { val: "PRICE_CHANGE_DOWN", label: "하락 종목" }
+                    ].find((item) => item.val === priceChangeFilter)?.label || "적용 안 함"}
                   </span>
                 </div>
               )}

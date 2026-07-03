@@ -57,6 +57,9 @@ export default function UnsavedChangesConfirmModal({
               <p className="desc-text">
                 관심 종목의 조건식명은 <span className="name-badge">'{conditionName}'</span>(으)로 지정됩니다.
               </p>
+              <p className="action-guide" style={{ marginTop: "8px", fontSize: "0.8rem", color: "#6b7280" }}>
+                조건식 명칭 변경을 원하시면 상단의 '조건 수정' 버튼을 클릭하여 변경 후 추가해 주세요.
+              </p>
             </>
           )}
         </div>

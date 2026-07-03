@@ -198,30 +198,13 @@ function BasicLayout({ children }: { children?: ReactNode }) {
               🔍 종목 검색
             </NavLink>
 
-            {/* ===== 시장 성과 ===== */}
-            <div className="nav-dropdown">
-              <button
-                type="button"
-                className={`nav-ani ${openMenu === "market" ? "active" : ""}`}
-                onClick={() => toggleMenu("market")}
-              >
-                📊 시장 성과
-                <span className="nav-caret">▾</span>
-              </button>
-
-              {openMenu === "market" && (
-                <div className="nav-dropdown-menu">
-                  <NavLink to="/result/listKR" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    국장
-                  </NavLink>
-                  <NavLink to="/result/listUS" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    미국장
-                  </NavLink>
-                </div>
-              )}
-            </div>
+            <NavLink
+              to="/result/listKR"
+              className="nav-ani"
+              onClick={closeMenu}
+            >
+              📊 시장 성과
+            </NavLink>
 
             {/* ===== 데이터 탐색 ===== */}
             <div className="nav-dropdown">

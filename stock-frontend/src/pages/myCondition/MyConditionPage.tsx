@@ -10,6 +10,7 @@ import ConditionRestoreModal from "./ConditionRestoreModal";
 import CreateEtfModal from "../myStock/CreateEtfModal"; // ETF 생성 모달 임포트
 import EditEtfModal from "../myStock/EditEtfModal"; // ETF 수정 모달 임포트
 import UnsavedChangesConfirmModal from "./UnsavedChangesConfirmModal";
+
 import "./MyConditionPage.css";
 import "../result/result-detail.css"; // ResultDetail 공통 테이블 스타일을 재사용합니다.
 
@@ -21,21 +22,60 @@ interface FilterOption {
   onlyKR?: boolean; /* 한국 시장 전용 여부 */
 }
 
+const FILTER_GROUPS = [
+  {
+    title: "📊 급락 & 급등",
+    codes: ["DAILY_DROP_SPIKE", "DAILY_RISE_SPIKE"]
+  },
+  {
+    title: "📈 신고가 & 신저가",
+    codes: ["DAILY_120D_NEW_HIGH", "DAILY_120D_NEW_LOW", "WEEKLY_52W_NEW_HIGH", "WEEKLY_52W_NEW_LOW"]
+  },
+  {
+    title: "🔵 볼린저 밴드",
+    codes: ["DAILY_BB_LOWER_TOUCH", "DAILY_BB_UPPER_TOUCH", "WEEKLY_BB_LOWER_TOUCH", "WEEKLY_BB_UPPER_TOUCH"]
+  },
+  {
+    title: "⚡ RSI 지표",
+    codes: ["RSI_30_UNHEATED", "RSI_70_OVERHEATED", "RSI_30_UNHEATED_WEEKLY", "RSI_70_OVERHEATED_WEEKLY"]
+  },
+  {
+    title: "📅 일봉 이동평균선",
+    codes: ["DAILY_TOUCH_MA20", "DAILY_TOUCH_MA60", "DAILY_TOUCH_MA120"]
+  },
+  {
+    title: "📆 주봉 이동평균선",
+    codes: ["WEEKLY_TOUCH_MA20", "WEEKLY_TOUCH_MA60", "WEEKLY_TOUCH_MA120"]
+  }
+];
+
 /* 화면에 표시할 후보 필터 조건 목록 (접미사를 제외한 Base Key 구조) */
 const FILTER_OPTIONS: FilterOption[] = [
-  { baseKey: "DAILY_120D_NEW_HIGH", label: "120일 신고가", hasCurrency: true },
-  { baseKey: "DAILY_120D_NEW_LOW", label: "120일 신저가", hasCurrency: true },
-  { baseKey: "DAILY_BB_LOWER_TOUCH", label: "볼린저밴드 하단선 터치값", hasCurrency: true },
-  { baseKey: "DAILY_BB_UPPER_TOUCH", label: "볼린저밴드 상단선 터치값", hasCurrency: true },
-  { baseKey: "DAILY_TOUCH_MA60", label: "일봉 60일선 터치값", hasCurrency: true },
-  { baseKey: "WEEKLY_TOUCH_MA60", label: "주봉 60주선 터치값", hasCurrency: true },
-  { baseKey: "RSI_30_UNHEATED", label: "RSI 하단 (30 이하) 진입값", hasCurrency: false },
-  { baseKey: "RSI_70_OVERHEATED", label: "RSI 상단 (70 이상) 진입값", hasCurrency: false },
-  { baseKey: "WEEKLY_52W_NEW_HIGH", label: "52주 신고가", hasCurrency: true },
-  { baseKey: "WEEKLY_52W_NEW_LOW", label: "52주 신저가", hasCurrency: true },
   { baseKey: "DAILY_DROP_SPIKE", label: "급락 스파이크", hasCurrency: true },
   { baseKey: "DAILY_RISE_SPIKE", label: "급등 스파이크", hasCurrency: true },
-  { baseKey: "DAILY_TOP20_VOLUME", label: "상위 20 거래량", hasCurrency: true },
+
+  { baseKey: "DAILY_120D_NEW_HIGH", label: "[일봉] 120일 신고가", hasCurrency: true },
+  { baseKey: "DAILY_120D_NEW_LOW", label: "[일봉] 120일 신저가", hasCurrency: true },
+  { baseKey: "WEEKLY_52W_NEW_HIGH", label: "[주봉] 52주 신고가", hasCurrency: true },
+  { baseKey: "WEEKLY_52W_NEW_LOW", label: "[주봉] 52주 신저가", hasCurrency: true },
+
+  { baseKey: "DAILY_BB_LOWER_TOUCH", label: "[일봉] 볼린저밴드 하단선 터치값", hasCurrency: true },
+  { baseKey: "DAILY_BB_UPPER_TOUCH", label: "[일봉] 볼린저밴드 상단선 터치값", hasCurrency: true },
+  { baseKey: "WEEKLY_BB_LOWER_TOUCH", label: "[주봉] 볼린저밴드 하단선 터치값", hasCurrency: true },
+  { baseKey: "WEEKLY_BB_UPPER_TOUCH", label: "[주봉] 볼린저밴드 상단선 터치값", hasCurrency: true },
+
+  { baseKey: "RSI_30_UNHEATED", label: "[일봉] RSI 하단 (30 이하) 진입값", hasCurrency: false },
+  { baseKey: "RSI_70_OVERHEATED", label: "[일봉] RSI 상단 (70 이상) 진입값", hasCurrency: false },
+  { baseKey: "RSI_30_UNHEATED_WEEKLY", label: "[주봉] RSI 하단 (30 이하) 진입값", hasCurrency: false },
+  { baseKey: "RSI_70_OVERHEATED_WEEKLY", label: "[주봉] RSI 상단 (70 이상) 진입값", hasCurrency: false },
+
+  { baseKey: "DAILY_TOUCH_MA20", label: "[일봉] 20일선 터치값", hasCurrency: true },
+  { baseKey: "DAILY_TOUCH_MA60", label: "[일봉] 60일선 터치값", hasCurrency: true },
+  { baseKey: "DAILY_TOUCH_MA120", label: "[일봉] 120일선 터치값", hasCurrency: true },
+
+  { baseKey: "WEEKLY_TOUCH_MA20", label: "[주봉] 20주선 터치값", hasCurrency: true },
+  { baseKey: "WEEKLY_TOUCH_MA60", label: "[주봉] 60주선 터치값", hasCurrency: true },
+  { baseKey: "WEEKLY_TOUCH_MA120", label: "[주봉] 120주선 터치값", hasCurrency: true }
 ];
 
 export default function MyConditionPage() {
@@ -47,8 +87,17 @@ export default function MyConditionPage() {
   /* 상태 관리: 체크된 필터 조건의 baseKey 목록 */
   const [checkedFilterKeys, setCheckedFilterKeys] = useState<string[]>([]);
 
-  /* 상태 관리: 시가총액 필터 선택 ("" | "RANK_MARKET_CAP_30" | "RANK_MARKET_CAP_100" | "RANK_MARKET_CAP_200") */
+  /* 상태 관리: 시가총액 필터 선택 ("" | "RANK_MARKET_CAP_10" | "RANK_MARKET_CAP_30" | "RANK_MARKET_CAP_50" | "RANK_MARKET_CAP_100" | "RANK_MARKET_CAP_200") */
   const [marketCapFilter, setMarketCapFilter] = useState<string>("");
+
+  /* 상태 관리: 거래량 필터 선택 ("" | "RANK_VOLUME_10" | "RANK_VOLUME_20" | "RANK_VOLUME_30" | "RANK_VOLUME_40" | "RANK_VOLUME_50") */
+  const [volumeFilter, setVolumeFilter] = useState<string>("");
+
+  /* 상태 관리: 거래대금 필터 선택 ("" | "RANK_AMOUNT_10" | "RANK_AMOUNT_30" | "RANK_AMOUNT_50" | "RANK_AMOUNT_100" | "RANK_AMOUNT_200") */
+  const [amountFilter, setAmountFilter] = useState<string>("");
+
+  /* 상태 관리: 가격 변동 필터 선택 ("" | "PRICE_CHANGE_UP" | "PRICE_CHANGE_DOWN") */
+  const [priceChangeFilter, setPriceChangeFilter] = useState<string>("");
 
   /* 상태 관리: 백엔드로부터 응답받은 스크리닝 결과 종목 리스트 */
   const [results, setResults] = useState<any[]>([]);
@@ -90,8 +139,47 @@ export default function MyConditionPage() {
   const [showCreateEtf, setShowCreateEtf] = useState<boolean>(false);
   const [showAddToEtf, setShowAddToEtf] = useState<boolean>(false);
   const [hasEtf, setHasEtf] = useState<boolean>(false);
+
   /* 변경사항 미저장 알림 커스텀 컨펌 모달 상태 */
   const [showUnsavedChangesConfirm, setShowUnsavedChangesConfirm] = useState<boolean>(false);
+
+  /* 공통 경고/알림 자체 모달 상태 */
+  const [alertConfig, setAlertConfig] = useState<{ isOpen: boolean; title: string; message: string }>({
+    isOpen: false,
+    title: "알림",
+    message: "",
+  });
+
+  const showAlert = (message: string, title: string = "알림") => {
+    setAlertConfig({
+      isOpen: true,
+      title,
+      message,
+    });
+  };
+
+  /* 공통 컨펌(Confirm) 자체 모달 상태 */
+  const [confirmConfig, setConfirmConfig] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({
+    isOpen: false,
+    title: "확인",
+    message: "",
+    onConfirm: () => { },
+  });
+
+  const showConfirm = (message: string, onConfirm: () => void, title: string = "확인") => {
+    setConfirmConfig({
+      isOpen: true,
+      title,
+      message,
+      onConfirm,
+    });
+  };
+
   /* 현재 불러와서 수정/적용 중인 조건식의 정보 (null이면 새로 저장 모드) */
   const [activeConditionId, setActiveConditionId] = useState<number | null>(null);
   const [activeConditionName, setActiveConditionName] = useState<string>("");
@@ -99,6 +187,9 @@ export default function MyConditionPage() {
   const [originalConditionSnapshot, setOriginalConditionSnapshot] = useState<{
     filters: string[];
     marketCapFilter: string;
+    volumeFilter: string;
+    amountFilter: string;
+    priceChangeFilter: string;
     selectedEtfs: { etfId: string; etfName: string }[];
   } | null>(null);
 
@@ -113,6 +204,15 @@ export default function MyConditionPage() {
 
     // 2. 시가총액 필터 비교
     if (marketCapFilter !== originalConditionSnapshot.marketCapFilter) return true;
+
+    // 2-2. 거래량 필터 비교
+    if (volumeFilter !== originalConditionSnapshot.volumeFilter) return true;
+
+    // 2-3. 거래대금 필터 비교
+    if (amountFilter !== originalConditionSnapshot.amountFilter) return true;
+
+    // 2-4. 가격 변동 필터 비교
+    if (priceChangeFilter !== originalConditionSnapshot.priceChangeFilter) return true;
 
     // 3. ETF 필터 비교
     const currentEtfIds = selectedEtfs.map(e => e.etfId).sort();
@@ -169,7 +269,7 @@ export default function MyConditionPage() {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, [checkedFilterKeys, marketCapFilter, selectedEtfs, originalConditionSnapshot, activeConditionId]);
+  }, [checkedFilterKeys, marketCapFilter, volumeFilter, amountFilter, priceChangeFilter, selectedEtfs, originalConditionSnapshot, activeConditionId]);
 
   /* ETF 요약 목록 조회 API 훅 */
   useEffect(() => {
@@ -286,6 +386,9 @@ export default function MyConditionPage() {
       setCheckedCodes([]);
       setErrorMessage(null);
       setMarketCapFilter("");
+      setVolumeFilter("");
+      setAmountFilter("");
+      setPriceChangeFilter("");
       setEtfBrand("KODEX");
       setEtfQuery("");
       setEtfSearchInput("");
@@ -306,6 +409,9 @@ export default function MyConditionPage() {
   const handleResetFilters = () => {
     setCheckedFilterKeys([]);
     setMarketCapFilter("");
+    setVolumeFilter("");
+    setAmountFilter("");
+    setPriceChangeFilter("");
     setEtfBrand("KODEX");
     setEtfQuery("");
     setEtfSearchInput("");
@@ -327,10 +433,19 @@ export default function MyConditionPage() {
     if (marketCapFilter) {
       finalFilters.push(`${marketCapFilter}_${market.toUpperCase()}`);
     }
+    if (volumeFilter) {
+      finalFilters.push(`${volumeFilter}_${market.toUpperCase()}`);
+    }
+    if (amountFilter) {
+      finalFilters.push(`${amountFilter}_${market.toUpperCase()}`);
+    }
+    if (priceChangeFilter) {
+      finalFilters.push(`${priceChangeFilter}_${market.toUpperCase()}`);
+    }
 
     // 저장할 조건이 전혀 없는 상황을 밸리데이션 검사
     if (finalFilters.length === 0 && selectedEtfs.length === 0) {
-      alert("저장할 조건이 없습니다. 최소 한 개 이상의 조건 혹은 ETF 필터를 설정해 주세요.");
+      showAlert("저장할 조건이 없습니다. 최소 한 개 이상의 조건 혹은 ETF 필터를 설정해 주세요.", "조건 저장 실패");
       return;
     }
 
@@ -340,8 +455,10 @@ export default function MyConditionPage() {
     } else {
       // 새로운 조건식으로 신규 저장하는 모드인 경우
       const today = new Date();
-      const dateStr = `${today.getFullYear()}.${today.getMonth() + 1}.${today.getDate()}`;
-      setSaveConditionName("나만의 조건식_" + dateStr);
+      const yy = String(today.getFullYear()).slice(-2);
+      const mm = String(today.getMonth() + 1).padStart(2, '0');
+      const dd = String(today.getDate()).padStart(2, '0');
+      setSaveConditionName(`나만의조건_${yy}.${mm}.${dd}`);
     }
     setIsSaveModalOpen(true);
   };
@@ -349,16 +466,30 @@ export default function MyConditionPage() {
   /* 저장 완료 실행 버튼 클릭 시 호출되는 최종 콜백 핸들러 (실제 백엔드 API 연동 완료) */
   const handleConfirmSave = async () => {
     if (!saveConditionName.trim()) {
-      alert("조건식 이름은 필수 입력 항목입니다.");
+      showAlert("조건식 이름은 필수 입력 항목입니다.", "조건 저장 실패");
       return;
     }
 
     const cleanName = saveConditionName.trim().replace(/_(KR|US)$/i, "");
+    if (cleanName.length > 20) {
+      showAlert("조건식 이름은 최대 20자까지 입력할 수 있습니다.", "조건 저장 실패");
+      return;
+    }
+
     const finalName = cleanName + (market === "kr" ? "_KR" : "_US");
 
     const finalFilters = checkedFilterKeys.map((key) => `${key}_${market.toUpperCase()}`);
     if (marketCapFilter) {
       finalFilters.push(`${marketCapFilter}_${market.toUpperCase()}`);
+    }
+    if (volumeFilter) {
+      finalFilters.push(`${volumeFilter}_${market.toUpperCase()}`);
+    }
+    if (amountFilter) {
+      finalFilters.push(`${amountFilter}_${market.toUpperCase()}`);
+    }
+    if (priceChangeFilter) {
+      finalFilters.push(`${priceChangeFilter}_${market.toUpperCase()}`);
     }
 
     try {
@@ -380,6 +511,9 @@ export default function MyConditionPage() {
       setOriginalConditionSnapshot({
         filters: checkedFilterKeys,
         marketCapFilter: marketCapFilter,
+        volumeFilter: volumeFilter,
+        amountFilter: amountFilter,
+        priceChangeFilter: priceChangeFilter,
         selectedEtfs: selectedEtfs,
       });
 
@@ -392,21 +526,24 @@ export default function MyConditionPage() {
 
   /* 백엔드에 저장된 내 조건식 리스트를 조회해 모달을 엽니다. */
   const handleLoadConditions = () => {
+    const proceedLoad = () => {
+      getScreenerConditions()
+        .then((data) => {
+          setSavedConditions(data || []);
+          setIsListModalOpen(true);
+        })
+        .catch((err) => {
+          console.error("조건식 목록 조회 오류:", err);
+          showAlert("조건식 목록을 불러오는 중 오류가 발생했습니다: " + err.message, "오류");
+        });
+    };
+
     // 수정 중인 상황에서 저장하지 않고 불러오기를 시도할 경우 경고 알림
     if (isConditionDirty()) {
-      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 불러오시겠습니까?")) {
-        return;
-      }
+      showConfirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 불러오시겠습니까?", proceedLoad, "불러오기 확인");
+    } else {
+      proceedLoad();
     }
-    getScreenerConditions()
-      .then((data) => {
-        setSavedConditions(data || []);
-        setIsListModalOpen(true);
-      })
-      .catch((err) => {
-        console.error("조건식 목록 조회 오류:", err);
-        alert("조건식 목록을 불러오는 중 오류가 발생했습니다: " + err.message);
-      });
   };
 
   /* 불러온 특정 조건식을 현재 필터들에 복원/바인딩 처리하고 자동 스크리닝을 실행합니다. */
@@ -418,9 +555,12 @@ export default function MyConditionPage() {
     // 2. 시장 설정 복원
     setMarket(cond.market);
 
-    // 3. 스크리닝 필터 및 시가총액 복원
+    // 3. 스크리닝 필터 및 시가총액/거래량/거래대금 복원
     const restoredKeys: string[] = [];
     let restoredMarketCap = "";
+    let restoredVolume = "";
+    let restoredAmount = "";
+    let restoredPriceChange = "";
 
     if (cond.filters) {
       cond.filters.forEach((fullKey: string) => {
@@ -428,6 +568,12 @@ export default function MyConditionPage() {
         const baseKey = fullKey.replace(/_(KR|US)$/i, "");
         if (baseKey.startsWith("RANK_MARKET_CAP")) {
           restoredMarketCap = baseKey;
+        } else if (baseKey.startsWith("RANK_VOLUME")) {
+          restoredVolume = baseKey;
+        } else if (baseKey.startsWith("RANK_AMOUNT")) {
+          restoredAmount = baseKey;
+        } else if (baseKey.startsWith("PRICE_CHANGE")) {
+          restoredPriceChange = baseKey;
         } else {
           restoredKeys.push(baseKey);
         }
@@ -436,6 +582,9 @@ export default function MyConditionPage() {
 
     setCheckedFilterKeys(restoredKeys);
     setMarketCapFilter(restoredMarketCap);
+    setVolumeFilter(restoredVolume);
+    setAmountFilter(restoredAmount);
+    setPriceChangeFilter(restoredPriceChange);
 
     // 4. ETF 및 홀딩스 종목 복원
     const holdingsSet = new Set<string>();
@@ -482,6 +631,9 @@ export default function MyConditionPage() {
     setOriginalConditionSnapshot({
       filters: restoredKeys,
       marketCapFilter: restoredMarketCap,
+      volumeFilter: restoredVolume,
+      amountFilter: restoredAmount,
+      priceChangeFilter: restoredPriceChange,
       selectedEtfs: cond.selectedEtfs || [],
     });
 
@@ -496,13 +648,23 @@ export default function MyConditionPage() {
       if (restoredMarketCap) {
         finalFilters.push(`${restoredMarketCap}_${cond.market.toUpperCase()}`);
       }
+      if (restoredVolume) {
+        finalFilters.push(`${restoredVolume}_${cond.market.toUpperCase()}`);
+      }
+      if (restoredAmount) {
+        finalFilters.push(`${restoredAmount}_${cond.market.toUpperCase()}`);
+      }
+      if (restoredPriceChange) {
+        finalFilters.push(`${restoredPriceChange}_${cond.market.toUpperCase()}`);
+      }
 
       const etfCodes = cond.selectedEtfs && cond.selectedEtfs.length > 0 ? Array.from(holdingsSet) : [];
 
       // API를 호출하여 즉각 검색 실행
       const searchRes = await runScreenerWithFilters(finalFilters, etfCodes, cond.market);
-      setResults(searchRes || []);
-      showToast(`"${cond.name}" 조건식이 적용되었습니다.\n검색버튼을 눌러주세요`, "success");
+      // API 응답에서 배열 데이터만 추출하여 세팅합니다 (searchRes 자체는 객체이므로 .data를 사용해야 합니다).
+      setResults(searchRes && Array.isArray(searchRes.data) ? searchRes.data : []);
+      showToast(`"${cond.name.replace(/_(KR|US)$/i, "")}" 조건식이 적용되었습니다.`, "success");
     } catch (err: any) {
       console.error("조건식 불러온 후 자동 스크리닝 실행 실패:", err);
       setErrorMessage(err.message || "조건식 불러오기 복원 후 자동 스크리닝 실행에 실패했습니다.");
@@ -514,90 +676,105 @@ export default function MyConditionPage() {
 
   /* 저장되어 있는 특정 조건식을 삭제 처리합니다. */
   const handleDeleteCondition = (id: number) => {
-    if (!window.confirm("이 조건식을 삭제하시겠습니까?")) {
-      return;
-    }
-
-    deleteScreenerCondition(id)
-      .then(() => {
-        showToast("조건식이 삭제되었습니다.", "success");
-        // 목록 갱신
-        return getScreenerConditions();
-      })
-      .then((data) => {
-        setSavedConditions(data || []);
-      })
-      .catch((err) => {
-        console.error("조건식 삭제 오류:", err);
-        showToast("조건식 삭제 실패: " + err.message, "error");
-      });
+    showConfirm(
+      "이 조건식을 삭제하시겠습니까?",
+      () => {
+        deleteScreenerCondition(id)
+          .then(() => {
+            showToast("조건식이 삭제되었습니다.", "success");
+            // 목록 갱신
+            return getScreenerConditions();
+          })
+          .then((data) => {
+            setSavedConditions(data || []);
+          })
+          .catch((err) => {
+            console.error("조건식 삭제 오류:", err);
+            showToast("조건식 삭제 실패: " + err.message, "error");
+          });
+      },
+      "조건식 삭제"
+    );
   };
 
   /* 삭제되어 있는 내 조건식 리스트를 조회해 복구 모달을 엽니다. */
   const handleLoadDeletedConditions = () => {
+    const proceedRestoreList = () => {
+      getDeletedScreenerConditions()
+        .then((data) => {
+          setDeletedConditions(data || []);
+          setIsRestoreModalOpen(true);
+        })
+        .catch((err) => {
+          console.error("삭제된 조건식 목록 조회 오류:", err);
+          showAlert("삭제된 조건식 목록을 불러오는 중 오류가 발생했습니다: " + err.message, "오류");
+        });
+    };
+
     // 수정 중인 상황에서 저장하지 않고 복구 리스트 열기를 시도할 경우 경고 알림
     if (isConditionDirty()) {
-      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 복구 창을 여시겠습니까?")) {
-        return;
-      }
+      showConfirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 복구 창을 여시겠습니까?", proceedRestoreList, "복구 창 열기 확인");
+    } else {
+      proceedRestoreList();
     }
-    getDeletedScreenerConditions()
-      .then((data) => {
-        setDeletedConditions(data || []);
-        setIsRestoreModalOpen(true);
-      })
-      .catch((err) => {
-        console.error("삭제된 조건식 목록 조회 오류:", err);
-        alert("삭제된 조건식 목록을 불러오는 중 오류가 발생했습니다: " + err.message);
-      });
   };
 
   /* 변경사항을 감지하여 저장하지 않고 내 관심 종목으로 이동하려 할 때 경고를 주는 헬퍼 이동 함수 */
   const handleGoToMyStock = () => {
     if (isConditionDirty()) {
-      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 내 관심 종목으로 이동하시겠습니까?")) {
-        return;
-      }
+      showConfirm(
+        "변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 내 관심 종목으로 이동하시겠습니까?",
+        () => navigate("/stock/myStock"),
+        "이동 확인"
+      );
+    } else {
+      navigate("/stock/myStock");
     }
-    navigate("/stock/myStock");
   };
 
   /* ETF 가기 핸들러 (Dirty Check 포함) */
   const handleGoToMyEtf = () => {
     if (isConditionDirty()) {
-      if (!window.confirm("변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 나의 ETF 화면으로 이동하시겠습니까?")) {
-        return;
-      }
+      showConfirm(
+        "변경된 조건식이 저장되지 않았습니다.\n저장하지 않고 나의 ETF 화면으로 이동하시겠습니까?",
+        () => navigate("/myetf/list"),
+        "이동 확인"
+      );
+    } else {
+      navigate("/myetf/list");
     }
-    navigate("/myetf/list");
   };
 
 
   /* 삭제된 특정 조건식을 복구(활성화) 처리합니다. */
   const handleRestoreCondition = (id: number, name: string) => {
-    if (!window.confirm(`"${name.replace(/_(KR|US)$/i, "")}" 조건식을 복구하시겠습니까?`)) {
-      return;
-    }
-
-    restoreScreenerCondition(id)
-      .then(() => {
-        showToast("조건식이 성공적으로 복구되었습니다.", "success");
-        // 삭제된 목록 갱신
-        return getDeletedScreenerConditions();
-      })
-      .then((data) => {
-        setDeletedConditions(data || []);
-        // 활성 조건식 목록도 갱신하여 불러오기 창에 즉시 나타나도록 함
-        return getScreenerConditions();
-      })
-      .then((data) => {
-        setSavedConditions(data || []);
-      })
-      .catch((err) => {
-        console.error("조건식 복구 오류:", err);
-        showToast("조건식 복구 실패: " + err.message, "error");
-      });
+    const cleanName = name.replace(/_(KR|US)$/i, "");
+    showConfirm(
+      `"${cleanName}" 조건식을 복구하시겠습니까?`,
+      () => {
+        restoreScreenerCondition(id)
+          .then(() => {
+            showToast("조건식이 성공적으로 복구되었습니다.", "success");
+            // 삭제된 목록 갱신
+            return getDeletedScreenerConditions();
+          })
+          .then((data) => {
+            setDeletedConditions(data || []);
+            // 활성 조건식 목록도 갱신하여 불러오기 창에 즉시 나타나도록 함
+            return getScreenerConditions();
+          })
+          .then((data) => {
+            setSavedConditions(data || []);
+          })
+          .catch((err) => {
+            console.error("조건식 복구 오류:", err);
+            showToast("조건식 복구 실패: " + err.message, "error");
+          });
+      },
+      "조건식 복구"
+    );
   };
+
 
 
 
@@ -636,11 +813,26 @@ export default function MyConditionPage() {
       finalFilters.push(`${marketCapFilter}_${market.toUpperCase()}`);
     }
 
+    // 거래량 단일 선택 필터가 지정되어 있다면 필터 목록에 결합하여 함께 전달합니다.
+    if (volumeFilter) {
+      finalFilters.push(`${volumeFilter}_${market.toUpperCase()}`);
+    }
+
+    // 거래대금 단일 선택 필터가 지정되어 있다면 필터 목록에 결합하여 함께 전달합니다.
+    if (amountFilter) {
+      finalFilters.push(`${amountFilter}_${market.toUpperCase()}`);
+    }
+
+    // 가격 변동 단일 선택 필터가 지정되어 있다면 필터 목록에 결합하여 함께 전달합니다.
+    if (priceChangeFilter) {
+      finalFilters.push(`${priceChangeFilter}_${market.toUpperCase()}`);
+    }
+
     const etfCodes = selectedEtfs.length > 0 ? Array.from(etfHoldings) : [];
 
     // 조건 필터도 없고 ETF 선택 목록도 비어 있는 경우 조회를 방지합니다.
     if (finalFilters.length === 0 && selectedEtfs.length === 0) {
-      alert("최소 한 개 이상의 조건을 선택하거나 ETF 필터를 추가해 주세요.");
+      showAlert("최소 한 개 이상의 조건을 선택하거나 ETF 필터를 추가해 주세요.", "검색 실행 실패");
       return;
     }
 
@@ -665,21 +857,31 @@ export default function MyConditionPage() {
     }
   };
 
-  /* 실질적으로 백엔드 관심종목 추가 API를 호출하는 헬퍼 함수 */
-  const executeAddMyStock = () => {
+  /* 관심종목에 최종 등록을 수행하는 핸들러 */
+  const handleConfirmAddMyStock = () => {
     setShowUnsavedChangesConfirm(false); // 모달 닫기
     const today = new Date().toISOString().substring(0, 10);
     const suffix = market === "kr" ? "_KR" : "_US";
     const targetStrategyName = (activeConditionName || "나만의 조건식").trim().replace(/_(KR|US)$/i, "");
+    const fullStrategyName = targetStrategyName + suffix;
+
     const payload = results
       .filter((r) => checkedCodes.includes(r.code))
-      .map((r) => ({
-        code: r.code,
-        name: r.name,
-        strategyName: targetStrategyName + suffix,
-        priceAtAdd: r.currentPrice,
-        memo: today,
-      }));
+      .map((r) => {
+        return {
+          code: r.code,
+          name: r.name,
+          strategyName: fullStrategyName,
+          priceAtAdd: r.currentPrice,
+          memo: today,
+          buyTargetPrice1: null,
+          buyTargetPrice2: null,
+          buyTargetPrice3: null,
+          sellTargetPrice1: null,
+          sellTargetPrice2: null,
+          sellTargetPrice3: null,
+        };
+      });
 
     fetch("/api/mystock/add", {
       method: "POST",
@@ -689,7 +891,7 @@ export default function MyConditionPage() {
     })
       .then((res) => {
         if (!res.ok) throw new Error();
-        showToast(`선택한 종목들이 '${targetStrategyName}' 조건명으로 관심 종목에 추가되었습니다.`, "success");
+        showToast(`선택한 종목들이 '${targetStrategyName}' 조건명과 함께 관심 종목에 추가되었습니다.`, "success");
         setCheckedCodes([]);
       })
       .catch((err) => {
@@ -698,7 +900,7 @@ export default function MyConditionPage() {
       });
   };
 
-  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하는 함수 */
+  /* 선택된 종목들을 내 관심 종목으로 일괄 추가하기 위해 컨펌 모달을 트리거하는 함수 */
   const handleAddMyStock = () => {
     if (!authenticated) {
       showToast("로그인 후 이용 가능합니다.", "error");
@@ -710,7 +912,7 @@ export default function MyConditionPage() {
       return;
     }
 
-    // 변경 사항 유무와 관계없이 무조건 커스텀 컨펌 모달을 노출하여 사용자 승인을 받음
+    // 스타일링된 관심종목 추가 확인 모달을 활성화합니다.
     setShowUnsavedChangesConfirm(true);
   };
 
@@ -880,147 +1082,261 @@ export default function MyConditionPage() {
             </h3>
             <p className="detail-desc">적용할 주식 스크리닝 필터를 선택해 주세요 (선택한 모든 조건의 교집합 종목이 추출됩니다).</p>
 
-            <div className="filter-checkbox-grid">
-              {FILTER_OPTIONS
-                .filter((filter) => !filter.onlyKR || market === "kr")
-                .map((filter) => {
-                  const isChecked = checkedFilterKeys.includes(filter.baseKey);
-                  return (
-                    <label
-                      key={filter.baseKey}
-                      className={`filter-checkbox-label ${isChecked ? "checked" : ""}`}
-                    >
-                      <input
-                        type="checkbox"
-                        className="filter-checkbox-input"
-                        checked={isChecked}
-                        onChange={() => handleCheckboxChange(filter.baseKey)}
-                      />
-                      <div className="filter-checkbox-text">
-                        <span className="filter-checkbox-name">
-                          {getFilterLabel(filter)}
-                        </span>
-                        <span className="filter-checkbox-code">
-                          {filter.baseKey}_{market.toUpperCase()}
-                        </span>
-                      </div>
-                    </label>
-                  );
-                })}
+            <div className="filter-groups-container">
+              {FILTER_GROUPS.map((group) => {
+                const groupFilters = FILTER_OPTIONS.filter(
+                  (filter) => group.codes.includes(filter.baseKey) && (!filter.onlyKR || market === "kr")
+                );
+
+                if (groupFilters.length === 0) return null;
+
+                return (
+                  <div key={group.title} className="my-filter-group-section">
+                    <h4 className="my-filter-group-title">{group.title}</h4>
+                    <div className="filter-checkbox-grid">
+                      {groupFilters.map((filter) => {
+                        const isChecked = checkedFilterKeys.includes(filter.baseKey);
+                        return (
+                          <label
+                            key={filter.baseKey}
+                            className={`filter-checkbox-label ${isChecked ? "checked" : ""}`}
+                          >
+                            <input
+                              type="checkbox"
+                              className="filter-checkbox-input"
+                              checked={isChecked}
+                              onChange={() => handleCheckboxChange(filter.baseKey)}
+                            />
+                            <div className="filter-checkbox-text">
+                              <span className="filter-checkbox-name">
+                                {getFilterLabel(filter)}
+                              </span>
+                              <span className="filter-checkbox-code">
+                                {filter.baseKey}_{market.toUpperCase()}
+                              </span>
+                            </div>
+                          </label>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
 
-            {/* 시가총액 및 ETF 필터링 조건은 국내 시장(KR)에서만 활성화됩니다. */}
+            {/* 시가총액 랭킹 조건 (국내 시장(KR)에서만 활성화) */}
             {market === "kr" && (
-              <>
-                {/* 시가총액 랭킹 조건 단일 선택 그룹 (택 1) */}
-                <div className="cap-radio-container">
-                  <span className="cap-radio-title">
-                    시가총액 상위 랭킹 필터 (택 1)
+              <div className="cap-radio-container">
+                <span className="cap-radio-title">
+                  시가총액 상위 랭킹 필터 (택 1)
+                </span>
+                <div className="cap-radio-group">
+                  {[
+                    { val: "", label: "적용 안 함" },
+                    { val: "RANK_MARKET_CAP_10", label: "상위 10" },
+                    { val: "RANK_MARKET_CAP_30", label: "상위 30" },
+                    { val: "RANK_MARKET_CAP_50", label: "상위 50" },
+                    { val: "RANK_MARKET_CAP_100", label: "상위 100" },
+                    { val: "RANK_MARKET_CAP_200", label: "상위 200" }
+                  ].map((item) => (
+                    <label
+                      key={item.val}
+                      className={`cap-radio-label ${marketCapFilter === item.val ? "selected" : ""}`}
+                    >
+                      <input
+                        type="radio"
+                        name="market-cap-radio"
+                        className="cap-radio-input"
+                        checked={marketCapFilter === item.val}
+                        onChange={() => setMarketCapFilter(item.val)}
+                      />
+                      {item.label}
+                    </label>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* 거래량 랭킹 조건 단일 선택 그룹 (국내/미국 시장 공통 노출) */}
+            <div className="cap-radio-container" style={{ marginTop: market === "kr" ? "16px" : "0" }}>
+              <span className="cap-radio-title">
+                거래량 상위 랭킹 필터 (택 1)
+              </span>
+              <div className="cap-radio-group">
+                {[
+                  { val: "", label: "적용 안 함" },
+                  { val: "RANK_VOLUME_10", label: "상위 10" },
+                  { val: "RANK_VOLUME_20", label: "상위 20" },
+                  { val: "RANK_VOLUME_30", label: "상위 30" },
+                  { val: "RANK_VOLUME_40", label: "상위 40" },
+                  { val: "RANK_VOLUME_50", label: "상위 50" }
+                ].map((item) => (
+                  <label
+                    key={item.val}
+                    className={`vol-radio-label ${volumeFilter === item.val ? "selected" : ""}`}
+                  >
+                    <input
+                      type="radio"
+                      name="volume-radio"
+                      className="cap-radio-input"
+                      checked={volumeFilter === item.val}
+                      onChange={() => setVolumeFilter(item.val)}
+                    />
+                    {item.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* 거래대금 범위 조건 단일 선택 그룹 (국내/미국 시장 공통 노출) */}
+            <div className="cap-radio-container" style={{ marginTop: "16px" }}>
+              <span className="cap-radio-title">
+                거래대금 범위 필터 (택 1)
+              </span>
+              <div className="cap-radio-group">
+                {(market === "kr"
+                  ? [
+                    { val: "", label: "적용 안 함" },
+                    { val: "AMOUNT_STAGE_1", label: "100억 미만" },
+                    { val: "AMOUNT_STAGE_2", label: "100억 ~ 500억" },
+                    { val: "AMOUNT_STAGE_3", label: "500억 ~ 1,000억" },
+                    { val: "AMOUNT_STAGE_4", label: "1,000억 ~ 3,000억" },
+                    { val: "AMOUNT_STAGE_5", label: "3,000억 이상" }
+                  ]
+                  : [
+                    { val: "", label: "적용 안 함" },
+                    { val: "AMOUNT_STAGE_1", label: "1억$ 미만 (약 1,300억)" },
+                    { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$ (약 1,300억 ~ 6,500억)" },
+                    { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$ (약 6,500억 ~ 1.3조)" },
+                    { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$ (약 1.3조 ~ 3.9조)" },
+                    { val: "AMOUNT_STAGE_5", label: "30억$ 이상 (약 3.9조)" }
+                  ]
+                ).map((item) => (
+                  <label
+                    key={item.val}
+                    className={`amt-radio-label ${amountFilter === item.val ? "selected" : ""}`}
+                  >
+                    <input
+                      type="radio"
+                      name="amount-radio"
+                      className="cap-radio-input"
+                      checked={amountFilter === item.val}
+                      onChange={() => setAmountFilter(item.val)}
+                    />
+                    {item.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* 당일 가격 변동성 조건 단일 선택 그룹 (국내/미국 시장 공통 노출) */}
+            <div className="cap-radio-container" style={{ marginTop: "16px" }}>
+              <span className="cap-radio-title">
+                당일 가격 변동 필터 (택 1)
+              </span>
+              <div className="cap-radio-group">
+                {[
+                  { val: "", label: "적용 안 함" },
+                  { val: "PRICE_CHANGE_UP", label: "상승 종목" },
+                  { val: "PRICE_CHANGE_DOWN", label: "하락 종목" }
+                ].map((item) => (
+                  <label
+                    key={item.val}
+                    className={`price-change-radio-label ${priceChangeFilter === item.val ? "selected" : ""}`}
+                  >
+                    <input
+                      type="radio"
+                      name="price-change-radio"
+                      className="cap-radio-input"
+                      checked={priceChangeFilter === item.val}
+                      onChange={() => setPriceChangeFilter(item.val)}
+                    />
+                    {item.label}
+                  </label>
+                ))}
+              </div>
+            </div>
+
+            {/* 특정 ETF 구성 종목 필터 옵션 (국내 시장(KR)에서만 활성화) */}
+            {market === "kr" && (
+              <div className="etf-filter-panel">
+                <div className="etf-panel-header">
+                  <span className="etf-panel-title">
+                    특정 ETF 구성 종목으로 결과 필터링 (교집합 추출)
                   </span>
-                  <div className="cap-radio-group">
-                    {[
-                      { val: "", label: "적용 안 함" },
-                      { val: "RANK_MARKET_CAP_30", label: "상위 30" },
-                      { val: "RANK_MARKET_CAP_100", label: "상위 100" },
-                      { val: "RANK_MARKET_CAP_200", label: "상위 200" }
-                    ].map((item) => (
-                      <label
-                        key={item.val}
-                        className={`cap-radio-label ${marketCapFilter === item.val ? "selected" : ""}`}
-                      >
-                        <input
-                          type="radio"
-                          name="market-cap-radio"
-                          className="cap-radio-input"
-                          checked={marketCapFilter === item.val}
-                          onChange={() => setMarketCapFilter(item.val)}
-                        />
-                        {item.label}
-                      </label>
-                    ))}
-                  </div>
                 </div>
 
-                {/* 특정 ETF 구성 종목 필터 옵션 (항상 활성화하여 상설 노출) */}
-                <div className="etf-filter-panel">
-                  <div className="etf-panel-header">
-                    <span className="etf-panel-title">
-                      특정 ETF 구성 종목으로 결과 필터링 (교집합 추출)
-                    </span>
+                <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
+                  {/* 운용사 브랜드 선택 버튼 그룹 */}
+                  <div className="etf-row">
+                    <span className="etf-row-label">운용사 선택:</span>
+                    <button
+                      type="button"
+                      className={`btn-brand-tab ${etfBrand === "KODEX" ? "active" : ""}`}
+                      onClick={() => setEtfBrand("KODEX")}
+                    >
+                      KODEX
+                    </button>
+                    <button
+                      type="button"
+                      className={`btn-brand-tab ${etfBrand === "TIGER" ? "active" : ""}`}
+                      onClick={() => setEtfBrand("TIGER")}
+                    >
+                      TIGER
+                    </button>
                   </div>
 
-                  <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
-                    {/* 운용사 브랜드 선택 버튼 그룹 */}
-                    <div className="etf-row">
-                      <span className="etf-row-label">운용사 선택:</span>
-                      <button
-                        type="button"
-                        className={`btn-brand-tab ${etfBrand === "KODEX" ? "active" : ""}`}
-                        onClick={() => setEtfBrand("KODEX")}
-                      >
-                        KODEX
-                      </button>
-                      <button
-                        type="button"
-                        className={`btn-brand-tab ${etfBrand === "TIGER" ? "active" : ""}`}
-                        onClick={() => setEtfBrand("TIGER")}
-                      >
-                        TIGER
-                      </button>
-                    </div>
-
-                    {/* ETF 이름 찾기 검색창 */}
-                    <div className="etf-row">
-                      <span className="etf-row-label">ETF 검색:</span>
-                      <input
-                        type="text"
-                        className="etf-search-input"
-                        placeholder="예: 200, 레버리지, 반도체 등"
-                        value={etfSearchInput}
-                        onChange={(e) => setEtfSearchInput(e.target.value)}
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") {
-                            setEtfQuery(etfSearchInput);
-                            setIsEtfModalOpen(true);
-                          }
-                        }}
-                      />
-                      <button
-                        type="button"
-                        className="btn-etf-search"
-                        onClick={() => {
+                  {/* ETF 이름 찾기 검색창 */}
+                  <div className="etf-row">
+                    <span className="etf-row-label">ETF 검색:</span>
+                    <input
+                      type="text"
+                      className="etf-search-input"
+                      placeholder="예: 200, 레버리지, 반도체 등"
+                      value={etfSearchInput}
+                      onChange={(e) => setEtfSearchInput(e.target.value)}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") {
                           setEtfQuery(etfSearchInput);
                           setIsEtfModalOpen(true);
-                        }}
-                      >
-                        찾기
-                      </button>
-                    </div>
-
-                    {/* 선택된 ETF 목록 칩 표시 */}
-                    {selectedEtfs.length > 0 && (
-                      <div style={{ display: "flex", gap: "5px", alignItems: "flex-start", flexDirection: "column", marginTop: "4px" }}>
-                        <span style={{ fontSize: "0.8rem", fontWeight: "600", color: "#4b5563" }}>선택된 ETF 목록 ({selectedEtfs.length}/5):</span>
-                        <div className="etf-chips-container">
-                          {selectedEtfs.map((etf) => (
-                            <span key={etf.etfId} className="etf-chip">
-                              {etf.etfName}
-                              <button
-                                type="button"
-                                className="etf-chip-delete"
-                                onClick={() => removeEtfChip(etf.etfId)}
-                              >
-                                ✕
-                              </button>
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="btn-etf-search"
+                      onClick={() => {
+                        setEtfQuery(etfSearchInput);
+                        setIsEtfModalOpen(true);
+                      }}
+                    >
+                      찾기
+                    </button>
                   </div>
+
+                  {/* 선택된 ETF 목록 칩 표시 */}
+                  {selectedEtfs.length > 0 && (
+                    <div style={{ display: "flex", gap: "5px", alignItems: "flex-start", flexDirection: "column", marginTop: "4px" }}>
+                      <span style={{ fontSize: "0.8rem", fontWeight: "600", color: "#4b5563" }}>선택된 ETF 목록 ({selectedEtfs.length}/5):</span>
+                      <div className="etf-chips-container">
+                        {selectedEtfs.map((etf) => (
+                          <span key={etf.etfId} className="etf-chip">
+                            {etf.etfName}
+                            <button
+                              type="button"
+                              className="etf-chip-delete"
+                              onClick={() => removeEtfChip(etf.etfId)}
+                            >
+                              ✕
+                            </button>
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
                 </div>
-              </>
+              </div>
             )}
 
             {/* 현재 선택된 조건 요약 패널 */}
@@ -1054,15 +1370,84 @@ export default function MyConditionPage() {
                 {market === "kr" && marketCapFilter && (
                   <span className="summary-chip cap-chip" style={{ background: "#fef3c7", border: "1px solid #fde68a", color: "#b45309", fontSize: "0.8rem", fontWeight: "700", padding: "6px 12px", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
                     시총: {[
+                      { val: "RANK_MARKET_CAP_10", label: "상위 10위" },
                       { val: "RANK_MARKET_CAP_30", label: "상위 30위" },
+                      { val: "RANK_MARKET_CAP_50", label: "상위 50위" },
                       { val: "RANK_MARKET_CAP_100", label: "상위 100위" },
-                      { val: "RANK_MARKET_CAP_200", label: "상위 200" }
+                      { val: "RANK_MARKET_CAP_200", label: "상위 200위" }
                     ].find(item => item.val === marketCapFilter)?.label || "적용 안 함"}
                     <button
                       type="button"
                       onClick={() => setMarketCapFilter("")}
                       style={{ border: "none", background: "transparent", color: "#b45309", cursor: "pointer", fontSize: "0.75rem", display: "inline-flex", padding: 0, alignItems: "center", fontWeight: "700" }}
                       title="시가총액 조건 해제"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {/* 거래량 조건 표시 칩 (삭제 버튼 포함) */}
+                {volumeFilter && (
+                  <span className="summary-chip cap-chip" style={{ background: "#e0f2fe", border: "1px solid #bae6fd", color: "#0369a1", fontSize: "0.8rem", fontWeight: "700", padding: "6px 12px", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    거래량: {[
+                      { val: "RANK_VOLUME_10", label: "상위 10위" },
+                      { val: "RANK_VOLUME_20", label: "상위 20위" },
+                      { val: "RANK_VOLUME_30", label: "상위 30위" },
+                      { val: "RANK_VOLUME_40", label: "상위 40위" },
+                      { val: "RANK_VOLUME_50", label: "상위 50위" }
+                    ].find(item => item.val === volumeFilter)?.label || "적용 안 함"}
+                    <button
+                      type="button"
+                      onClick={() => setVolumeFilter("")}
+                      style={{ border: "none", background: "transparent", color: "#0369a1", cursor: "pointer", fontSize: "0.75rem", display: "inline-flex", padding: 0, alignItems: "center", fontWeight: "700" }}
+                      title="거래량 조건 해제"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+                {/* 거래대금 조건 표시 칩 (삭제 버튼 포함) */}
+                {amountFilter && (
+                  <span className="summary-chip cap-chip" style={{ background: "#faf5ff", border: "1px solid #e9d5ff", color: "#6b21a8", fontSize: "0.8rem", fontWeight: "700", padding: "6px 12px", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    거래대금: {(market === "kr"
+                      ? [
+                        { val: "AMOUNT_STAGE_1", label: "100억 미만" },
+                        { val: "AMOUNT_STAGE_2", label: "100억 ~ 500억" },
+                        { val: "AMOUNT_STAGE_3", label: "500억 ~ 1,000억" },
+                        { val: "AMOUNT_STAGE_4", label: "1,000억 ~ 3,000억" },
+                        { val: "AMOUNT_STAGE_5", label: "3,000억 이상" }
+                      ]
+                      : [
+                        { val: "AMOUNT_STAGE_1", label: "1억$ 미만 (약 1,300억)" },
+                        { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$ (약 1,300억 ~ 6,500억)" },
+                        { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$ (약 6,500억 ~ 1.3조)" },
+                        { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$ (약 1.3조 ~ 3.9조)" },
+                        { val: "AMOUNT_STAGE_5", label: "30억$ 이상 (약 3.9조)" }
+                      ]
+                    ).find(item => item.val === amountFilter)?.label || "적용 안 함"}
+                    <button
+                      type="button"
+                      onClick={() => setAmountFilter("")}
+                      style={{ border: "none", background: "transparent", color: "#6b21a8", cursor: "pointer", fontSize: "0.75rem", display: "inline-flex", padding: 0, alignItems: "center", fontWeight: "700" }}
+                      title="거래대금 조건 해제"
+                    >
+                      ✕
+                    </button>
+                  </span>
+                )}
+
+                {/* 가격 변동 조건 표시 칩 (삭제 버튼 포함) */}
+                {priceChangeFilter && (
+                  <span className="summary-chip cap-chip" style={{ background: "#fee2e2", border: "1px solid #fca5a5", color: "#991b1b", fontSize: "0.8rem", fontWeight: "700", padding: "6px 12px", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
+                    변동성: {[
+                      { val: "PRICE_CHANGE_UP", label: "상승 종목" },
+                      { val: "PRICE_CHANGE_DOWN", label: "하락 종목" }
+                    ].find(item => item.val === priceChangeFilter)?.label || "적용 안 함"}
+                    <button
+                      type="button"
+                      onClick={() => setPriceChangeFilter("")}
+                      style={{ border: "none", background: "transparent", color: "#991b1b", cursor: "pointer", fontSize: "0.75rem", display: "inline-flex", padding: 0, alignItems: "center", fontWeight: "700" }}
+                      title="가격 변동 조건 해제"
                     >
                       ✕
                     </button>
@@ -1134,7 +1519,7 @@ export default function MyConditionPage() {
                 ))}
 
                 {/* 아무것도 선택하지 않은 경우의 예외 안내 표시 */}
-                {checkedFilterKeys.length === 0 && (!marketCapFilter || market !== "kr") && (selectedEtfs.length === 0 || market !== "kr") && (
+                {checkedFilterKeys.length === 0 && (!marketCapFilter || market !== "kr") && (selectedEtfs.length === 0 || market !== "kr") && !priceChangeFilter && (
                   <span style={{ fontSize: "0.825rem", color: "#94a3b8", fontWeight: "500", padding: "4px 0" }}>
                     아직 선택된 분석 조건이 없습니다. 위에서 조건을 선택해 주세요.
                   </span>
@@ -1340,12 +1725,13 @@ export default function MyConditionPage() {
               <table className="detail-table align-table" style={{ width: "100%" }}>
                 <colgroup>
                   {activeConditionId !== null && <col style={{ width: "48px" }} />}
+                  <col style={{ width: "110px" }} />
+                  <col style={{ width: "18%" }} />
+                  <col style={{ width: "100px" }} />
                   <col style={{ width: "120px" }} />
-                  <col style={{ width: "20%" }} />
-                  <col style={{ width: "120px" }} />
-                  <col style={{ width: "150px" }} />
-                  <col style={{ width: "125px" }} />
-                  <col style={{ width: "125px" }} />
+                  <col style={{ width: "110px" }} />
+                  <col style={{ width: "110px" }} />
+                  <col style={{ width: "130px" }} />
                 </colgroup>
                 <thead>
                   <tr>
@@ -1364,18 +1750,19 @@ export default function MyConditionPage() {
                     <th className="col-num">현재가(종가)</th>
                     <th className="col-num">고가</th>
                     <th className="col-num">저가</th>
+                    <th className="col-num">거래량</th>
                   </tr>
                 </thead>
                 <tbody>
                   {isRunning ? (
                     <tr>
-                      <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#6b7280" }}>
+                      <td colSpan={activeConditionId !== null ? 8 : 7} style={{ textAlign: "center", padding: "40px 0", color: "#6b7280" }}>
                         조건에 부합하는 종목을 실시간으로 스크리닝 중입니다. 잠시만 기다려 주세요.
                       </td>
                     </tr>
                   ) : displayedResults.length === 0 ? (
                     <tr>
-                      <td colSpan={activeConditionId !== null ? 7 : 6} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>
+                      <td colSpan={activeConditionId !== null ? 8 : 7} style={{ textAlign: "center", padding: "40px 0", color: "#9ca3af" }}>
                         {errorMessage ? "에러가 발생하여 조회가 중단되었습니다." : "상단의 필터를 선택하고 실행 버튼을 눌러 스크리닝된 종목 리스트를 확인하세요."}
                       </td>
                     </tr>
@@ -1410,6 +1797,9 @@ export default function MyConditionPage() {
                         </td>
                         <td className="col-num">
                           {r.low ? `${r.low.toLocaleString()} ${market === "kr" ? "원" : "$"}` : "-"}
+                        </td>
+                        <td className="col-num">
+                          {r.volume ? `${r.volume.toLocaleString()} 주` : "-"}
                         </td>
                       </tr>
                     ))
@@ -1451,6 +1841,9 @@ export default function MyConditionPage() {
         market={market}
         checkedFilterKeys={checkedFilterKeys}
         marketCapFilter={marketCapFilter}
+        volumeFilter={volumeFilter}
+        amountFilter={amountFilter}
+        priceChangeFilter={priceChangeFilter}
         selectedEtfs={selectedEtfs}
         filterOptions={FILTER_OPTIONS}
         isEditMode={!!activeConditionId}
@@ -1476,92 +1869,202 @@ export default function MyConditionPage() {
       />
 
       {/* ETF 생성 및 기존 수정 모달 팝업 추가 연동 */}
-      {showCreateEtf && (
-        <CreateEtfModal
-          open={showCreateEtf}
-          myStocks={displayedResults.map(r => ({
-            code: r.code,
-            name: r.name,
-            market: (r.market || market).toUpperCase() as "KR" | "US",
-            currentPrice: r.currentPrice || null,
-          }))}
-          leftPanelTitle="스크리닝 포착 종목"
-          onClose={() => setShowCreateEtf(false)}
-          onCreated={() => {
-            setShowCreateEtf(false);
-            setHasEtf(true);
-          }}
-        />
-      )}
+      {
+        showCreateEtf && (
+          <CreateEtfModal
+            open={showCreateEtf}
+            myStocks={displayedResults.map(r => ({
+              code: r.code,
+              name: r.name,
+              market: (r.market || market).toUpperCase() as "KR" | "US",
+              currentPrice: r.currentPrice || null,
+            }))}
+            leftPanelTitle="스크리닝 포착 종목"
+            onClose={() => setShowCreateEtf(false)}
+            onCreated={() => {
+              setShowCreateEtf(false);
+              setHasEtf(true);
+            }}
+          />
+        )
+      }
 
-      {showAddToEtf && (
-        <EditEtfModal
-          open={showAddToEtf}
-          myStocks={displayedResults.map(r => ({
-            code: r.code,
-            name: r.name,
-            market: (r.market || market).toUpperCase() as "KR" | "US",
-            currentPrice: r.currentPrice || null,
-          }))}
-          leftPanelTitle="스크리닝 포착 종목"
-          onClose={() => setShowAddToEtf(false)}
-          onSaved={() => setShowAddToEtf(false)}
-        />
-      )}
+      {
+        showAddToEtf && (
+          <EditEtfModal
+            open={showAddToEtf}
+            myStocks={displayedResults.map(r => ({
+              code: r.code,
+              name: r.name,
+              market: (r.market || market).toUpperCase() as "KR" | "US",
+              currentPrice: r.currentPrice || null,
+            }))}
+            leftPanelTitle="스크리닝 포착 종목"
+            onClose={() => setShowAddToEtf(false)}
+            onSaved={() => setShowAddToEtf(false)}
+          />
+        )
+      }
 
+      {/* 변경사항 미저장 및 관심종목 추가 확인 모달 팝업 */}
       <UnsavedChangesConfirmModal
         isOpen={showUnsavedChangesConfirm}
         onClose={() => setShowUnsavedChangesConfirm(false)}
-        onConfirm={executeAddMyStock}
+        onConfirm={handleConfirmAddMyStock}
         conditionName={(activeConditionName || "나만의 조건식").trim().replace(/_(KR|US)$/i, "")}
-        isDirty={activeConditionId !== null && isConditionDirty()}
+        isDirty={isConditionDirty()}
       />
 
-      {/* 세련된 토스트(Toast) 팝업 알림 */}
-      {toast && (
-        <div
-          className="toast-popup-container"
-          style={{
-            position: "fixed",
-            top: "30px",
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1500,
-            background: "#ffffff",
-            border: toast.type === "success" ? "1px solid #10b981" : toast.type === "error" ? "1px solid #ef4444" : "1px solid #3b82f6",
-            borderLeftWidth: "6px",
-            borderRadius: "10px",
-            padding: "14px 20px",
-            boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05)",
-            display: "flex",
-            alignItems: "center",
-            gap: "10px",
-            animation: "toastSlideDown 0.3s ease-out",
-            minWidth: "320px"
-          }}
-        >
-          {toast.type === "success" && (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="20 6 9 17 4 12" />
-            </svg>
-          )}
-          {toast.type === "error" && (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg>
-          )}
-          {toast.type === "info" && (
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="16" x2="12" y2="12" />
-              <line x1="12" y1="8" x2="12.01" y2="8" />
-            </svg>
-          )}
-          <span style={{ fontSize: "0.875rem", fontWeight: "700", color: "#334155", whiteSpace: "pre-line" }}>{toast.message}</span>
+      {/* 공통 경고/알림 자체 모달 팝업 */}
+      {alertConfig.isOpen && (
+        <div className="confirm-modal-overlay" style={{ zIndex: 1200 }}>
+          <div className="confirm-modal-content" style={{ maxWidth: "420px", padding: "24px" }}>
+            <div className="confirm-modal-header" style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "12px", marginBottom: "16px" }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+              <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: "700", color: "#1e293b" }}>{alertConfig.title}</h3>
+            </div>
+            <div className="confirm-modal-body" style={{ marginBottom: "20px" }}>
+              <p style={{ margin: 0, fontSize: "0.9rem", color: "#475569", lineHeight: "1.6", fontWeight: "500", whiteSpace: "pre-line" }}>
+                {alertConfig.message}
+              </p>
+            </div>
+            <div className="confirm-modal-footer" style={{ display: "flex", justifyContent: "flex-end", borderTop: "1px solid #f1f5f9", paddingTop: "12px" }}>
+              <button
+                type="button"
+                onClick={() => setAlertConfig(prev => ({ ...prev, isOpen: false }))}
+                style={{
+                  background: "#4f46e5",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "8px 20px",
+                  fontSize: "0.85rem",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 4px rgba(79, 70, 229, 0.15)"
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
         </div>
       )}
-    </div>
+
+      {/* 공통 컨펌(Confirm) 자체 모달 팝업 */}
+      {confirmConfig.isOpen && (
+        <div className="confirm-modal-overlay" style={{ zIndex: 1200 }}>
+          <div className="confirm-modal-content" style={{ maxWidth: "420px", padding: "24px" }}>
+            <div className="confirm-modal-header" style={{ display: "flex", alignItems: "center", gap: "8px", borderBottom: "1px solid #f1f5f9", paddingBottom: "12px", marginBottom: "16px" }}>
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#f59e0b" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                <line x1="12" y1="9" x2="12" y2="13" />
+                <line x1="12" y1="17" x2="12.01" y2="17" />
+              </svg>
+              <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: "700", color: "#1e293b" }}>{confirmConfig.title}</h3>
+            </div>
+            <div className="confirm-modal-body" style={{ marginBottom: "20px" }}>
+              <p style={{ margin: 0, fontSize: "0.9rem", color: "#475569", lineHeight: "1.6", fontWeight: "500", whiteSpace: "pre-line" }}>
+                {confirmConfig.message}
+              </p>
+            </div>
+            <div className="confirm-modal-footer" style={{ display: "flex", justifyContent: "flex-end", gap: "10px", borderTop: "1px solid #f1f5f9", paddingTop: "12px" }}>
+              <button
+                type="button"
+                className="btn-cancel"
+                onClick={() => setConfirmConfig(prev => ({ ...prev, isOpen: false }))}
+                style={{
+                  background: "#f1f5f9",
+                  color: "#475569",
+                  border: "1px solid #cbd5e1",
+                  borderRadius: "8px",
+                  padding: "8px 20px",
+                  fontSize: "0.85rem",
+                  fontWeight: "700",
+                  cursor: "pointer"
+                }}
+              >
+                취소
+              </button>
+              <button
+                type="button"
+                className="btn-confirm"
+                onClick={() => {
+                  setConfirmConfig(prev => ({ ...prev, isOpen: false }));
+                  confirmConfig.onConfirm();
+                }}
+                style={{
+                  background: "#4f46e5",
+                  color: "#ffffff",
+                  border: "none",
+                  borderRadius: "8px",
+                  padding: "8px 20px",
+                  fontSize: "0.85rem",
+                  fontWeight: "700",
+                  cursor: "pointer",
+                  boxShadow: "0 2px 4px rgba(79, 70, 229, 0.15)"
+                }}
+              >
+                확인
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+
+
+      {/* 세련된 토스트(Toast) 팝업 알림 */}
+      {
+        toast && (
+          <div
+            className="toast-popup-container"
+            style={{
+              position: "fixed",
+              top: "30px",
+              left: "50%",
+              transform: "translateX(-50%)",
+              zIndex: 1500,
+              background: "#ffffff",
+              border: toast.type === "success" ? "1px solid #10b981" : toast.type === "error" ? "1px solid #ef4444" : "1px solid #3b82f6",
+              borderLeftWidth: "6px",
+              borderRadius: "10px",
+              padding: "14px 20px",
+              boxShadow: "0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.05)",
+              display: "flex",
+              alignItems: "center",
+              gap: "10px",
+              animation: "toastSlideDown 0.3s ease-out",
+              minWidth: "320px"
+            }}
+          >
+            {toast.type === "success" && (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#10b981" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            )}
+            {toast.type === "error" && (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="8" x2="12" y2="12" />
+                <line x1="12" y1="16" x2="12.01" y2="16" />
+              </svg>
+            )}
+            {toast.type === "info" && (
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#3b82f6" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
+              </svg>
+            )}
+            <span style={{ fontSize: "0.875rem", fontWeight: "700", color: "#334155", whiteSpace: "pre-line" }}>{toast.message}</span>
+          </div>
+        )
+      }
+    </div >
   );
 }

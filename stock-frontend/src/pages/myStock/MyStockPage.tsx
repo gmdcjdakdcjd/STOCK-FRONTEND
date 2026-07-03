@@ -6,6 +6,7 @@ import {
     getDeletedMyStock,
     deleteMyStock,
     restoreMyStock,
+    updateMyStockTargets, // 신규 목표가 수정 API 임포트
 } from "../../api/myStockApi";
 
 import type { MyStockDTO, PageResponseDTO } from "../../api/myStockApi";
@@ -13,6 +14,7 @@ import CreateEtfModal from "./CreateEtfModal";
 import EditEtfModal from "./EditEtfModal";
 
 import DeletedMyStockModal from "./DeletedMyStockModal";
+import MyStockTargetEditModal from "./MyStockTargetEditModal"; // 목표가 수정 모달 임포트
 import "./MyStockPage.css";
 
 /* =========================
@@ -103,6 +105,8 @@ export default function MyStockPage() {
     const [showCreateEtf, setShowCreateEtf] = useState(false);
     const [showAddToEtf, setShowAddToEtf] = useState(false);
     const [hasEtf, setHasEtf] = useState<boolean>(false);
+    const [editingStock, setEditingStock] = useState<MyStockDTO | null>(null); // 목표가 수정 대상 종목 상태
+    const [isTargetEditModalOpen, setIsTargetEditModalOpen] = useState<boolean>(false); // 목표가 수정 모달 노출 상태
 
     // 사용자가 소유한 ETF 목록이 존재하는지 초기 로드 확인
     useEffect(() => {
@@ -158,6 +162,26 @@ export default function MyStockPage() {
         loadUS(1);
     };
 
+    // 목표가 최종 수정 저장 핸들러
+    const handleSaveTargets = async (id: number, targets: {
+        buyTargetPrice1: number | null;
+        buyTargetPrice2: number | null;
+        buyTargetPrice3: number | null;
+        sellTargetPrice1: number | null;
+        sellTargetPrice2: number | null;
+        sellTargetPrice3: number | null;
+    }) => {
+        try {
+            await updateMyStockTargets(id, targets);
+            alert("목표가가 정상적으로 수정되었습니다.");
+            loadKR(krPage);
+            loadUS(usPage);
+        } catch (error) {
+            console.error("목표가 수정 에러:", error);
+            alert("목표가 수정에 실패했습니다.");
+        }
+    };
+
     /* =========================
        Render Helpers
     ========================= */
@@ -172,7 +196,7 @@ export default function MyStockPage() {
         ) {
             return (
                 <tr>
-                    <td colSpan={10} className="mystock-empty">
+                    <td colSpan={12} className="mystock-empty">
                         데이터가 없습니다
                     </td>
                 </tr>
@@ -215,15 +239,31 @@ export default function MyStockPage() {
                         {(result.page - 1) * result.size + i + 1}
                     </td>
                     <td className="col-code">{s.code}</td>
-                    <td className="col-name">{s.name}</td>
-
-                    <td className="col-detail">
-                        <button
-                            className="detail-link-btn"
-                            onClick={() => navigate(stockSearchUrl)}
-                        >
-                            종목 상세보기
-                        </button>
+                    <td className="col-name">
+                        <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
+                            <span>{s.name}</span>
+                            <button
+                                onClick={() => navigate(stockSearchUrl)}
+                                title="종목 상세보기"
+                                style={{
+                                    background: "none",
+                                    border: "none",
+                                    padding: "2px",
+                                    cursor: "pointer",
+                                    display: "flex",
+                                    alignItems: "center",
+                                    color: "#94a3b8",
+                                    transition: "color 0.2s"
+                                }}
+                                onMouseEnter={(e) => e.currentTarget.style.color = "#4f46e5"}
+                                onMouseLeave={(e) => e.currentTarget.style.color = "#94a3b8"}
+                            >
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.8" strokeLinecap="round" strokeLinejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                        </div>
                     </td>
 
                     <td className={`col-num ${priceClass}`}>
@@ -238,16 +278,40 @@ export default function MyStockPage() {
                             : fmt(s.priceAtAdd, " $", true)}
                     </td>
 
-                    <td className="col-num">
-                        {isKR
-                            ? fmt(s.targetPrice5, " 원", false)
-                            : fmt(s.targetPrice5, " $", true)}
+                    {/* 저점매수 표출 */}
+                    <td className="col-num" style={{ fontWeight: 700 }}>
+                        {s.buyTargetPrice1 != null
+                            ? isKR
+                                ? fmt(s.buyTargetPrice1, " 원", false)
+                                : fmt(s.buyTargetPrice1, " $", true)
+                            : "-"}
                     </td>
 
-                    <td className="col-num">
-                        {isKR
-                            ? fmt(s.targetPrice10, " 원", false)
-                            : fmt(s.targetPrice10, " $", true)}
+                    {/* 고점매수 표출 */}
+                    <td className="col-num" style={{ fontWeight: 700 }}>
+                        {s.buyTargetPrice2 != null
+                            ? isKR
+                                ? fmt(s.buyTargetPrice2, " 원", false)
+                                : fmt(s.buyTargetPrice2, " $", true)
+                            : "-"}
+                    </td>
+
+                    {/* 익절가 표출 */}
+                    <td className="col-num" style={{ fontWeight: 700 }}>
+                        {s.sellTargetPrice1 != null
+                            ? isKR
+                                ? fmt(s.sellTargetPrice1, " 원", false)
+                                : fmt(s.sellTargetPrice1, " $", true)
+                            : "-"}
+                    </td>
+
+                    {/* 손절가 표출 */}
+                    <td className="col-num" style={{ fontWeight: 700 }}>
+                        {s.sellTargetPrice2 != null
+                            ? isKR
+                                ? fmt(s.sellTargetPrice2, " 원", false)
+                                : fmt(s.sellTargetPrice2, " $", true)
+                            : "-"}
                     </td>
 
                     <td className="col-strategy">
@@ -262,7 +326,28 @@ export default function MyStockPage() {
                         {s.createdAt?.substring(0, 10) ?? "-"}
                     </td>
 
-                    <td className="col-action">
+                    <td className="col-action" style={{ display: "flex", gap: "4px", justifyContent: "center", alignItems: "center" }}>
+                        <button
+                            className="btn-edit-target"
+                            style={{
+                                padding: "5px 8px",
+                                fontSize: "0.75rem",
+                                borderRadius: "6px",
+                                border: "1px solid #3b82f6",
+                                color: "#2563eb",
+                                background: "#eff6ff",
+                                cursor: "pointer",
+                                fontWeight: 700,
+                                transition: "all 0.2s",
+                                whiteSpace: "nowrap"
+                            }}
+                            onClick={() => {
+                                setEditingStock(s);
+                                setIsTargetEditModalOpen(true);
+                            }}
+                        >
+                            목표가
+                        </button>
                         <button
                             className="btn-delete"
                             onClick={() => onDelete(s.id)}
@@ -373,17 +458,18 @@ export default function MyStockPage() {
                 <div className="mystock-card-title">한국 관심 종목</div>
                 <table className="mystock-table">
                     <colgroup>
-                        <col style={{ width: "48px" }} />  {/* No */}
-                        <col style={{ width: "100px" }} /> {/* 종목코드 */}
-                        <col style={{ width: "180px" }} /> {/* 종목명 */}
-                        <col style={{ width: "120px" }} /> {/* 상세보기 */}
-                        <col style={{ width: "110px" }} /> {/* 현재가 */}
-                        <col style={{ width: "110px" }} /> {/* 편입가 */}
-                        <col style={{ width: "80px" }} />  {/* +5% */}
-                        <col style={{ width: "80px" }} />  {/* +10% */}
-                        <col style={{ width: "140px" }} /> {/* 전략 */}
-                        <col style={{ width: "100px" }} /> {/* 등록일 */}
-                        <col style={{ width: "80px" }} />  {/* 삭제 */}
+                        <col style={{ width: "48px" }} />
+                        <col style={{ width: "85px" }} />
+                        <col style={{ width: "170px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "125px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "130px" }} />
                     </colgroup>
 
                     <thead>
@@ -391,14 +477,15 @@ export default function MyStockPage() {
                             <th className="col-no">No</th>
                             <th className="col-code">종목코드</th>
                             <th className="col-name">종목명</th>
-                            <th className="col-detail"></th>
                             <th className="col-num">현재가</th>
                             <th className="col-num">편입가</th>
-                            <th className="col-num">+5%</th>
-                            <th className="col-num">+10%</th>
+                            <th className="col-num">저점매수</th>
+                            <th className="col-num">고점매수</th>
+                            <th className="col-num">익절가</th>
+                            <th className="col-num">손절가</th>
                             <th className="col-strategy">전략</th>
                             <th className="col-date">등록일</th>
-                            <th className="col-action">삭제</th>
+                            <th className="col-action">관리</th>
                         </tr>
                     </thead>
 
@@ -412,17 +499,18 @@ export default function MyStockPage() {
                 <div className="mystock-card-title">미국 관심 종목</div>
                 <table className="mystock-table">
                     <colgroup>
-                        <col style={{ width: "48px" }} />  {/* No */}
-                        <col style={{ width: "100px" }} /> {/* 종목코드 */}
-                        <col style={{ width: "180px" }} /> {/* 종목명 */}
-                        <col style={{ width: "120px" }} /> {/* 상세보기 */}
-                        <col style={{ width: "110px" }} /> {/* 현재가 */}
-                        <col style={{ width: "110px" }} /> {/* 편입가 */}
-                        <col style={{ width: "80px" }} />  {/* +5% */}
-                        <col style={{ width: "80px" }} />  {/* +10% */}
-                        <col style={{ width: "140px" }} /> {/* 전략 */}
-                        <col style={{ width: "100px" }} /> {/* 등록일 */}
-                        <col style={{ width: "80px" }} />  {/* 삭제 */}
+                        <col style={{ width: "48px" }} />
+                        <col style={{ width: "85px" }} />
+                        <col style={{ width: "170px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "125px" }} />
+                        <col style={{ width: "100px" }} />
+                        <col style={{ width: "130px" }} />
                     </colgroup>
 
                     <thead>
@@ -430,14 +518,15 @@ export default function MyStockPage() {
                             <th className="col-no">No</th>
                             <th className="col-code">종목코드</th>
                             <th className="col-name">종목명</th>
-                            <th className="col-detail"></th>
                             <th className="col-num">현재가</th>
                             <th className="col-num">편입가</th>
-                            <th className="col-num">+5%</th>
-                            <th className="col-num">+10%</th>
+                            <th className="col-num">저점매수</th>
+                            <th className="col-num">고점매수</th>
+                            <th className="col-num">익절가</th>
+                            <th className="col-num">손절가</th>
                             <th className="col-strategy">전략</th>
                             <th className="col-date">등록일</th>
-                            <th className="col-action">삭제</th>
+                            <th className="col-action">관리</th>
                         </tr>
                     </thead>
                     <tbody>{renderRows(usResult, false)}</tbody>
@@ -500,6 +589,18 @@ export default function MyStockPage() {
                     ]}
                     onClose={() => setShowAddToEtf(false)}
                     onSaved={() => setShowAddToEtf(false)}
+                />
+            )}
+            {isTargetEditModalOpen && editingStock && (
+                <MyStockTargetEditModal
+                    isOpen={isTargetEditModalOpen}
+                    onClose={() => {
+                        setIsTargetEditModalOpen(false);
+                        setEditingStock(null);
+                    }}
+                    stock={editingStock}
+                    onSave={handleSaveTargets}
+                    market={editingStock.strategyName.endsWith("_US") ? "us" : "kr"}
                 />
             )}
 

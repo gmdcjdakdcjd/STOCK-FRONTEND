@@ -198,25 +198,29 @@
 }
 
 .cap-radio-group {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  /* 3열 균등 레이아웃 */
+  gap: 10px;
 }
 
 .cap-radio-label {
   display: flex;
   align-items: center;
+  justify-content: center;
+  /* 캡슐 내부 텍스트 중앙 정렬 */
   gap: 8px;
-  padding: 10px 18px;
+  padding: 8px 14px;
   background: #ffffff;
   border: 1px solid #cbd5e1;
   border-radius: 9999px;
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   color: #475569;
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
   user-select: none;
+  white-space: nowrap;
 }
 
 .cap-radio-label:hover {
@@ -233,7 +237,78 @@
 }
 
 .cap-radio-input {
-  display: none; /* 실제 라디오 마크업은 숨기고 컨테이너 자체를 단추처럼 연출 */
+  display: none;
+  /* 실제 라디오 마크업은 숨기고 컨테이너 자체를 단추처럼 연출 */
+}
+
+/* =====================================================
+   거래량 라디오 버튼 스타일링 (Teal 계열)
+===================================================== */
+.vol-radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 캡슐 내부 텍스트 중앙 정렬 */
+  gap: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.vol-radio-label:hover {
+  border-color: #0d9488;
+  color: #0f766e;
+  background: #f0fdfa;
+}
+
+.vol-radio-label.selected {
+  background: #0d9488;
+  border-color: #0d9488;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+}
+
+/* =====================================================
+   거래대금 라디오 버튼 스타일링 (Purple/Violet 계열)
+===================================================== */
+.amt-radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 캡슐 내부 텍스트 중앙 정렬 */
+  gap: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.amt-radio-label:hover {
+  border-color: #7c3aed;
+  color: #6d28d9;
+  background: #faf5ff;
+}
+
+.amt-radio-label.selected {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(124, 58, 237, 0.25);
 }
 
 /* =====================================================
@@ -478,8 +553,71 @@
     transform: translate(-50%, -20px);
     opacity: 0;
   }
+
   to {
     transform: translate(-50%, 0);
     opacity: 1;
   }
+}
+
+/* 가격 변동 라디오 버튼 스타일링 (상승/하락 조건에 대응하는 rose/coral 계열 테마 스타일) */
+.price-change-radio-label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 14px;
+  background: #ffffff;
+  border: 1px solid #cbd5e1;
+  border-radius: 9999px;
+  font-size: 0.8rem;
+  color: #475569;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+  white-space: nowrap;
+}
+
+.price-change-radio-label:hover {
+  border-color: #f43f5e;
+  color: #e11d48;
+  background: #fff1f2;
+}
+
+.price-change-radio-label.selected {
+  background: #e11d48;
+  border-color: #e11d48;
+  color: #ffffff;
+  box-shadow: 0 4px 10px rgba(225, 29, 72, 0.25);
+}
+
+/* =====================================================
+   나만의 조건식 필터 그룹화 스타일 추가
+===================================================== */
+.filter-groups-container {
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
+  margin-bottom: 24px;
+}
+
+.my-filter-group-section {
+  background: #f8fafc;
+  padding: 20px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.my-filter-group-title {
+  font-size: 1.025rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-top: 0;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid #3b82f6;
+  padding-left: 10px;
 }

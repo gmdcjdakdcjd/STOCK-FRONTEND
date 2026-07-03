@@ -99,6 +99,7 @@
   color: #6b7280;
   font-size: 0.95rem;
 }
+
 /* ================================
    Search Action Buttons
 ================================ */
@@ -156,6 +157,7 @@
 .btn-search-reset:active {
   transform: translateY(1px);
 }
+
 /* ================================
    Filter Card
 ================================ */
@@ -253,4 +255,304 @@
 .btn-reset:hover {
   background: #f9fafb;
   color: #374151;
+}
+
+/* ================================
+   전략 카드 그리드 스타일링 (바둑판 배열 형식)
+================================ */
+.strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+.strategy-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 20px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  user-select: none;
+}
+
+.strategy-card:hover {
+  border-color: #3b82f6;
+  background: #f8fafc;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(59, 130, 246, 0.08);
+}
+
+.strategy-card.selected {
+  border-color: #2563eb;
+  background: #eff6ff;
+  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.12);
+}
+
+/* 카드 좌측 둥근 사각형 체크 박스 표시부 */
+.strategy-card-indicator {
+  width: 20px;
+  height: 20px;
+  border: 2px solid #cbd5e1;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  transition: all 0.15s ease;
+  background: #ffffff;
+}
+
+.strategy-card.selected .strategy-card-indicator {
+  border-color: #2563eb;
+  background: #2563eb;
+}
+
+.strategy-card-indicator::after {
+  content: "";
+  width: 5px;
+  height: 9px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg) translate(-0.5px, -1px);
+  opacity: 0;
+  transition: all 0.15s ease;
+}
+
+.strategy-card.selected .strategy-card-indicator::after {
+  opacity: 1;
+}
+
+/* 카드 우측 텍스트 내용 영역 */
+.strategy-card-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.strategy-card-label {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1e293b;
+  line-height: 1.25;
+}
+
+.strategy-card.selected .strategy-card-label {
+  color: #1d4ed8;
+}
+
+.strategy-card-code {
+  font-size: 0.725rem;
+  color: #94a3b8;
+  font-family: monospace;
+}
+
+/* ================================
+   전략 그룹 구획 스타일링
+================================ */
+.strategy-group-section {
+  margin-bottom: 30px;
+  background: #f8fafc;
+  padding: 22px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
+}
+
+.strategy-group-title {
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-top: 0;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 4px solid #3b82f6;
+  padding-left: 10px;
+}
+
+/* ================================
+   2컬럼 스티키 사이드바 레이아웃 (세로형 정렬 방식)
+================================ */
+.result-layout {
+  display: flex;
+  gap: 28px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.result-sidebar {
+  width: 340px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 24px;
+  max-height: calc(100vh - 140px);
+  overflow-y: auto;
+  padding-right: 10px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.02);
+}
+
+/* 사이드바 스크롤바 커스터마이징 */
+.result-sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+.result-sidebar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.result-sidebar::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 999px;
+}
+.result-sidebar::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.result-main {
+  flex: 1;
+  min-width: 0;
+}
+
+/* 사이드바 내부 그리드 요소를 세로형 리스트 형태로 변경 */
+.result-sidebar .strategy-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 0;
+}
+
+.result-sidebar .strategy-group-section {
+  margin-bottom: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+}
+
+.result-sidebar .strategy-group-title {
+  font-size: 0.95rem;
+  margin-bottom: 12px;
+  border-left-width: 3px;
+  padding-left: 8px;
+}
+
+.result-sidebar .strategy-card {
+  padding: 10px 14px;
+  gap: 10px;
+  border-radius: 8px;
+}
+
+.result-sidebar .strategy-card-indicator {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+}
+
+.result-sidebar .strategy-card-indicator::after {
+  width: 4px;
+  height: 7px;
+  transform: rotate(45deg) translate(-0.5px, -1px);
+}
+
+.result-sidebar .strategy-card-label {
+  font-size: 0.85rem;
+}
+
+.result-sidebar .strategy-card-code {
+  font-size: 0.675rem;
+}
+
+/* ================================
+   오늘날짜 버튼 & 미국 시차 안내 배너 스타일 추가
+================================ */
+.date-input-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.btn-today {
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #f8fafc;
+  color: #475569;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.btn-today:hover {
+  background: #eff6ff;
+  color: #2563eb;
+  border-color: #bfdbfe;
+}
+
+.us-timezone-notice {
+  background: #fffbeb;
+  border: 1px solid #fef3c7;
+  border-radius: 8px;
+  padding: 8px 14px;
+  color: #b45309;
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  line-height: 1.4;
+  box-shadow: 0 2px 6px rgba(180, 83, 9, 0.02);
+}
+
+/* ================================
+   본문 상단 시장(KR/US) 선택 토글 탭 스타일
+================================ */
+.market-toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+
+.market-toggle-tabs {
+  display: flex;
+  background: #f1f5f9;
+  padding: 4px;
+  border-radius: 10px;
+  gap: 4px;
+  width: fit-content;
+  border: 1px solid #e2e8f0;
+}
+
+.market-toggle-btn {
+  padding: 8px 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  border-radius: 8px;
+  border: none;
+  background: transparent;
+  color: #64748b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.market-toggle-btn.active {
+  background: #ffffff;
+  color: #2563eb;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.08);
+}
+
+.market-toggle-btn:hover:not(.active) {
+  color: #334155;
+  background: #f8fafc;
 }
