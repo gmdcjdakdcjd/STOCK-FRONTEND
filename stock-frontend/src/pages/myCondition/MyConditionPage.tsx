@@ -40,12 +40,15 @@ const FILTER_GROUPS = [
     codes: ["RSI_30_UNHEATED", "RSI_70_OVERHEATED", "RSI_30_UNHEATED_WEEKLY", "RSI_70_OVERHEATED_WEEKLY"]
   },
   {
-    title: "📅 일봉 이동평균선",
-    codes: ["DAILY_TOUCH_MA20", "DAILY_TOUCH_MA60", "DAILY_TOUCH_MA120"]
-  },
-  {
-    title: "📆 주봉 이동평균선",
-    codes: ["WEEKLY_TOUCH_MA20", "WEEKLY_TOUCH_MA60", "WEEKLY_TOUCH_MA120"]
+    title: "📈 이동평균선",
+    codes: [
+      "DAILY_TOUCH_MA20",
+      "DAILY_TOUCH_MA60",
+      "DAILY_TOUCH_MA120",
+      "WEEKLY_TOUCH_MA20",
+      "WEEKLY_TOUCH_MA60",
+      "WEEKLY_TOUCH_MA120"
+    ]
   }
 ];
 
@@ -437,7 +440,9 @@ export default function MyConditionPage() {
       finalFilters.push(`${volumeFilter}_${market.toUpperCase()}`);
     }
     if (amountFilter) {
-      finalFilters.push(`${amountFilter}_${market.toUpperCase()}`);
+      amountFilter.split(",").forEach(val => {
+        finalFilters.push(`${val}_${market.toUpperCase()}`);
+      });
     }
     if (priceChangeFilter) {
       finalFilters.push(`${priceChangeFilter}_${market.toUpperCase()}`);
@@ -486,7 +491,9 @@ export default function MyConditionPage() {
       finalFilters.push(`${volumeFilter}_${market.toUpperCase()}`);
     }
     if (amountFilter) {
-      finalFilters.push(`${amountFilter}_${market.toUpperCase()}`);
+      amountFilter.split(",").forEach(val => {
+        finalFilters.push(`${val}_${market.toUpperCase()}`);
+      });
     }
     if (priceChangeFilter) {
       finalFilters.push(`${priceChangeFilter}_${market.toUpperCase()}`);
@@ -792,6 +799,22 @@ export default function MyConditionPage() {
     }
   };
 
+  /* 거래대금 다중 선택 토글 핸들러 */
+  const handleAmountFilterToggle = (val: string) => {
+    if (val === "") {
+      setAmountFilter("");
+    } else {
+      const currentVals = amountFilter ? amountFilter.split(",") : [];
+      let nextVals: string[];
+      if (currentVals.includes(val)) {
+        nextVals = currentVals.filter((v) => v !== val);
+      } else {
+        nextVals = [...currentVals, val];
+      }
+      setAmountFilter(nextVals.join(","));
+    }
+  };
+
   /* 결과 테이블 개별 종목 선택 토글 */
   const toggleOneCode = (code: string) => {
     setCheckedCodes((prev) =>
@@ -818,9 +841,11 @@ export default function MyConditionPage() {
       finalFilters.push(`${volumeFilter}_${market.toUpperCase()}`);
     }
 
-    // 거래대금 단일 선택 필터가 지정되어 있다면 필터 목록에 결합하여 함께 전달합니다.
+    // 거래대금 필터가 지정되어 있다면 필터 목록에 결합하여 함께 전달합니다 (다중 선택 대응 split 처리)
     if (amountFilter) {
-      finalFilters.push(`${amountFilter}_${market.toUpperCase()}`);
+      amountFilter.split(",").forEach(val => {
+        finalFilters.push(`${val}_${market.toUpperCase()}`);
+      });
     }
 
     // 가격 변동 단일 선택 필터가 지정되어 있다면 필터 목록에 결합하여 함께 전달합니다.
@@ -1082,7 +1107,7 @@ export default function MyConditionPage() {
             </h3>
             <p className="detail-desc">적용할 주식 스크리닝 필터를 선택해 주세요 (선택한 모든 조건의 교집합 종목이 추출됩니다).</p>
 
-            <div className="filter-groups-container">
+            <div className="multi-column-filter-container">
               {FILTER_GROUPS.map((group) => {
                 const groupFilters = FILTER_OPTIONS.filter(
                   (filter) => group.codes.includes(filter.baseKey) && (!filter.onlyKR || market === "kr")
@@ -1091,27 +1116,29 @@ export default function MyConditionPage() {
                 if (groupFilters.length === 0) return null;
 
                 return (
-                  <div key={group.title} className="my-filter-group-section">
-                    <h4 className="my-filter-group-title">{group.title}</h4>
-                    <div className="filter-checkbox-grid">
+                  <div key={group.title} className="filter-column">
+                    <div className="filter-column-header">
+                      {group.title}
+                    </div>
+                    <div className="filter-column-body">
                       {groupFilters.map((filter) => {
                         const isChecked = checkedFilterKeys.includes(filter.baseKey);
                         return (
                           <label
                             key={filter.baseKey}
-                            className={`filter-checkbox-label ${isChecked ? "checked" : ""}`}
+                            className={`filter-column-item ${isChecked ? "checked" : ""}`}
                           >
                             <input
                               type="checkbox"
-                              className="filter-checkbox-input"
+                              className="filter-column-input"
                               checked={isChecked}
                               onChange={() => handleCheckboxChange(filter.baseKey)}
                             />
-                            <div className="filter-checkbox-text">
-                              <span className="filter-checkbox-name">
+                            <div className="filter-column-item-text">
+                              <span className="filter-column-item-name">
                                 {getFilterLabel(filter)}
                               </span>
-                              <span className="filter-checkbox-code">
+                              <span className="filter-column-item-code">
                                 {filter.baseKey}_{market.toUpperCase()}
                               </span>
                             </div>
@@ -1125,135 +1152,174 @@ export default function MyConditionPage() {
             </div>
 
             {/* 시가총액 랭킹 조건 (국내 시장(KR)에서만 활성화) */}
-            {market === "kr" && (
-              <div className="cap-radio-container">
-                <span className="cap-radio-title">
-                  시가총액 상위 랭킹 필터 (택 1)
-                </span>
-                <div className="cap-radio-group">
+            {/* 3단계: 기본/랭킹 조건 필터 체크 (다단 격자 컬럼 형태로 아래쪽에 노출) */}
+            <h3 className="detail-title" style={{ marginTop: "32px" }}>
+              <span className="step-badge">Step 03</span>
+              기본 & 랭킹 필터 선택
+            </h3>
+            <p className="detail-desc">부가적인 시장 필터를 택 1 형식으로 설정할 수 있습니다.</p>
+
+            <div className="multi-column-filter-container" style={{ marginTop: "16px" }}>
+              {/* 시가총액 컬럼 (국내 시장(KR)에서만 노출) */}
+              {market === "kr" && (
+                <div className="filter-column">
+                  <div className="filter-column-header">
+                    시가총액 상위 랭킹
+                  </div>
+                  <div className="filter-column-body">
+                    {[
+                      { val: "", label: "적용 안 함" },
+                      { val: "RANK_MARKET_CAP_10", label: "상위 10" },
+                      { val: "RANK_MARKET_CAP_30", label: "상위 30" },
+                      { val: "RANK_MARKET_CAP_50", label: "상위 50" },
+                      { val: "RANK_MARKET_CAP_100", label: "상위 100" },
+                      { val: "RANK_MARKET_CAP_200", label: "상위 200" }
+                    ].map((item) => {
+                      const isSelected = marketCapFilter === item.val;
+                      return (
+                        <label
+                          key={item.val}
+                          className={`filter-column-item ${isSelected ? "checked" : ""}`}
+                        >
+                          <input
+                            type="radio"
+                            name="market-cap-radio"
+                            className="filter-column-input"
+                            checked={isSelected}
+                            onChange={() => setMarketCapFilter(item.val)}
+                          />
+                          <div className="filter-column-item-text">
+                            <span className="filter-column-item-name">
+                              {item.label}
+                            </span>
+                          </div>
+                        </label>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              {/* 거래량 상위 랭킹 컬럼 */}
+              <div className="filter-column">
+                <div className="filter-column-header">
+                  거래량 상위 랭킹
+                </div>
+                <div className="filter-column-body">
                   {[
                     { val: "", label: "적용 안 함" },
-                    { val: "RANK_MARKET_CAP_10", label: "상위 10" },
-                    { val: "RANK_MARKET_CAP_30", label: "상위 30" },
-                    { val: "RANK_MARKET_CAP_50", label: "상위 50" },
-                    { val: "RANK_MARKET_CAP_100", label: "상위 100" },
-                    { val: "RANK_MARKET_CAP_200", label: "상위 200" }
-                  ].map((item) => (
-                    <label
-                      key={item.val}
-                      className={`cap-radio-label ${marketCapFilter === item.val ? "selected" : ""}`}
-                    >
-                      <input
-                        type="radio"
-                        name="market-cap-radio"
-                        className="cap-radio-input"
-                        checked={marketCapFilter === item.val}
-                        onChange={() => setMarketCapFilter(item.val)}
-                      />
-                      {item.label}
-                    </label>
-                  ))}
+                    { val: "RANK_VOLUME_10", label: "상위 10" },
+                    { val: "RANK_VOLUME_20", label: "상위 20" },
+                    { val: "RANK_VOLUME_30", label: "상위 30" },
+                    { val: "RANK_VOLUME_40", label: "상위 40" },
+                    { val: "RANK_VOLUME_50", label: "상위 50" }
+                  ].map((item) => {
+                    const isSelected = volumeFilter === item.val;
+                    return (
+                      <label
+                        key={item.val}
+                        className={`filter-column-item ${isSelected ? "checked" : ""}`}
+                      >
+                        <input
+                          type="radio"
+                          name="volume-radio"
+                          className="filter-column-input"
+                          checked={isSelected}
+                          onChange={() => setVolumeFilter(item.val)}
+                        />
+                        <div className="filter-column-item-text">
+                          <span className="filter-column-item-name">
+                            {item.label}
+                          </span>
+                        </div>
+                      </label>
+                    );
+                  })}
                 </div>
               </div>
-            )}
 
-            {/* 거래량 랭킹 조건 단일 선택 그룹 (국내/미국 시장 공통 노출) */}
-            <div className="cap-radio-container" style={{ marginTop: market === "kr" ? "16px" : "0" }}>
-              <span className="cap-radio-title">
-                거래량 상위 랭킹 필터 (택 1)
-              </span>
-              <div className="cap-radio-group">
-                {[
-                  { val: "", label: "적용 안 함" },
-                  { val: "RANK_VOLUME_10", label: "상위 10" },
-                  { val: "RANK_VOLUME_20", label: "상위 20" },
-                  { val: "RANK_VOLUME_30", label: "상위 30" },
-                  { val: "RANK_VOLUME_40", label: "상위 40" },
-                  { val: "RANK_VOLUME_50", label: "상위 50" }
-                ].map((item) => (
-                  <label
-                    key={item.val}
-                    className={`vol-radio-label ${volumeFilter === item.val ? "selected" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name="volume-radio"
-                      className="cap-radio-input"
-                      checked={volumeFilter === item.val}
-                      onChange={() => setVolumeFilter(item.val)}
-                    />
-                    {item.label}
-                  </label>
-                ))}
+              {/* 거래대금 범위 필터 컬럼 */}
+              <div className="filter-column">
+                <div className="filter-column-header">
+                  거래대금 범위 필터
+                </div>
+                <div className="filter-column-body">
+                  {(market === "kr"
+                    ? [
+                      { val: "", label: "적용 안 함" },
+                      { val: "AMOUNT_STAGE_1", label: "100억 미만" },
+                      { val: "AMOUNT_STAGE_2", label: "100억 ~ 500억" },
+                      { val: "AMOUNT_STAGE_3", label: "500억 ~ 1,000억" },
+                      { val: "AMOUNT_STAGE_4", label: "1,000억 ~ 3,000억" },
+                      { val: "AMOUNT_STAGE_5", label: "3,000억 이상" }
+                    ]
+                    : [
+                      { val: "", label: "적용 안 함" },
+                      { val: "AMOUNT_STAGE_1", label: "1억$ 미만 (약 1,300억)" },
+                      { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$ (약 1,300억~6,500억)" },
+                      { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$ (약 6,500억~1.3조)" },
+                      { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$ (약 1.3조~3.9조)" },
+                      { val: "AMOUNT_STAGE_5", label: "30억$ 이상 (약 3.9조)" }
+                    ]
+                  ).map((item) => {
+                    const currentVals = amountFilter ? amountFilter.split(",") : [];
+                    const isSelected = item.val === "" ? currentVals.length === 0 : currentVals.includes(item.val);
+                    return (
+                      <label
+                        key={item.val}
+                        className={`filter-column-item ${isSelected ? "checked" : ""}`}
+                      >
+                        <input
+                          type="checkbox"
+                          name="amount-checkbox"
+                          className="filter-column-input"
+                          checked={isSelected}
+                          onChange={() => handleAmountFilterToggle(item.val)}
+                        />
+                        <div className="filter-column-item-text">
+                          <span className="filter-column-item-name" style={{ fontSize: "0.825rem" }}>
+                            {item.label}
+                          </span>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
 
-            {/* 거래대금 범위 조건 단일 선택 그룹 (국내/미국 시장 공통 노출) */}
-            <div className="cap-radio-container" style={{ marginTop: "16px" }}>
-              <span className="cap-radio-title">
-                거래대금 범위 필터 (택 1)
-              </span>
-              <div className="cap-radio-group">
-                {(market === "kr"
-                  ? [
+              {/* 당일 가격 변동 필터 컬럼 */}
+              <div className="filter-column">
+                <div className="filter-column-header">
+                  당일 가격 변동 필터
+                </div>
+                <div className="filter-column-body">
+                  {[
                     { val: "", label: "적용 안 함" },
-                    { val: "AMOUNT_STAGE_1", label: "100억 미만" },
-                    { val: "AMOUNT_STAGE_2", label: "100억 ~ 500억" },
-                    { val: "AMOUNT_STAGE_3", label: "500억 ~ 1,000억" },
-                    { val: "AMOUNT_STAGE_4", label: "1,000억 ~ 3,000억" },
-                    { val: "AMOUNT_STAGE_5", label: "3,000억 이상" }
-                  ]
-                  : [
-                    { val: "", label: "적용 안 함" },
-                    { val: "AMOUNT_STAGE_1", label: "1억$ 미만 (약 1,300억)" },
-                    { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$ (약 1,300억 ~ 6,500억)" },
-                    { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$ (약 6,500억 ~ 1.3조)" },
-                    { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$ (약 1.3조 ~ 3.9조)" },
-                    { val: "AMOUNT_STAGE_5", label: "30억$ 이상 (약 3.9조)" }
-                  ]
-                ).map((item) => (
-                  <label
-                    key={item.val}
-                    className={`amt-radio-label ${amountFilter === item.val ? "selected" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name="amount-radio"
-                      className="cap-radio-input"
-                      checked={amountFilter === item.val}
-                      onChange={() => setAmountFilter(item.val)}
-                    />
-                    {item.label}
-                  </label>
-                ))}
-              </div>
-            </div>
-
-            {/* 당일 가격 변동성 조건 단일 선택 그룹 (국내/미국 시장 공통 노출) */}
-            <div className="cap-radio-container" style={{ marginTop: "16px" }}>
-              <span className="cap-radio-title">
-                당일 가격 변동 필터 (택 1)
-              </span>
-              <div className="cap-radio-group">
-                {[
-                  { val: "", label: "적용 안 함" },
-                  { val: "PRICE_CHANGE_UP", label: "상승 종목" },
-                  { val: "PRICE_CHANGE_DOWN", label: "하락 종목" }
-                ].map((item) => (
-                  <label
-                    key={item.val}
-                    className={`price-change-radio-label ${priceChangeFilter === item.val ? "selected" : ""}`}
-                  >
-                    <input
-                      type="radio"
-                      name="price-change-radio"
-                      className="cap-radio-input"
-                      checked={priceChangeFilter === item.val}
-                      onChange={() => setPriceChangeFilter(item.val)}
-                    />
-                    {item.label}
-                  </label>
-                ))}
+                    { val: "PRICE_CHANGE_UP", label: "상승 종목" },
+                    { val: "PRICE_CHANGE_DOWN", label: "하락 종목" }
+                  ].map((item) => {
+                    const isSelected = priceChangeFilter === item.val;
+                    return (
+                      <label
+                        key={item.val}
+                        className={`filter-column-item ${isSelected ? "checked" : ""}`}
+                      >
+                        <input
+                          type="radio"
+                          name="price-change-radio"
+                          className="filter-column-input"
+                          checked={isSelected}
+                          onChange={() => setPriceChangeFilter(item.val)}
+                        />
+                        <div className="filter-column-item-text">
+                          <span className="filter-column-item-name">
+                            {item.label}
+                          </span>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
               </div>
             </div>
 
@@ -1409,22 +1475,27 @@ export default function MyConditionPage() {
                 {/* 거래대금 조건 표시 칩 (삭제 버튼 포함) */}
                 {amountFilter && (
                   <span className="summary-chip cap-chip" style={{ background: "#faf5ff", border: "1px solid #e9d5ff", color: "#6b21a8", fontSize: "0.8rem", fontWeight: "700", padding: "6px 12px", borderRadius: "8px", display: "inline-flex", alignItems: "center", gap: "6px" }}>
-                    거래대금: {(market === "kr"
-                      ? [
-                        { val: "AMOUNT_STAGE_1", label: "100억 미만" },
-                        { val: "AMOUNT_STAGE_2", label: "100억 ~ 500억" },
-                        { val: "AMOUNT_STAGE_3", label: "500억 ~ 1,000억" },
-                        { val: "AMOUNT_STAGE_4", label: "1,000억 ~ 3,000억" },
-                        { val: "AMOUNT_STAGE_5", label: "3,000억 이상" }
-                      ]
-                      : [
-                        { val: "AMOUNT_STAGE_1", label: "1억$ 미만 (약 1,300억)" },
-                        { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$ (약 1,300억 ~ 6,500억)" },
-                        { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$ (약 6,500억 ~ 1.3조)" },
-                        { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$ (약 1.3조 ~ 3.9조)" },
-                        { val: "AMOUNT_STAGE_5", label: "30억$ 이상 (약 3.9조)" }
-                      ]
-                    ).find(item => item.val === amountFilter)?.label || "적용 안 함"}
+                    거래대금: {(() => {
+                      const list = market === "kr"
+                        ? [
+                          { val: "AMOUNT_STAGE_1", label: "100억 미만" },
+                          { val: "AMOUNT_STAGE_2", label: "100억 ~ 500억" },
+                          { val: "AMOUNT_STAGE_3", label: "500억 ~ 1,000억" },
+                          { val: "AMOUNT_STAGE_4", label: "1,000억 ~ 3,000억" },
+                          { val: "AMOUNT_STAGE_5", label: "3,000억 이상" }
+                        ]
+                        : [
+                          { val: "AMOUNT_STAGE_1", label: "1억$ 미만" },
+                          { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$" },
+                          { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$" },
+                          { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$" },
+                          { val: "AMOUNT_STAGE_5", label: "30억$ 이상" }
+                        ];
+                      const selectedLabels = amountFilter.split(",").map(val => {
+                        return list.find(item => item.val === val)?.label || "";
+                      }).filter(Boolean);
+                      return selectedLabels.length > 0 ? selectedLabels.join(", ") : "적용 안 함";
+                    })()}
                     <button
                       type="button"
                       onClick={() => setAmountFilter("")}

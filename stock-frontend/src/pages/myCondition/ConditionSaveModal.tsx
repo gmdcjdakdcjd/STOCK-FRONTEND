@@ -129,22 +129,27 @@ const ConditionSaveModal: React.FC<ConditionSaveModalProps> = ({
                 <div className="save-summary-row">
                   <span className="summary-label">거래대금 범위:</span>
                   <span className="summary-value cap-text summary-chip-style cap-chip" style={{ background: "#faf5ff", border: "1px solid #e9d5ff", color: "#6b21a8" }}>
-                    {(market === "kr"
-                      ? [
-                          { val: "AMOUNT_STAGE_1", label: "100억 원 미만" },
-                          { val: "AMOUNT_STAGE_2", label: "100억 원 ~ 500억 원" },
-                          { val: "AMOUNT_STAGE_3", label: "500억 원 ~ 1,000억 원" },
-                          { val: "AMOUNT_STAGE_4", label: "1,000억 원 ~ 3,000억 원" },
-                          { val: "AMOUNT_STAGE_5", label: "3,000억 원 이상" },
-                        ]
-                      : [
-                          { val: "AMOUNT_STAGE_1", label: "1억$ 미만 (약 1,300억)" },
-                          { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$ (약 1,300억 ~ 6,500억)" },
-                          { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$ (약 6,500억 ~ 1.3조)" },
-                          { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$ (약 1.3조 ~ 3.9조)" },
-                          { val: "AMOUNT_STAGE_5", label: "3억$ 이상 (약 3.9조)" },
-                        ]
-                    ).find((item) => item.val === amountFilter)?.label || "적용 안 함"}
+                    {(() => {
+                      const list = market === "kr"
+                        ? [
+                            { val: "AMOUNT_STAGE_1", label: "100억 원 미만" },
+                            { val: "AMOUNT_STAGE_2", label: "100억 원 ~ 500억 원" },
+                            { val: "AMOUNT_STAGE_3", label: "500억 원 ~ 1,000억 원" },
+                            { val: "AMOUNT_STAGE_4", label: "1,000억 원 ~ 3,000억 원" },
+                            { val: "AMOUNT_STAGE_5", label: "3,000억 원 이상" },
+                          ]
+                        : [
+                            { val: "AMOUNT_STAGE_1", label: "1억$ 미만" },
+                            { val: "AMOUNT_STAGE_2", label: "1억$ ~ 5억$" },
+                            { val: "AMOUNT_STAGE_3", label: "5억$ ~ 10억$" },
+                            { val: "AMOUNT_STAGE_4", label: "10억$ ~ 30억$" },
+                            { val: "AMOUNT_STAGE_5", label: "30억$ 이상" },
+                          ];
+                      const selectedLabels = amountFilter.split(",").map(val => {
+                        return list.find(item => item.val === val)?.label || "";
+                      }).filter(Boolean);
+                      return selectedLabels.length > 0 ? selectedLabels.join(", ") : "적용 안 함";
+                    })()}
                   </span>
                 </div>
               )}
