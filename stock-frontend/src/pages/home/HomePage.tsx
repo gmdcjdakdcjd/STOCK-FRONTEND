@@ -1230,13 +1230,13 @@ export default function HomePage() {
                     <div style={{ fontSize: "0.92rem", fontWeight: "700", color: "#334155", marginBottom: "12px", borderBottom: "1px solid #f1f5f9", paddingBottom: "6px" }}>👤 마이페이지</div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
                       <span onClick={() => handleMyPageLinkClick("/myetf/list")} className="sitemap-link">
-                        내 ETF <span className="sitemap-lock-badge">로그인</span>
+                        내 ETF {!authenticated && <span onClick={(e) => { e.stopPropagation(); navigate("/login"); }} className="sitemap-lock-badge">로그인 필요</span>}
                       </span>
                       <span onClick={() => handleMyPageLinkClick("/stock/myStock")} className="sitemap-link">
-                        내 관심 종목 <span className="sitemap-lock-badge">로그인</span>
+                        내 관심 종목 {!authenticated && <span onClick={(e) => { e.stopPropagation(); navigate("/login"); }} className="sitemap-lock-badge">로그인 필요</span>}
                       </span>
                       <span onClick={() => handleMyPageLinkClick("/stock/myCondition")} className="sitemap-link">
-                        나만의 조건식 <span className="sitemap-lock-badge">로그인</span>
+                        나만의 조건식 {!authenticated && <span onClick={(e) => { e.stopPropagation(); navigate("/login"); }} className="sitemap-lock-badge">로그인 필요</span>}
                       </span>
                     </div>
                   </div>
