@@ -210,6 +210,13 @@ export default function HomePage() {
         // 정렬 규칙 분기
         if (strat.code === "DAILY_TOP20_VOLUME_KR") {
           detailList.sort((a, b) => b.volume - a.volume);
+        } else if (strat.code === "DAILY_DROP_SPIKE_KR") {
+          // 급락 스파이크의 경우 하락폭이 가장 큰 종목(음수 등락률이 가장 낮은 순)으로 오름차순 정렬합니다.
+          detailList.sort((a, b) => {
+            const rateA = a.prevClose ? ((a.price - a.prevClose) / a.prevClose) * 100 : 0;
+            const rateB = b.prevClose ? ((b.price - b.prevClose) / b.prevClose) * 100 : 0;
+            return rateA - rateB;
+          });
         } else {
           detailList.sort((a, b) => {
             const rateA = a.prevClose ? ((a.price - a.prevClose) / a.prevClose) * 100 : 0;
@@ -268,6 +275,13 @@ export default function HomePage() {
         // 정렬 규칙 분기
         if (strat.code === "DAILY_TOP20_VOLUME_US") {
           detailList.sort((a, b) => b.volume - a.volume);
+        } else if (strat.code === "DAILY_DROP_SPIKE_US") {
+          // 급락 스파이크의 경우 하락폭이 가장 큰 종목(음수 등락률이 가장 낮은 순)으로 오름차순 정렬합니다.
+          detailList.sort((a, b) => {
+            const rateA = a.prevClose ? ((a.price - a.prevClose) / a.prevClose) * 100 : 0;
+            const rateB = b.prevClose ? ((b.price - b.prevClose) / b.prevClose) * 100 : 0;
+            return rateA - rateB;
+          });
         } else {
           detailList.sort((a, b) => {
             const rateA = a.prevClose ? ((a.price - a.prevClose) / a.prevClose) * 100 : 0;
@@ -770,7 +784,9 @@ export default function HomePage() {
                                 <tr>
                                   <th>종목명</th>
                                   <th style={{ textAlign: "right" }}>현재가</th>
-                                  <th style={{ textAlign: "right" }}>등락률</th>
+                                  <th style={{ textAlign: "right" }}>
+                                    {card.code === "DAILY_TOP20_VOLUME_KR" ? "거래량" : "등락률"}
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -797,13 +813,19 @@ export default function HomePage() {
                                       <td className="strat-td-price" style={{ textAlign: "right" }}>
                                         {item.price.toLocaleString()}원
                                       </td>
-                                      <td
-                                        className={`strat-td-rate ${isUp ? "trend-up" : isDown ? "trend-down" : "trend-flat"}`}
-                                        style={{ textAlign: "right", fontWeight: "700" }}
-                                      >
-                                        {isUp ? "+" : ""}
-                                        {rate.toFixed(2)}%
-                                      </td>
+                                      {card.code === "DAILY_TOP20_VOLUME_KR" ? (
+                                        <td className="strat-td-rate" style={{ textAlign: "right", fontWeight: "700" }}>
+                                          {item.volume ? item.volume.toLocaleString() : "0"}주
+                                        </td>
+                                      ) : (
+                                        <td
+                                          className={`strat-td-rate ${isUp ? "trend-up" : isDown ? "trend-down" : "trend-flat"}`}
+                                          style={{ textAlign: "right", fontWeight: "700" }}
+                                        >
+                                          {isUp ? "+" : ""}
+                                          {rate.toFixed(2)}%
+                                        </td>
+                                      )}
                                     </tr>
                                   );
                                 })}
@@ -844,7 +866,9 @@ export default function HomePage() {
                                 <tr>
                                   <th>종목명</th>
                                   <th style={{ textAlign: "right" }}>현재가</th>
-                                  <th style={{ textAlign: "right" }}>등락률</th>
+                                  <th style={{ textAlign: "right" }}>
+                                    {card.code === "DAILY_TOP20_VOLUME_US" ? "거래량" : "등락률"}
+                                  </th>
                                 </tr>
                               </thead>
                               <tbody>
@@ -871,13 +895,19 @@ export default function HomePage() {
                                       <td className="strat-td-price" style={{ textAlign: "right" }}>
                                         {item.price.toLocaleString()} $
                                       </td>
-                                      <td
-                                        className={`strat-td-rate ${isUp ? "trend-up" : isDown ? "trend-down" : "trend-flat"}`}
-                                        style={{ textAlign: "right", fontWeight: "700" }}
-                                      >
-                                        {isUp ? "+" : ""}
-                                        {rate.toFixed(2)}%
-                                      </td>
+                                      {card.code === "DAILY_TOP20_VOLUME_US" ? (
+                                        <td className="strat-td-rate" style={{ textAlign: "right", fontWeight: "700" }}>
+                                          {item.volume ? item.volume.toLocaleString() : "0"}주
+                                        </td>
+                                      ) : (
+                                        <td
+                                          className={`strat-td-rate ${isUp ? "trend-up" : isDown ? "trend-down" : "trend-flat"}`}
+                                          style={{ textAlign: "right", fontWeight: "700" }}
+                                        >
+                                          {isUp ? "+" : ""}
+                                          {rate.toFixed(2)}%
+                                        </td>
+                                      )}
                                     </tr>
                                   );
                                 })}
