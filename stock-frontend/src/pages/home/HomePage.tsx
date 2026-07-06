@@ -608,7 +608,7 @@ export default function HomePage() {
         {isGlobalLoading ? (
           <div className="home-loading-fallback">
             <div className="loading-spinner"></div>
-            <p className="loading-text">실시간 금융 자산 및 지수 데이터를 수집하고 있습니다...</p>
+            <p className="loading-text">금융 자산 및 지수 데이터를 수집하고 있습니다...</p>
           </div>
         ) : hasGlobalError || !indexData ? (
           <div className="home-error-fallback">
@@ -718,11 +718,11 @@ export default function HomePage() {
               </div>
             </div>
 
-            {/* 하단 통합 실시간 조건식 포착 종목 영역 */}
+            {/* 하단 통합 조건식 포착 종목 영역 */}
             <div className="home-strategy-section">
               <div className="home-strategy-section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                 <div className="home-strategy-section-title" style={{ marginBottom: 0 }}>
-                  🔥 실시간 조건식 포착 종목 (Top 5)
+                  🔥 조건식 포착 종목 (Top 5)
                 </div>
 
                 {/* 한국/미국 선택 스위처 탭 */}
@@ -895,7 +895,7 @@ export default function HomePage() {
             {/* 최하단 나만의 조건식 섹션 */}
             <div className="home-strategy-section" style={{ marginTop: "12px" }}>
               <div className="home-strategy-section-title" style={{ marginBottom: "16px" }}>
-                🔥 나만의 조건식 실시간 관제
+                🔥 나만의 조건식 관제
               </div>
 
               {!authenticated ? (
@@ -998,7 +998,7 @@ export default function HomePage() {
                             <span className="strategy-card-title">
                               🎯 {myConditions[selectedMyCondIndex]?.name.replace(/_(KR|US)$/i, "")} ({myConditions[selectedMyCondIndex]?.market === "us" ? "미국 시장" : "한국 시장"})
                             </span>
-                            <span className="strategy-card-date-badge">실시간 스크리닝 결과</span>
+                            <span className="strategy-card-date-badge">스크리닝 결과</span>
                           </div>
                           
                           <div 
