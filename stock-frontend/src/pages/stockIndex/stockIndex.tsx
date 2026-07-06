@@ -38,12 +38,18 @@ type Props = {
   title: string;
   data: MarketIndicator[];
   colorKey: IndicatorKey;
+  hideRangeSelector?: boolean; // 상단 기간 선택 버튼 숨김 여부
+  indexSelector?: React.ReactNode; // 지수 탭 선택기 추가
+  hidePriceDetail?: boolean; // 현재가 및 등락율 배지 숨김 여부
 };
 
 export default function IndicatorCard({
   title,
   data,
-  colorKey
+  colorKey,
+  hideRangeSelector = false,
+  indexSelector,
+  hidePriceDetail = false
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const chartRef = useRef<Chart<"line"> | null>(null);
@@ -65,10 +71,13 @@ export default function IndicatorCard({
     const lastDataDate = data.length > 0 ? new Date(data[data.length - 1].date) : new Date();
     const from = new Date(lastDataDate);
 
-    if (range === "1m") from.setMonth(lastDataDate.getMonth() - 1);
-    if (range === "3m") from.setMonth(lastDataDate.getMonth() - 3);
-    if (range === "6m") from.setMonth(lastDataDate.getMonth() - 6);
-    if (range === "1y") from.setFullYear(lastDataDate.getFullYear() - 1);
+    // 기간 선택기를 숨긴 경우 강제로 3개월 범위("3m")를 기준 삼고, 그렇지 않으면 상태값 range를 사용
+    const activeRange = hideRangeSelector ? "3m" : range;
+
+    if (activeRange === "1m") from.setMonth(lastDataDate.getMonth() - 1);
+    if (activeRange === "3m") from.setMonth(lastDataDate.getMonth() - 3);
+    if (activeRange === "6m") from.setMonth(lastDataDate.getMonth() - 6);
+    if (activeRange === "1y") from.setFullYear(lastDataDate.getFullYear() - 1);
 
     const dataset = {
       data: data.map(d => ({
@@ -138,9 +147,16 @@ export default function IndicatorCard({
     } else {
       chartRef.current.options.scales!.x!.min = from.getTime();
       chartRef.current.options.scales!.x!.max = lastDataDate.getTime();
+      // 데이터셋 갱신 처리
+      chartRef.current.data.datasets[0].borderColor = border;
+      chartRef.current.data.datasets[0].backgroundColor = background;
+      chartRef.current.data.datasets[0].data = data.map(d => ({
+        x: Date.parse(d.date),
+        y: d.close
+      }));
       chartRef.current.update();
     }
-  }, [data, range, colorKey]);
+  }, [data, range, colorKey, hideRangeSelector, border, background]);
 
   return (
     <div className="card shadow-sm">
@@ -149,7 +165,7 @@ export default function IndicatorCard({
         <span className="fw-bold">{title}</span>
 
         {/* 중앙 (지수 정보) */}
-        {last && (
+        {!hidePriceDetail && last && (
           <div className="latest-info">
             {last.close.toLocaleString()}
             {diff > 0 && <span className="up"> ▲</span>}
@@ -163,20 +179,28 @@ export default function IndicatorCard({
 
         {/* 우 */}
         <div className="header-right">
-          <div
-            className="btn-group btn-group-sm"
-            style={{ ["--indicator-color" as any]: border }}
-          >
-            {(["1m", "3m", "6m", "1y"] as Range[]).map(r => (
-              <button
-                key={r}
-                className={`btn ${range === r ? "active" : ""}`}
-                onClick={() => setRange(r)}
-              >
-                {r.toUpperCase()}
-              </button>
-            ))}
-          </div>
+          {indexSelector ? (
+            indexSelector
+          ) : !hideRangeSelector ? (
+            <div
+              className="btn-group btn-group-sm"
+              style={{ ["--indicator-color" as any]: border }}
+            >
+              {(["1m", "3m", "6m", "1y"] as Range[]).map(r => (
+                <button
+                  key={r}
+                  className={`btn ${range === r ? "active" : ""}`}
+                  onClick={() => setRange(r)}
+                >
+                  {r.toUpperCase()}
+                </button>
+              ))}
+            </div>
+          ) : (
+            <span className="badge text-bg-light border" style={{ fontSize: "0.75rem", padding: "4px 8px" }}>
+              3개월
+            </span>
+          )}
         </div>
       </div>
 

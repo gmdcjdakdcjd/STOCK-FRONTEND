@@ -2,6 +2,11 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import BasicLayout from "../layouts/BasicLayout";
 
 /* =========================
+   HOME
+   ========================= */
+import HomePage from "../pages/home/HomePage";
+
+/* =========================
    AUTH
    ========================= */
 import LoginPage from "../pages/auth/LoginPage";
@@ -61,17 +66,17 @@ function AppRouter() {
          <Routes>
 
             {/* =========================
-           ROOT
-           ========================= */}
-            <Route path="/" element={<Navigate to="/marketTrend" replace />} />
-
-            {/* =========================
            AUTH
            ========================= */}
             <Route path="/login" element={<LoginPage />} />
             <Route path="/join" element={<JoinPage />} />
 
             <Route element={<BasicLayout />}>
+               {/* =========================
+              ROOT / HOME
+              ========================= */}
+               <Route path="/" element={<HomePage />} />
+
                {/* =========================
               BOARD (전략 결과)
               ========================= */}

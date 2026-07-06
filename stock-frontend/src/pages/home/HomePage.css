@@ -1,0 +1,450 @@
+/* ==========================================================================
+   Home Page Dashboard Style System (대형 단일 차트 스위칭 버전)
+   상단 바가 없는 몰입형 탭 스위칭 단일 지수 차트 레이아웃 스타일링
+   ========================================================================== */
+
+/* 전체 레이아웃 래퍼 */
+.home-dashboard-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #ffffff;
+  /* 흰색 배경으로 통일 */
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+/* ==========================================================================
+   1. 단일 차트 레이아웃 영역
+   ========================================================================== */
+.home-single-chart-content {
+  width: 100%;
+  padding: 24px clamp(24px, 6vw, 120px);
+  /* 상하 여백을 줄여 상단에 밀착시킴 */
+  display: flex;
+  justify-content: center;
+}
+
+/* 단일 차트 박스 컨테이너 (기존 지수 페이지 가로 꽉 찬 비율 재현) */
+.home-chart-container-box {
+  width: 100%;
+  max-width: 100%;
+  /* 가로 폭 제한을 풀어서 긴 차트 화면 적용 */
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* 여백 좁힘 */
+}
+
+/* 2. 지수 선택 탭 메뉴 (카드 헤더 내장형으로 대체됨) */
+
+/* ==========================================================================
+   3. 단일 대형 차트 카드 오버라이드
+   ========================================================================== */
+.home-single-chart-wrapper {
+  flex: 1;
+  width: 100%;
+  min-height: 300px;
+}
+
+/* 기존 IndicatorCard 기본 스타일(stockIndex.css) 그대로 노출되도록 오버라이딩 없음 */
+
+/* ==========================================================================
+   4. 폴백 화면 (로딩/에러)
+   ========================================================================== */
+.home-loading-fallback,
+.home-error-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  max-width: 1100px;
+  height: 100%;
+  min-height: 450px;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08);
+  text-align: center;
+  color: #64748B;
+  padding: 40px;
+}
+
+.loading-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid #f3f4f6;
+  border-top-color: #3B82F6;
+  border-radius: 50%;
+  animation: loading-spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+.loading-text {
+  font-size: 15px;
+  font-weight: 600;
+  color: #334155;
+}
+
+.no-data-icon {
+  font-size: 40px;
+  margin-bottom: 16px;
+}
+
+.error-text {
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+}
+
+.error-sub {
+  font-size: 13px;
+  color: #64748B;
+  margin: 0;
+}
+
+@keyframes loading-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* ==========================================================================
+   5. 스크롤바
+   ========================================================================== */
+.scrollbar-dark::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.scrollbar-dark::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* ==========================================================================
+   4. 7:3 분할 레이아웃
+   ========================================================================== */
+.home-main-layout-grid {
+  display: flex;
+  width: 100%;
+  gap: 20px;
+}
+
+.home-left-charts-panel {
+  flex: 7;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+  /* Chart.js 캔버스 폭 초과 방지 */
+}
+
+.home-right-side-panel {
+  flex: 3;
+  min-width: 0;
+}
+
+.home-side-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(3, 1fr);
+  gap: 16px;
+  height: 100%;
+}
+
+.side-asset-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 20px 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* 가로 중앙 정렬 */
+  justify-content: center;
+  /* 세로 중앙 정렬 */
+  text-align: center;
+  /* 텍스트 정렬 */
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 124px;
+  gap: 4px;
+  /* 구성 요소 간 간격 설정 */
+}
+
+.side-asset-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
+}
+
+.asset-card-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #64748b;
+  margin-bottom: 6px;
+  letter-spacing: -0.01em;
+}
+
+.asset-card-value {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #1e293b;
+  letter-spacing: -0.03em;
+}
+
+.asset-card-trend {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.trend-up {
+  color: #ef4444;
+}
+
+.trend-down {
+  color: #3b82f6;
+}
+
+.trend-flat {
+  color: #64748b;
+}
+
+.asset-card-date {
+  font-size: 0.65rem;
+  color: #94a3b8;
+  margin-top: 2px;
+}
+
+/* 반응형 모바일 대응 */
+@media (max-width: 992px) {
+  .home-main-layout-grid {
+    flex-direction: column;
+  }
+
+  .home-left-charts-panel,
+  .home-right-side-panel {
+    flex: none;
+    width: 100%;
+  }
+
+  .home-side-grid {
+    grid-template-rows: auto;
+    gap: 12px;
+  }
+
+  .side-asset-card {
+    min-height: 100px;
+    padding: 16px;
+  }
+}
+
+/* ==========================================================================
+   5. 국내 조건식 포착 종목 하단 판넬
+   ========================================================================== */
+.home-strategy-section {
+  width: 100%;
+  margin-top: 24px;
+  margin-bottom: 24px;
+}
+
+.home-strategy-section-title {
+  font-size: 1.15rem;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.home-strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  width: 100%;
+}
+
+.strategy-list-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.2s ease;
+}
+
+.strategy-list-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
+}
+
+.strategy-card-header {
+  background-color: #fafbfc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.strategy-card-title {
+  font-size: 0.85rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.strategy-card-date-badge {
+  font-size: 0.68rem;
+  font-weight: 700;
+  background-color: #f1f5f9;
+  color: #64748b;
+  padding: 2px 6px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.strategy-card-body {
+  padding: 12px 16px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-strategy-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 160px;
+  font-size: 0.8rem;
+  color: #94a3b8;
+}
+
+.strategy-mini-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+
+.strategy-mini-table th {
+  color: #64748b;
+  font-weight: 700;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #f1f5f9;
+}
+
+.strategy-mini-table td {
+  padding: 10px 0;
+  color: #334155;
+  border-bottom: 1px solid #f8fafc;
+  vertical-align: middle;
+}
+
+.strategy-mini-table tr:last-child td {
+  border-bottom: none;
+}
+
+.strategy-mini-table tbody tr:hover td {
+  color: #1e293b;
+  background-color: #f8fafc;
+}
+
+.strat-td-name {
+  font-weight: 700;
+  max-width: 100px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
+}
+
+.strat-td-name:hover {
+  text-decoration: underline;
+  color: #3b82f6;
+}
+
+.strat-td-price {
+  color: #475569;
+}
+
+/* 992px ~ 1200px 이하 반응형 처리 */
+@media (max-width: 1200px) {
+  .home-strategy-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* 768px 이하 반응형 처리 */
+@media (max-width: 768px) {
+  .home-strategy-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.sitemap-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #475569 !important;
+  text-decoration: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  padding: 2px 0;
+  cursor: pointer;
+}
+
+.sitemap-link::before {
+  content: "•";
+  color: #94a3b8;
+  font-size: 0.82rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.sitemap-link:hover {
+  color: #3b82f6 !important;
+  transform: translateX(4px);
+}
+
+.sitemap-link:hover::before {
+  content: "→";
+  color: #3b82f6;
+  font-weight: bold;
+}
+
+.sitemap-lock-badge {
+  font-size: 0.68rem;
+  color: #64748b;
+  background-color: #f8fafc;
+  padding: 1px 6px;
+  border-radius: 4px;
+  margin-left: 6px;
+  font-weight: normal;
+  border: 1px solid #e2e8f0;
+  display: inline-block;
+  cursor: pointer;
+  vertical-align: middle;
+  line-height: 1.4;
+}

@@ -258,7 +258,31 @@ export default function MyConditionPage() {
       });
   }, []);
 
+  // URL 쿼리 스트링 (?id=xx) 감지하여 특정 조건식 자동 로드 및 자동 검색 실행
+  useEffect(() => {
+    if (!authenticated) return;
 
+    const queryParams = new URLSearchParams(window.location.search);
+    const urlCondIdStr = queryParams.get("id");
+    if (!urlCondIdStr) return;
+
+    const targetId = parseInt(urlCondIdStr, 10);
+    if (isNaN(targetId)) return;
+
+    // 조건식 목록 전체를 조회한 뒤 일치하는 ID 복원 실행
+    getScreenerConditions()
+      .then((data) => {
+        const condList = data || [];
+        const matchedCond = condList.find((c: any) => c.id === targetId);
+        if (matchedCond) {
+          handleApplyCondition(matchedCond);
+          showToast(`"${matchedCond.name.replace(/_(KR|US)$/i, "")}" 조건식을 성공적으로 불러왔습니다.`, "success");
+        }
+      })
+      .catch((err) => {
+        console.error("URL 파라미터 기반 조건식 복원 실패:", err);
+      });
+  }, [authenticated]);
 
   // 브라우저 탭 닫기 / 새로고침 시 저장되지 않은 변경사항이 있으면 경고 표시
   useEffect(() => {
