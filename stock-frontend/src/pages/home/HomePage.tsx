@@ -55,7 +55,7 @@ const FILTER_LABEL_MAP: Record<string, string> = {
   WEEKLY_TOUCH_MA20: "20주선 터치",
   WEEKLY_TOUCH_MA60: "60주선 터치",
   WEEKLY_TOUCH_MA120: "120주선 터치",
-  
+
   // 순위 필터 그룹
   RANK_MARKET_CAP_10: "시총 상위 10",
   RANK_MARKET_CAP_30: "시총 상위 30",
@@ -93,8 +93,8 @@ const getConditionSummaryList = (cond: any): string[] => {
   // 2. 선택된 ETF 필터명 파싱 (KODEX, TIGER 접두사 정제)
   if (cond.selectedEtfs && Array.isArray(cond.selectedEtfs)) {
     cond.selectedEtfs.forEach((etf: any) => {
-      const cleanEtfName = etf.etfName 
-        ? etf.etfName.replace(/TIGER|KODEX/gi, "").trim() 
+      const cleanEtfName = etf.etfName
+        ? etf.etfName.replace(/TIGER|KODEX/gi, "").trim()
         : etf.etfId;
       summaryList.push(`ETF: ${cleanEtfName}`);
     });
@@ -121,7 +121,7 @@ export default function HomePage() {
 
   // 현재 선택된 지수 상태 (기본값: KOSPI)
   const [selectedIndex, setSelectedIndex] = useState<IndexKey>("kospi");
-  
+
   // 지수 선택 탭 마우스 호버 상태 관리
   const [hoveredIndex, setHoveredIndex] = useState<IndexKey | null>(null);
 
@@ -193,20 +193,20 @@ export default function HomePage() {
         if (!listRes.ok) throw new Error();
         const listData = await listRes.json();
         const dtoList = listData.response?.dtoList || [];
-        
+
         if (dtoList.length === 0) {
           return { code: strat.code, label: strat.label, date: "-", items: [] };
         }
-        
+
         // 최신 시그널 날짜 획득
         const latestDate = dtoList[0].signalDate;
-        
+
         // 2. 최신 날짜 기준 상세 포착 종목 리스트 조회
         const detailRes = await fetch(`/api/result/kr/detail?strategy=${strat.code}&date=${latestDate}`);
         if (!detailRes.ok) throw new Error();
         const detailData = await detailRes.json();
         let detailList: DetailRow[] = detailData.detailList || [];
-        
+
         // 정렬 규칙 분기
         if (strat.code === "DAILY_TOP20_VOLUME_KR") {
           detailList.sort((a, b) => b.volume - a.volume);
@@ -224,7 +224,7 @@ export default function HomePage() {
             return rateB - rateA;
           });
         }
-        
+
         return {
           code: strat.code,
           label: strat.label,
@@ -258,20 +258,20 @@ export default function HomePage() {
         if (!listRes.ok) throw new Error();
         const listData = await listRes.json();
         const dtoList = listData.response?.dtoList || [];
-        
+
         if (dtoList.length === 0) {
           return { code: strat.code, label: strat.label, date: "-", items: [] };
         }
-        
+
         // 최신 시그널 날짜 획득
         const latestDate = dtoList[0].signalDate;
-        
+
         // 2. 최신 날짜 기준 상세 포착 종목 리스트 조회
         const detailRes = await fetch(`/api/result/us/detail?strategy=${strat.code}&date=${latestDate}`);
         if (!detailRes.ok) throw new Error();
         const detailData = await detailRes.json();
         let detailList: DetailRow[] = detailData.detailList || [];
-        
+
         // 정렬 규칙 분기
         if (strat.code === "DAILY_TOP20_VOLUME_US") {
           detailList.sort((a, b) => b.volume - a.volume);
@@ -289,7 +289,7 @@ export default function HomePage() {
             return rateB - rateA;
           });
         }
-        
+
         return {
           code: strat.code,
           label: strat.label,
@@ -347,7 +347,7 @@ export default function HomePage() {
     const runScreening = async () => {
       setMyCondLoading(true);
       const cond = myConditions[selectedMyCondIndex];
-      
+
       // 런타임 에러 방지용 가드
       if (!cond) {
         setMyCondItems([]);
@@ -388,7 +388,7 @@ export default function HomePage() {
         // 스크리너 필터 실행 API 호출
         const searchRes = await runScreenerWithFilters(cond.filters || [], etfCodes, cond.market || "kr");
         const list = searchRes && Array.isArray(searchRes.data) ? searchRes.data : [];
-        
+
         // 등락률(changeRate) 기준 내림차순(Desc) 정렬 후 스크리닝된 전체 종목 노출
         list.sort((a: any, b: any) => {
           const rateA = a.changeRate ?? a.rate ?? a.change_rate ?? 0;
@@ -572,7 +572,7 @@ export default function HomePage() {
     if (!indicatorData || indicatorData.length === 0) return null;
     const last = indicatorData.at(-1);
     const prev = indicatorData.length > 1 ? indicatorData.at(-2) : null;
-    
+
     if (!last) return null;
 
     const close = last.close;
@@ -633,106 +633,7 @@ export default function HomePage() {
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "24px", width: "100%" }}>
 
-            {/* 상단 7:3 레이아웃 구역 */}
-            <div className="home-main-layout-grid">
-              {/* 좌측 7 구역 (차트 판넬) */}
-              <div className="home-left-charts-panel">
-                <div className="home-single-chart-wrapper">
-                  <IndicatorCard
-                    title={titleMapping[selectedIndex]}
-                    data={getSelectedData()}
-                    colorKey={selectedIndex}
-                    hideRangeSelector={true}
-                    indexSelector={indexSelectorNode}
-                  />
-                </div>
-
-                <div className="home-single-chart-wrapper">
-                  <InvestorTrendCard />
-                </div>
-              </div>
-
-              {/* 우측 3 구역 (실물자산 및 환율 미니 대시보드) */}
-              <div className="home-right-side-panel">
-                <div className="home-side-grid">
-
-                  {/* 1. USD/KRW 환율 */}
-                  {usd && (
-                    <div className="side-asset-card">
-                      <div className="asset-card-title">USD / KRW 환율</div>
-                      <div className="asset-card-value">{usd.close}</div>
-                      <div className={`asset-card-trend ${usd.isUp ? "trend-up" : usd.isDown ? "trend-down" : "trend-flat"}`}>
-                        {usd.isUp ? "▲" : usd.isDown ? "▼" : "-"} {Math.abs(usd.rate).toFixed(2)}%
-                      </div>
-                      <div className="asset-card-date">{usd.date} 기준</div>
-                    </div>
-                  )}
-
-                  {/* 2. JPY/KRW 환율 */}
-                  {jpy && (
-                    <div className="side-asset-card">
-                      <div className="asset-card-title">JPY / KRW 환율</div>
-                      <div className="asset-card-value">{jpy.close}</div>
-                      <div className={`asset-card-trend ${jpy.isUp ? "trend-up" : jpy.isDown ? "trend-down" : "trend-flat"}`}>
-                        {jpy.isUp ? "▲" : jpy.isDown ? "▼" : "-"} {Math.abs(jpy.rate).toFixed(2)}%
-                      </div>
-                      <div className="asset-card-date">{jpy.date} 기준</div>
-                    </div>
-                  )}
-
-                  {/* 3. WTI 원유 */}
-                  {wti && (
-                    <div className="side-asset-card">
-                      <div className="asset-card-title">WTI 원유</div>
-                      <div className="asset-card-value">{wti.close}</div>
-                      <div className={`asset-card-trend ${wti.isUp ? "trend-up" : wti.isDown ? "trend-down" : "trend-flat"}`}>
-                        {wti.isUp ? "▲" : wti.isDown ? "▼" : "-"} {Math.abs(wti.rate).toFixed(2)}%
-                      </div>
-                      <div className="asset-card-date">{wti.date} 기준</div>
-                    </div>
-                  )}
-
-                  {/* 4. 두바이유 */}
-                  {dubai && (
-                    <div className="side-asset-card">
-                      <div className="asset-card-title">두바이유</div>
-                      <div className="asset-card-value">{dubai.close}</div>
-                      <div className={`asset-card-trend ${dubai.isUp ? "trend-up" : dubai.isDown ? "trend-down" : "trend-flat"}`}>
-                        {dubai.isUp ? "▲" : dubai.isDown ? "▼" : "-"} {Math.abs(dubai.rate).toFixed(2)}%
-                      </div>
-                      <div className="asset-card-date">{dubai.date} 기준</div>
-                    </div>
-                  )}
-
-                  {/* 5. 국내 금 */}
-                  {goldKr && (
-                    <div className="side-asset-card">
-                      <div className="asset-card-title">국내 금 (KRW/g)</div>
-                      <div className="asset-card-value">{goldKr.close}</div>
-                      <div className={`asset-card-trend ${goldKr.isUp ? "trend-up" : goldKr.isDown ? "trend-down" : "trend-flat"}`}>
-                        {goldKr.isUp ? "▲" : goldKr.isDown ? "▼" : "-"} {Math.abs(goldKr.rate).toFixed(2)}%
-                      </div>
-                      <div className="asset-card-date">{goldKr.date} 기준</div>
-                    </div>
-                  )}
-
-                  {/* 6. 국제 금 */}
-                  {goldGlobal && (
-                    <div className="side-asset-card">
-                      <div className="asset-card-title">국제 금 (USD/T.oz)</div>
-                      <div className="asset-card-value">{goldGlobal.close}</div>
-                      <div className={`asset-card-trend ${goldGlobal.isUp ? "trend-up" : goldGlobal.isDown ? "trend-down" : "trend-flat"}`}>
-                        {goldGlobal.isUp ? "▲" : goldGlobal.isDown ? "▼" : "-"} {Math.abs(goldGlobal.rate).toFixed(2)}%
-                      </div>
-                      <div className="asset-card-date">{goldGlobal.date} 기준</div>
-                    </div>
-                  )}
-
-                </div>
-              </div>
-            </div>
-
-            {/* 하단 통합 조건식 포착 종목 영역 */}
+            {/* 1. 조건식 포착 종목 (Top 5) 카드 영역 (최상단 선배치) */}
             <div className="home-strategy-section">
               <div className="home-strategy-section-header" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "16px" }}>
                 <div className="home-strategy-section-title" style={{ marginBottom: 0 }}>
@@ -922,44 +823,37 @@ export default function HomePage() {
               )}
             </div>
 
-            {/* 최하단 나만의 조건식 섹션 */}
-            <div className="home-strategy-section" style={{ marginTop: "12px" }}>
-              <div className="home-strategy-section-title" style={{ marginBottom: "16px" }}>
+            {/* 2. 나만의 조건식 섹션 (조건식 포착 종목 바로 밑에 2순위로 동반 배치) */}
+            <div className="home-strategy-section" style={{ marginTop: "0" }}>
+              <div className="home-strategy-section-title" style={{ marginBottom: "12px" }}>
                 🔥 나만의 조건식 관제
               </div>
 
               {!authenticated ? (
-                // 1. 미로그인 상태 (카드 상자 프레임은 보여주되 본문에 안내 문구 렌더링)
-                <div className="strategy-list-card" style={{ width: "100%" }}>
-                  <div className="strategy-card-header">
-                    <span className="strategy-card-title">🎯 나만의 조건식 (미로그인)</span>
-                    <span className="strategy-card-date-badge">로그인 필요</span>
-                  </div>
-                  <div className="strategy-card-body" style={{ padding: "16px 20px" }}>
-                    <div
-                      className="empty-strategy-placeholder"
-                      style={{
-                        minHeight: "160px",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        gap: "12px",
-                        fontSize: "0.85rem",
-                        color: "#64748b",
-                        fontWeight: "600"
-                      }}
-                    >
-                      <span>💡 회원가입 또는 로그인 이후 나만의 조건식을 만들면 보여집니다.</span>
-                      <button 
-                        className="btn-outline-pill" 
-                        onClick={() => navigate("/login")}
-                        style={{ padding: "6px 20px", fontSize: "0.8rem", height: "auto", cursor: "pointer" }}
-                      >
-                        로그인 하기
-                      </button>
-                    </div>
-                  </div>
+                // 1. 미로그인 상태 (가볍고 슬림한 한 줄 바 형태로 렌더링하여 높이 낭비 방지)
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 16px",
+                    backgroundColor: "#fafbfc",
+                    border: "1px dashed #cbd5e1",
+                    borderRadius: "8px",
+                    width: "100%",
+                    boxSizing: "border-box"
+                  }}
+                >
+                  <span style={{ fontSize: "0.8rem", color: "#64748b", fontWeight: "600" }}>
+                    💡 로그인 이후 나만의 조건식을 만들면 편리하게 실시간 관제할 수 있습니다.
+                  </span>
+                  <button
+                    className="btn-outline-pill"
+                    onClick={() => navigate("/login")}
+                    style={{ padding: "4px 14px", fontSize: "0.72rem", height: "auto", cursor: "pointer" }}
+                  >
+                    로그인 하기
+                  </button>
                 </div>
               ) : (
                 // 2. 로그인 상태
@@ -973,10 +867,10 @@ export default function HomePage() {
                     <div
                       className="my-condition-empty-card"
                       style={{
-                        display: "flex", 
+                        display: "flex",
                         flexDirection: "column",
-                        alignItems: "center", 
-                        justifyContent: "center", 
+                        alignItems: "center",
+                        justifyContent: "center",
                         padding: "40px 24px",
                         backgroundColor: "#ffffff",
                         border: "1px solid #e2e8f0",
@@ -988,8 +882,8 @@ export default function HomePage() {
                       <span style={{ fontSize: "0.85rem", color: "#64748b", fontWeight: "600" }}>
                         아직 저장된 나만의 조건식이 없습니다. 나만의 필터를 구성하고 조건식을 저장해 보세요!
                       </span>
-                      <button 
-                        className="btn-outline-pill" 
+                      <button
+                        className="btn-outline-pill"
                         onClick={() => navigate("/stock/myCondition")}
                         style={{ padding: "6px 16px", fontSize: "0.8rem", height: "auto" }}
                       >
@@ -999,20 +893,20 @@ export default function HomePage() {
                   ) : (
                     // 저장한 조건식이 있고 결과 로드된 경우 (7:3 수평 분할 레이아웃 적용)
                     <div className="home-main-layout-grid">
-                      
+
                       {/* 좌측 7 구역 (선택된 조건식의 종목 포착 결과 테이블 카드) */}
                       <div className="home-left-charts-panel">
-                        <div 
-                          className="strategy-list-card" 
-                          style={{ 
-                            width: "100%", 
-                            height: "480px", 
-                            display: "flex", 
+                        <div
+                          className="strategy-list-card"
+                          style={{
+                            width: "100%",
+                            height: "480px",
+                            display: "flex",
                             flexDirection: "column",
-                            boxSizing: "border-box" 
+                            boxSizing: "border-box"
                           }}
                         >
-                          <div 
+                          <div
                             className="strategy-card-header"
                             onClick={() => {
                               const cond = myConditions[selectedMyCondIndex];
@@ -1030,14 +924,14 @@ export default function HomePage() {
                             </span>
                             <span className="strategy-card-date-badge">스크리닝 결과</span>
                           </div>
-                          
-                          <div 
-                            className="strategy-card-body" 
-                            style={{ 
-                              padding: "16px 20px", 
-                              flex: 1, 
-                              display: "flex", 
-                              flexDirection: "column", 
+
+                          <div
+                            className="strategy-card-body"
+                            style={{
+                              padding: "16px 20px",
+                              flex: 1,
+                              display: "flex",
+                              flexDirection: "column",
                               minHeight: 0,
                               boxSizing: "border-box"
                             }}
@@ -1116,12 +1010,12 @@ export default function HomePage() {
 
                       {/* 우측 3 구역 (내가 저장한 조건식 리스트 - 세로 정렬 탭 버튼들) */}
                       <div className="home-right-side-panel">
-                        <div 
-                          className="strategy-list-card" 
-                          style={{ 
-                            width: "100%", 
-                            height: "480px", 
-                            border: "1px solid #e2e8f0", 
+                        <div
+                          className="strategy-list-card"
+                          style={{
+                            width: "100%",
+                            height: "480px",
+                            border: "1px solid #e2e8f0",
                             backgroundColor: "#ffffff",
                             padding: "20px 16px",
                             boxSizing: "border-box",
@@ -1129,11 +1023,11 @@ export default function HomePage() {
                             flexDirection: "column"
                           }}
                         >
-                          <div 
-                            style={{ 
-                              fontSize: "0.85rem", 
-                              fontWeight: "800", 
-                              color: "#334155", 
+                          <div
+                            style={{
+                              fontSize: "0.85rem",
+                              fontWeight: "800",
+                              color: "#334155",
                               marginBottom: "16px",
                               borderBottom: "1px solid #e2e8f0",
                               paddingBottom: "12px",
@@ -1142,7 +1036,7 @@ export default function HomePage() {
                           >
                             📁 내 조건식 목록
                           </div>
-                          
+
                           <div style={{ flex: 1, overflowY: "auto", display: "flex", flexDirection: "column", minHeight: 0 }}>
                             {myConditions.map((cond, idx) => (
                               <button
@@ -1155,8 +1049,8 @@ export default function HomePage() {
                                 <div style={{ fontWeight: "700", marginBottom: "4px" }}>
                                   📝 {cond.name.replace(/_(KR|US)$/i, "")} ({cond.market === "us" ? "US" : "KR"})
                                 </div>
-                                <div 
-                                  style={{ 
+                                <div
+                                  style={{
                                     display: "flex",
                                     flexWrap: "wrap",
                                     gap: "4px",
@@ -1202,16 +1096,115 @@ export default function HomePage() {
               )}
             </div>
 
+            {/* 3. 하단 7:3 레이아웃 구역 (기존에 상단에 있던 메인 지수 차트 및 환율/원유 판넬을 조건식 아래로 후배치) */}
+            <div className="home-main-layout-grid">
+              {/* 좌측 7 구역 (차트 판넬) */}
+              <div className="home-left-charts-panel">
+                <div className="home-single-chart-wrapper">
+                  <IndicatorCard
+                    title={titleMapping[selectedIndex]}
+                    data={getSelectedData()}
+                    colorKey={selectedIndex}
+                    hideRangeSelector={true}
+                    indexSelector={indexSelectorNode}
+                  />
+                </div>
+
+                <div className="home-single-chart-wrapper">
+                  <InvestorTrendCard />
+                </div>
+              </div>
+
+              {/* 우측 3 구역 (실물자산 및 환율 미니 대시보드) */}
+              <div className="home-right-side-panel">
+                <div className="home-side-grid">
+
+                  {/* 1. USD/KRW 환율 */}
+                  {usd && (
+                    <div className="side-asset-card">
+                      <div className="asset-card-title">USD / KRW 환율</div>
+                      <div className="asset-card-value">{usd.close}</div>
+                      <div className={`asset-card-trend ${usd.isUp ? "trend-up" : usd.isDown ? "trend-down" : "trend-flat"}`}>
+                        {usd.isUp ? "▲" : usd.isDown ? "▼" : "-"} {Math.abs(usd.rate).toFixed(2)}%
+                      </div>
+                      <div className="asset-card-date">{usd.date} 기준</div>
+                    </div>
+                  )}
+
+                  {/* 2. JPY/KRW 환율 */}
+                  {jpy && (
+                    <div className="side-asset-card">
+                      <div className="asset-card-title">JPY / KRW 환율</div>
+                      <div className="asset-card-value">{jpy.close}</div>
+                      <div className={`asset-card-trend ${jpy.isUp ? "trend-up" : jpy.isDown ? "trend-down" : "trend-flat"}`}>
+                        {jpy.isUp ? "▲" : jpy.isDown ? "▼" : "-"} {Math.abs(jpy.rate).toFixed(2)}%
+                      </div>
+                      <div className="asset-card-date">{jpy.date} 기준</div>
+                    </div>
+                  )}
+
+                  {/* 3. WTI 원유 */}
+                  {wti && (
+                    <div className="side-asset-card">
+                      <div className="asset-card-title">WTI 원유</div>
+                      <div className="asset-card-value">{wti.close}</div>
+                      <div className={`asset-card-trend ${wti.isUp ? "trend-up" : wti.isDown ? "trend-down" : "trend-flat"}`}>
+                        {wti.isUp ? "▲" : wti.isDown ? "▼" : "-"} {Math.abs(wti.rate).toFixed(2)}%
+                      </div>
+                      <div className="asset-card-date">{wti.date} 기준</div>
+                    </div>
+                  )}
+
+                  {/* 4. 두바이유 */}
+                  {dubai && (
+                    <div className="side-asset-card">
+                      <div className="asset-card-title">두바이유</div>
+                      <div className="asset-card-value">{dubai.close}</div>
+                      <div className={`asset-card-trend ${dubai.isUp ? "trend-up" : dubai.isDown ? "trend-down" : "trend-flat"}`}>
+                        {dubai.isUp ? "▲" : dubai.isDown ? "▼" : "-"} {Math.abs(dubai.rate).toFixed(2)}%
+                      </div>
+                      <div className="asset-card-date">{dubai.date} 기준</div>
+                    </div>
+                  )}
+
+                  {/* 5. 국내 금 */}
+                  {goldKr && (
+                    <div className="side-asset-card">
+                      <div className="asset-card-title">국내 금 (KRW/g)</div>
+                      <div className="asset-card-value">{goldKr.close}</div>
+                      <div className={`asset-card-trend ${goldKr.isUp ? "trend-up" : goldKr.isDown ? "trend-down" : "trend-flat"}`}>
+                        {goldKr.isUp ? "▲" : goldKr.isDown ? "▼" : "-"} {Math.abs(goldKr.rate).toFixed(2)}%
+                      </div>
+                      <div className="asset-card-date">{goldKr.date} 기준</div>
+                    </div>
+                  )}
+
+                  {/* 6. 국제 금 */}
+                  {goldGlobal && (
+                    <div className="side-asset-card">
+                      <div className="asset-card-title">국제 금 (USD/T.oz)</div>
+                      <div className="asset-card-value">{goldGlobal.close}</div>
+                      <div className={`asset-card-trend ${goldGlobal.isUp ? "trend-up" : goldGlobal.isDown ? "trend-down" : "trend-flat"}`}>
+                        {goldGlobal.isUp ? "▲" : goldGlobal.isDown ? "▼" : "-"} {Math.abs(goldGlobal.rate).toFixed(2)}%
+                      </div>
+                      <div className="asset-card-date">{goldGlobal.date} 기준</div>
+                    </div>
+                  )}
+
+                </div>
+              </div>
+            </div>
+
             {/* 최최하단 전체 서비스 바로가기 */}
             <div className="home-strategy-section" style={{ marginTop: "24px" }}>
               <div className="home-strategy-section-title" style={{ marginBottom: "16px" }}>
                 🗺️ 전체 메뉴 바로가기
               </div>
 
-              <div 
-                className="strategy-list-card" 
-                style={{ 
-                  width: "100%", 
+              <div
+                className="strategy-list-card"
+                style={{
+                  width: "100%",
                   padding: "24px 32px",
                   boxSizing: "border-box"
                 }}
@@ -1247,8 +1240,7 @@ export default function HomePage() {
                   <div>
                     <div style={{ fontSize: "0.92rem", fontWeight: "700", color: "#334155", marginBottom: "12px", borderBottom: "1px solid #f1f5f9", paddingBottom: "6px" }}>🔍 데이터 탐색</div>
                     <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
-                      <span onClick={() => navigate("/kodex/summary")} className="sitemap-link">KODEX ETF</span>
-                      <span onClick={() => navigate("/tiger/summary")} className="sitemap-link">TIGER ETF</span>
+                      <span onClick={() => navigate("/kodex/summary")} className="sitemap-link">ETF 탐색</span>
                       <span onClick={() => navigate("/marketCap")} className="sitemap-link">시가총액</span>
                       <span onClick={() => navigate("/nps/summary")} className="sitemap-link">연기금 현황</span>
                       <span onClick={() => navigate("/marketTrend")} className="sitemap-link">시장 매매 동향</span>
@@ -1280,8 +1272,8 @@ export default function HomePage() {
 
       {/* 커스텀 토스트 알림 메시지 팝업 */}
       {toast && (
-        <div 
-          className={`custom-toast toast-${toast.type}`} 
+        <div
+          className={`custom-toast toast-${toast.type}`}
           style={{
             position: "fixed",
             bottom: "24px",

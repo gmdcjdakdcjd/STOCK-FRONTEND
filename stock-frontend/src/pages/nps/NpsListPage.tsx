@@ -35,56 +35,56 @@ function NpsListPage() {
 
   return (
     <section className="nps-list">
-        <div className="nps-summary">
-          <div className="nps-summary-header">
-            <div className="nps-summary-title">
-              국민연금 보유 종목
-            </div>
+      <div className="nps-summary">
+        <div className="nps-summary-header">
+          <div className="nps-summary-title">
+            국민연금 보유 종목
           </div>
         </div>
-        {/* ===== Search ===== */}
-        <div className="nps-search">
-          <div className="nps-search-row">
+      </div>
+      {/* ===== Search ===== */}
+      <div className="nps-search">
+        <div className="nps-search-row">
 
-            {/* input + 내부  */}
-            <div className="nps-search-input-wrap">
-              <input
-                value={q}
-                onChange={e => setQ(e.target.value)}
-                onKeyDown={e => {
-                  if (e.key === "Enter") {
-                    setSearchQ(q);
-                  }
+          {/* input + 내부  */}
+          <div className="nps-search-input-wrap">
+            <input
+              value={q}
+              onChange={e => setQ(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === "Enter") {
+                  setSearchQ(q);
+                }
+              }}
+              placeholder="보유 여부 확인할 종목명"
+            />
+
+            {q && (
+              <button
+                type="button"
+                className="nps-reset-inside"
+                onClick={() => {
+                  setQ("");
+                  setSearchQ("");
                 }}
-                placeholder="보유 여부 확인할 종목명"
-              />
-
-              {q && (
-                <button
-                  type="button"
-                  className="nps-reset-inside"
-                  onClick={() => {
-                    setQ("");
-                    setSearchQ("");
-                  }}
-                >
-                  ✕
-                </button>
-              )}
-            </div>
-
-            {/* 검색 버튼 */}
-            <button
-              className="nps-search-btn"
-              onClick={() => setSearchQ(q)}
-            >
-              검색
-            </button>
+              >
+                ✕
+              </button>
+            )}
           </div>
-        </div>
 
-        {/* ===== Table ===== */}
-        <div className="nps-table">
+          {/* 검색 버튼 */}
+          <button
+            className="nps-search-btn"
+            onClick={() => setSearchQ(q)}
+          >
+            검색
+          </button>
+        </div>
+      </div>
+
+      {/* ===== Table ===== */}
+      <div className="nps-table">
         <div className="nps-table-head">
           <span className="center">순위</span>
           <span>종목명</span>
@@ -108,7 +108,7 @@ function NpsListPage() {
             </span>
           </div>
         ))}
-        </div>
+      </div>
 
     </section>
   );

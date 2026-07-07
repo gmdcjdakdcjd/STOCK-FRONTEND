@@ -21,6 +21,11 @@ function BasicLayout({ children }: { children?: ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [openMenu, setOpenMenu] = useState<MenuKey | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
+  // 드롭다운 닫힘 딜레이 타이머 (너무 예민하게 바로 닫히지 않도록 유예 시간 부여)
+  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // 스크롤 위치를 추적하여 Top 버튼 노출 여부를 결정
+  const [showScrollTop, setShowScrollTop] = useState(false);
 
   const navigate = useNavigate();
 
@@ -88,6 +93,22 @@ function BasicLayout({ children }: { children?: ReactNode }) {
 
   const closeMenu = () => setOpenMenu(null);
 
+  // 호버로 메뉴 열기: 진입 시 닫힘 타이머를 취소하고 해당 메뉴를 엽니다
+  const handleMenuEnter = (key: MenuKey) => {
+    if (closeTimerRef.current) {
+      clearTimeout(closeTimerRef.current);
+      closeTimerRef.current = null;
+    }
+    setOpenMenu(key);
+  };
+
+  // 호버로 메뉴 닫기: 250ms 딜레이를 두어 살짝 벗어나도 바로 닫히지 않게 합니다
+  const handleMenuLeave = () => {
+    closeTimerRef.current = setTimeout(() => {
+      setOpenMenu(null);
+    }, 250);
+  };
+
   /* =========================
      외부 클릭 시 메뉴 닫기
      ========================= */
@@ -108,6 +129,23 @@ function BasicLayout({ children }: { children?: ReactNode }) {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [openMenu]);
+
+  /* =========================
+     스크롤 감지: 300px 이상 내려가면 Top 버튼 노출
+     ========================= */
+  useEffect(() => {
+    const handleScroll = () => {
+      setShowScrollTop(window.scrollY > 300);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // 페이지 최상단으로 부드럽게 스크롤 이동
+  const scrollToTop = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <>
@@ -146,7 +184,11 @@ function BasicLayout({ children }: { children?: ReactNode }) {
 
           <nav className="nav" ref={navRef}>
             {/* ===== 지수 ===== */}
-            <div className="nav-dropdown">
+            <div
+              className="nav-dropdown"
+              onMouseEnter={() => handleMenuEnter("indicator")}
+              onMouseLeave={handleMenuLeave}
+            >
               <button
                 type="button"
                 className={`nav-ani ${openMenu === "indicator" ? "active" : ""}`}
@@ -207,7 +249,11 @@ function BasicLayout({ children }: { children?: ReactNode }) {
             </NavLink>
 
             {/* ===== 데이터 탐색 ===== */}
-            <div className="nav-dropdown">
+            <div
+              className="nav-dropdown"
+              onMouseEnter={() => handleMenuEnter("search")}
+              onMouseLeave={handleMenuLeave}
+            >
               <button
                 type="button"
                 className={`nav-ani ${openMenu === "search" ? "active" : ""}`}
@@ -225,11 +271,7 @@ function BasicLayout({ children }: { children?: ReactNode }) {
                   </NavLink> */}
                   <NavLink to="/kodex/summary" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>
-                    KODEX ETF
-                  </NavLink>
-                  <NavLink to="/tiger/summary" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    TIGER ETF
+                    ETF 탐색
                   </NavLink>
                   <NavLink to="/marketCap" onClick={closeMenu}>
                     <span className="nav-dd-mark">–</span>
@@ -248,7 +290,11 @@ function BasicLayout({ children }: { children?: ReactNode }) {
             </div>
 
             {/* ===== 마이페이지 (로그인 시만) ===== */}
-            <div className="nav-dropdown">
+            <div
+              className="nav-dropdown"
+              onMouseEnter={() => user && handleMenuEnter("mypage")}
+              onMouseLeave={handleMenuLeave}
+            >
               <button
                 type="button"
                 className={`nav-ani mypage-btn
@@ -316,6 +362,29 @@ function BasicLayout({ children }: { children?: ReactNode }) {
           </div>
         </div>
       </footer>
+
+      {/* ================= SCROLL TO TOP BUTTON ================= */}
+      <button
+        className={`scroll-to-top-btn ${showScrollTop ? "visible" : ""}`}
+        onClick={scrollToTop}
+        aria-label="페이지 최상단으로 이동"
+        title="최상단으로 이동"
+      >
+        {/* 얇고 세련된 chevron-up SVG 아이콘 */}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          width="20"
+          height="20"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        >
+          <polyline points="18 15 12 9 6 15" />
+        </svg>
+      </button>
     </>
   );
 }

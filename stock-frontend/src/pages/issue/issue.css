@@ -1,151 +1,222 @@
-/* ===============================
-   Dashboard Card
-=============================== */
-
-.dashboard-card {
-  border: 1px solid #ccc;
-  border-radius: 10px;
-  padding: 1.2rem;
-  background: #ffffff;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+/* =========================
+   기존 상세 테이블 리스트 스타일 유지
+========================= */
+.card {
   margin-bottom: 2rem;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
 }
 
-/* ===============================
-   Scroll Container
-=============================== */
-
-.content-box {
-  max-height: 400px;
-  overflow-y: auto;
-  padding-right: 0.5rem;
+.table th {
+  font-weight: 700;
+  background-color: #f8fafc;
+  color: #475569;
 }
 
-/* ===============================
-   Table Base
-=============================== */
+.table td {
+  color: #334155;
+  vertical-align: middle;
+}
 
-table {
+/* ==========================================================================
+   이슈 페이지 통합 스타일 바인딩 (스코프 격리화)
+   ========================================================================== */
+.issue-page {
+  padding: 1.5rem 0; /* 부모 레이아웃 패딩을 온전히 활용하기 위해 상하만 부여 */
+}
+
+/* 스무스 스크롤 이동 시 상단 고정 헤더 영역 가림 방지 오프셋 확보 */
+.issue-table-wrapper {
+  scroll-margin-top: 80px;
+}
+
+/* 요약 카드 그리드 공통 정의 (한국, 미국, ETF 모두 가로 3열 격자로 정밀 통일) */
+.issue-strategy-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
   width: 100%;
-  font-size: 0.9rem;
+  margin-bottom: 2.5rem;
+}
+
+/* 개별 전략 카드 스타일링 (홈 화면과 완벽히 동기화된 프리미엄 비주얼) */
+.strategy-list-card {
+  background-color: #ffffff;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: all 0.22s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 250px; /* 요약 내용이 들어설 충분한 공간 보존 */
+}
+
+.strategy-list-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.04);
+  border-color: #cbd5e1;
+}
+
+.strategy-list-card:active {
+  transform: translateY(0) scale(0.98);
+  transition: transform 0.06s ease;
+}
+
+.strategy-card-header {
+  background-color: #fafbfc;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 14px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.strategy-card-title {
+  font-size: 0.82rem;
+  font-weight: 800;
+  color: #334155;
+}
+
+.strategy-card-date-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  background-color: #f1f5f9;
+  color: #64748b;
+  padding: 2px 5px;
+  border-radius: 4px;
+  border: 1px solid #e2e8f0;
+}
+
+.strategy-card-body {
+  padding: 10px 14px;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.empty-strategy-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+/* 미니 요약 테이블 스타일 */
+.strategy-mini-table {
+  width: 100%;
   border-collapse: collapse;
-  /*  table-layout: fixed 제거 */
+  font-size: 0.76rem; /* 5열/4열 폭 축소에 대항하기 위해 글자 크기 최적화 */
 }
 
-th,
-td {
-  padding: 6px 8px;              /*  헤더/바디 패딩 통일 */
-  vertical-align: middle;        /* 세로 중앙 */
-}
-
-/* ===============================
-   Header
-=============================== */
-
-th {
-  font-weight: 600;
-  color: #374151;
-  border-bottom: 1px solid #e5e7eb;
-  background: #fafafa;
-}
-
-/* ===============================
-   Body
-=============================== */
-
-td {
-  color: #111827;
+.strategy-mini-table th {
+  color: #64748b;
+  font-weight: 700;
+  padding-bottom: 6px;
   border-bottom: 1px solid #f1f5f9;
 }
 
-/* Hover */
-tbody tr:hover {
-  background: #f9fafb;
+.strategy-mini-table td {
+  padding: 8px 0;
+  color: #334155;
+  border-bottom: 1px solid #f8fafc;
+  vertical-align: middle;
 }
 
-/* ===============================
-   Column Alignment
-=============================== */
+.strategy-mini-table tr:last-child td {
+  border-bottom: none;
+}
 
-/* 종목 (코드 + 이름) */
-.col-code {
-  text-align: left;
+.strategy-mini-table tbody tr:hover td {
+  color: #1e293b;
+  background-color: #f8fafc;
+}
+
+.strat-td-name {
+  font-weight: 700;
+  max-width: 90px;
   white-space: nowrap;
-  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s ease;
 }
 
-/* 숫자 컬럼 */
-.col-price,
-.col-prev,
-.col-diff,
-.col-volume {
-  text-align: right;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
+.strat-td-name:hover {
+  text-decoration: underline;
+  color: #3b82f6;
 }
 
-/* 날짜 */
-.col-date {
-  text-align: center;
-  white-space: nowrap;
-  color: #6b7280;
+.strat-td-price {
+  color: #475569;
 }
 
-/* ===============================
-   Up / Down Color
-=============================== */
-
-.up {
-  color: #d93025; /* 상승 */
-  font-weight: 600;
+/* 홈 화면 전사 금융 등락 컬러 테마 정의 */
+.trend-up {
+  color: #ef4444 !important; /* 금융 상승 레드 */
 }
 
-.down {
-  color: #1a73e8; /* 하락 */
-  font-weight: 600;
+.trend-down {
+  color: #3b82f6 !important; /* 금융 하락 블루 */
 }
 
-/* ===============================
-   Detail Column
-=============================== */
-
-.col-detail {
-  text-align: center;
-  white-space: nowrap;
+.trend-flat {
+  color: #64748b !important; /* 보합 그레이 */
 }
 
-/* ===============================
-   Detail Tag Button
-=============================== */
+/* ==========================================================================
+   반응형 미디어 쿼리 구간 (요약 카드 가로 깨짐 정밀 정제)
+   ========================================================================== */
 
-.detail-link-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+/* 1. 데스크톱 및 태블릿 과도기 구간 (1024px 이하) */
+@media (max-width: 1024px) {
+  .issue-page .issue-strategy-grid {
+    grid-template-columns: repeat(3, 1fr) !important; /* 3열 1줄 강제 유지 */
+  }
 
-  padding: 4px 10px;
-  min-height: 22px;
+  .strategy-list-card {
+    min-height: 230px;
+  }
 
-  font-size: 0.7rem;
-  font-weight: 600;
+  .strategy-card-header {
+    padding: 10px 12px;
+  }
 
-  color: #2563eb;
-  background: #eff6ff;
+  .strategy-card-title {
+    font-size: 0.78rem;
+  }
 
-  border: 1px solid #dbeafe;
-  border-radius: 999px;
+  .strategy-card-body {
+    padding: 8px 12px;
+  }
 
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.15s ease;
+  .strategy-mini-table {
+    font-size: 0.72rem; /* 태블릿 뷰에서 폰트 슬림화 극대화 */
+  }
+
+  .strat-td-name {
+    max-width: 76px;
+  }
 }
 
-.detail-link-btn:hover {
-  background: #dbeafe;
-  border-color: #bfdbfe;
-  color: #1d4ed8;
-}
+/* 2. 모바일 구간 (768px 이하): 2열 바둑판 평준화 자동 랩핑 */
+@media (max-width: 768px) {
+  .issue-page .issue-strategy-grid {
+    grid-template-columns: repeat(2, 1fr) !important; /* 모바일 해상도에서는 공평하게 2열로 바인딩 정렬 */
+    gap: 8px;
+  }
 
-.detail-link-btn:active {
-  transform: scale(0.96);
+  .strategy-list-card {
+    min-height: 200px;
+  }
+
+  .strategy-mini-table {
+    font-size: 0.74rem;
+  }
+
+  .strat-td-name {
+    max-width: 100px;
+  }
 }
