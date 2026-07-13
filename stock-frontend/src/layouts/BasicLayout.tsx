@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
+import { NavLink, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useEffect, useState, useRef } from "react";
 import "./basic-layout.css";
 import "./page-header.css";
@@ -28,6 +28,7 @@ function BasicLayout({ children }: { children?: ReactNode }) {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const isAdmin =
     user?.authorities?.some(
@@ -162,6 +163,11 @@ function BasicLayout({ children }: { children?: ReactNode }) {
               >
                 로그아웃
               </button>
+              {isAdmin && location.pathname !== "/manage/admin" && (
+                <NavLink to="/manage/admin" className="top-link">
+                  관리자 페이지
+                </NavLink>
+              )}
             </>
           ) : (
             <>
@@ -182,164 +188,170 @@ function BasicLayout({ children }: { children?: ReactNode }) {
             STOCK PROJECT
           </NavLink>
 
-          <nav className="nav" ref={navRef}>
-            {/* ===== 지수 ===== */}
-            <div
-              className="nav-dropdown"
-              onMouseEnter={() => handleMenuEnter("indicator")}
-              onMouseLeave={handleMenuLeave}
-            >
-              <button
-                type="button"
-                className={`nav-ani ${openMenu === "indicator" ? "active" : ""}`}
-                onClick={() => toggleMenu("indicator")}
+          {location.pathname === "/manage/admin" ? (
+            <nav className="nav" ref={navRef}>
+              <span style={{ fontWeight: 800, color: "#1e3a8a", marginRight: "10px" }}>
+                관리자 페이지
+              </span>
+              <span style={{ color: "#cbd5e1", marginRight: "10px" }}>|</span>
+              <NavLink to="/" className="nav-ani" onClick={closeMenu}>
+                사용자페이지로 이동
+              </NavLink>
+            </nav>
+          ) : (
+            <nav className="nav" ref={navRef}>
+              {/* ===== 지수 ===== */}
+              <div
+                className="nav-dropdown"
+                onMouseEnter={() => handleMenuEnter("indicator")}
+                onMouseLeave={handleMenuLeave}
               >
-                📉 지수
-                <span className="nav-caret">▾</span>
-              </button>
+                <button
+                  type="button"
+                  className={`nav-ani ${openMenu === "indicator" ? "active" : ""}`}
+                  onClick={() => toggleMenu("indicator")}
+                >
+                  📉 지수
+                  <span className="nav-caret">▾</span>
+                </button>
 
-              {openMenu === "indicator" && (
-                <div className="nav-dropdown-menu">
-                  <NavLink to="/stockIndex" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    증권 지수
-                  </NavLink>
-                  <NavLink to="/exchange" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    환율 지수
-                  </NavLink>
-                  <NavLink to="/physical" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    원자재 지수
-                  </NavLink>
-                  <NavLink to="/crypto" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    코인 지수
-                  </NavLink>
-                </div>
-              )}
-            </div>
-
-            <NavLink to="/issue" className="nav-ani" onClick={closeMenu}>
-              🔥 이슈 종목
-            </NavLink>
-
-            <NavLink
-              to="/dualMomentumList"
-              className="nav-ani"
-              onClick={closeMenu}
-            >
-              📈 수익률 상위
-            </NavLink>
-
-            <NavLink
-              to="/stock/searchStock"
-              className="nav-ani"
-              onClick={closeMenu}
-            >
-              🔍 종목 검색
-            </NavLink>
-
-            <NavLink
-              to="/result/listKR"
-              className="nav-ani"
-              onClick={closeMenu}
-            >
-              📊 시장 성과
-            </NavLink>
-
-            {/* ===== 데이터 탐색 ===== */}
-            <div
-              className="nav-dropdown"
-              onMouseEnter={() => handleMenuEnter("search")}
-              onMouseLeave={handleMenuLeave}
-            >
-              <button
-                type="button"
-                className={`nav-ani ${openMenu === "search" ? "active" : ""}`}
-                onClick={() => toggleMenu("search")}
-              >
-                🔍 데이터 탐색
-                <span className="nav-caret">▾</span>
-              </button>
-
-              {openMenu === "search" && (
-                <div className="nav-dropdown-menu">
-                  {/* <NavLink to="/stock/searchStock" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    종목 검색
-                  </NavLink> */}
-                  <NavLink to="/kodex/summary" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    ETF 탐색
-                  </NavLink>
-                  <NavLink to="/marketCap" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    시가총액
-                  </NavLink>
-                  <NavLink to="/nps/summary" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    연기금 현황
-                  </NavLink>
-                  <NavLink to="/marketTrend" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    시장 매매 동향
-                  </NavLink>
-                </div>
-              )}
-            </div>
-
-            {/* ===== 마이페이지 (로그인 시만) ===== */}
-            <div
-              className="nav-dropdown"
-              onMouseEnter={() => user && handleMenuEnter("mypage")}
-              onMouseLeave={handleMenuLeave}
-            >
-              <button
-                type="button"
-                className={`nav-ani mypage-btn
-                    ${!user ? "login-required" : ""}
-                    ${openMenu === "mypage" ? "active" : ""}
-                  `}
-                onClick={user ? () => toggleMenu("mypage") : handleGuestLogin}
-                data-tooltip={!user ? "클릭 시 guest 계정으로 로그인" : undefined}
-              >
-                {user ? "👤 마이페이지" : "🚀 가입 없이 시작하기"}
-                {user && <span className="nav-caret">▾</span>}
-              </button>
-
-
-              {user && openMenu === "mypage" && (
-                <div className="nav-dropdown-menu">
-                  <NavLink to="/myetf/list" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    내 ETF
-                  </NavLink>
-
-                  <NavLink to="/stock/myStock" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    내 관심 종목
-                  </NavLink>
-
-                  <NavLink to="/stock/myCondition" onClick={closeMenu}>
-                    <span className="nav-dd-mark">–</span>
-                    나만의 조건식
-                  </NavLink>
-
-                  {isAdmin && (
-                    <NavLink to="/manage/batch/history" onClick={closeMenu}>
+                {openMenu === "indicator" && (
+                  <div className="nav-dropdown-menu">
+                    <NavLink to="/stockIndex" onClick={closeMenu}>
                       <span className="nav-dd-mark">–</span>
-                      배치 실행 이력
+                      증권 지수
                     </NavLink>
-                  )}
-                </div>
-              )}
-            </div>
+                    <NavLink to="/exchange" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      환율 지수
+                    </NavLink>
+                    <NavLink to="/physical" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      원자재 지수
+                    </NavLink>
+                    <NavLink to="/crypto" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      코인 지수
+                    </NavLink>
+                  </div>
+                )}
+              </div>
+
+              <NavLink to="/issue" className="nav-ani" onClick={closeMenu}>
+                🔥 이슈 종목
+              </NavLink>
+
+              <NavLink
+                to="/dualMomentumList"
+                className="nav-ani"
+                onClick={closeMenu}
+              >
+                📈 수익률 상위
+              </NavLink>
+
+              <NavLink
+                to="/stock/searchStock"
+                className="nav-ani"
+                onClick={closeMenu}
+              >
+                🔍 종목 검색
+              </NavLink>
+
+              <NavLink
+                to="/result/listKR"
+                className="nav-ani"
+                onClick={closeMenu}
+              >
+                📊 시장 성과
+              </NavLink>
+
+              {/* ===== 데이터 탐색 ===== */}
+              <div
+                className="nav-dropdown"
+                onMouseEnter={() => handleMenuEnter("search")}
+                onMouseLeave={handleMenuLeave}
+              >
+                <button
+                  type="button"
+                  className={`nav-ani ${openMenu === "search" ? "active" : ""}`}
+                  onClick={() => toggleMenu("search")}
+                >
+                  🔍 데이터 탐색
+                  <span className="nav-caret">▾</span>
+                </button>
+
+                {openMenu === "search" && (
+                  <div className="nav-dropdown-menu">
+                    {/* <NavLink to="/stock/searchStock" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      종목 검색
+                    </NavLink> */}
+                    <NavLink to="/kodex/summary" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      ETF 탐색
+                    </NavLink>
+                    <NavLink to="/marketCap" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      시가총액
+                    </NavLink>
+                    <NavLink to="/nps/summary" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      연기금 현황
+                    </NavLink>
+                    <NavLink to="/marketTrend" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      시장 매매 동향
+                    </NavLink>
+                  </div>
+                )}
+              </div>
+
+              {/* ===== 마이페이지 (로그인 시만) ===== */}
+              <div
+                className="nav-dropdown"
+                onMouseEnter={() => user && handleMenuEnter("mypage")}
+                onMouseLeave={handleMenuLeave}
+              >
+                <button
+                  type="button"
+                  className={`nav-ani mypage-btn
+                      ${!user ? "login-required" : ""}
+                      ${openMenu === "mypage" ? "active" : ""}
+                    `}
+                  onClick={user ? () => toggleMenu("mypage") : handleGuestLogin}
+                  data-tooltip={!user ? "클릭 시 guest 계정으로 로그인" : undefined}
+                >
+                  {user ? "👤 마이페이지" : "🚀 가입 없이 시작하기"}
+                  {user && <span className="nav-caret">▾</span>}
+                </button>
 
 
+                {user && openMenu === "mypage" && (
+                  <div className="nav-dropdown-menu">
+                    <NavLink to="/myetf/list" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      내 ETF
+                    </NavLink>
 
+                    <NavLink to="/stock/myStock" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      내 관심 종목
+                    </NavLink>
 
-          </nav>
+                    <NavLink to="/stock/myCondition" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      나만의 조건식
+                    </NavLink>
+
+                    <NavLink to="/mypage/profile" onClick={closeMenu}>
+                      <span className="nav-dd-mark">–</span>
+                      내 정보 관리
+                    </NavLink>
+                  </div>
+                )}
+              </div>
+            </nav>
+          )}
         </div>
       </header>
 

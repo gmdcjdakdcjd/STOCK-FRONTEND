@@ -55,6 +55,11 @@ import MyEtfListPage from "../pages/myEtf/MyEtfListPage";
 import MyEtfDetailPage from "../pages/myEtf/MyEtfDetailPage";
 
 /* =========================
+   MYPAGE (내 정보 관리)
+   ========================= */
+import ProfilePage from "../pages/mypage/ProfilePage";
+
+/* =========================
    CRYPTO
    ========================= */
 import CryptoPage from "../pages/crypto/cryptoIndexPage";
@@ -89,7 +94,7 @@ function AppRouter() {
                {/* =========================
               MANAGE (ADMIN)
               ========================= */}
-               <Route path="/manage/batch/history" element={<BatchHistoryPage />} />
+               <Route path="/manage/admin" element={<BatchHistoryPage />} />
 
                {/* =========================
               INDICATOR / ETC
@@ -114,6 +119,11 @@ function AppRouter() {
               ========================= */}
                <Route path="/myetf/list" element={<MyEtfListPage />} />
                <Route path="/myetf/detail" element={<MyEtfDetailPage />} />
+
+               {/* =========================
+              MYPAGE (내 정보 관리)
+              ========================= */}
+               <Route path="/mypage/profile" element={<ProfilePage />} />
 
                <Route path="/kodex/summary" element={<KodexSummaryPage />} />
                {/* TIGER ETF 요약 페이지 라우트 등록 */}

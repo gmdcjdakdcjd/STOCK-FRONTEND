@@ -65,7 +65,27 @@ export default function LoginPage() {
         }
       }
 
-      // 로그인 성공 시 홈 화면으로 이동
+      try {
+        // 로그인 성공한 유저의 정보 및 권한을 조회하여 분기합니다.
+        const userRes = await fetch("/api/auth/me", {
+          credentials: "include",
+          headers: { Accept: "application/json" }
+        });
+        if (userRes.ok) {
+          const userData = await userRes.json();
+          const isAdmin = userData.authorities?.some(
+            (auth: any) => auth.authority === "ROLE_ADMIN"
+          );
+          if (isAdmin) {
+            window.location.href = "/manage/admin";
+            return;
+          }
+        }
+      } catch (err) {
+        console.error("권한 판별 처리 에러:", err);
+      }
+
+      // 관리자가 아니거나 조회가 안 되는 경우 홈 화면으로 이동
       window.location.href = "/";
     } else {
       if (isGuestMode) {
