@@ -183,10 +183,11 @@ body {
   letter-spacing: -0.02em;
 }
 
-/* 요약 카드 그리드 (7열 격자형 배치 구조) */
+/* 요약 카드 그리드 (4열 격자형 배치 구조) */
 .exchange-page .summary-cards-grid {
   display: grid;
-  grid-template-columns: repeat(7, 1fr); /* 7개 환율 카드를 가로 7열 한 줄로 단정하게 정렬 */
+  /* 7개 환율 카드를 가로 4열로 배치하여 가로 스크롤바 없이 4-3 2줄 구조로 레이아웃을 구성합니다 */
+  grid-template-columns: repeat(4, 1fr);
   gap: 0.75rem; /* 카드들 사이에 넉넉한 공간 여백 부여 */
   width: 100%;
 }
@@ -299,10 +300,11 @@ body {
    요약 카드 반응형 미디어 쿼리 구간 (글자 깨짐 방어)
    ========================================================================== */
 
-/* 1. 데스크톱 및 태블릿 과도기 구간 (창 크기가 좁아졌을 때 텍스트 겹침 방지) */
+/* 1. 태블릿 및 중소형 화면 구간 */
 @media (max-width: 1024px) {
   .exchange-page .summary-cards-grid {
-    grid-template-columns: repeat(7, 1fr) !important; /* 태블릿 및 노트북 구간에서도 7*1 정합성을 강제 유지 */
+    /* 1024px 이하에서도 기본 4열 배치를 동일하게 유지합니다. */
+    grid-template-columns: repeat(4, 1fr) !important;
   }
 
   .summary-card {

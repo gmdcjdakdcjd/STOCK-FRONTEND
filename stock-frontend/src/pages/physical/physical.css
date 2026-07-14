@@ -303,10 +303,19 @@ body {
    요약 카드 반응형 미디어 쿼리 구간 (글자 깨짐 방어)
    ========================================================================== */
 
-/* 1. 데스크톱 및 태블릿 과도기 구간 (창 크기가 좁아졌을 때 텍스트 겹침 방지) */
+/* 1. 노트북 및 작은 데스크톱 구간 (6열이 들어가지 않아 가로 스크롤바가 생기는 현상 방지) */
+@media (max-width: 1350px) {
+  .physical-page .summary-cards-grid {
+    /* 1350px 이하에서는 4열로 축소 배치하여 스크롤바 발생을 예방합니다. */
+    grid-template-columns: repeat(4, 1fr) !important;
+  }
+}
+
+/* 2. 태블릿 및 중소형 화면 구간 */
 @media (max-width: 1024px) {
   .physical-page .summary-cards-grid {
-    grid-template-columns: repeat(6, 1fr) !important; /* 태블릿 및 노트북 구간에서도 6*2 정합성을 강제 유지 */
+    /* 1024px 이하에서도 4열로 동일하게 유지합니다. */
+    grid-template-columns: repeat(4, 1fr) !important;
   }
 
   .summary-card {
