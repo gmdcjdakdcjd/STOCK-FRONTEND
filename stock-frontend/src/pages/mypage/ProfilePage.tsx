@@ -376,19 +376,21 @@ export default function ProfilePage() {
             <span className="info-value">{profile.email || "등록된 이메일 없음"}</span>
           </div>
 
+          {/* 가입 유형 정보 임시 주석 처리
           <div className="info-row">
             <span className="info-label">가입 유형</span>
             <span className="info-value">
               {profile.social ? "소셜 간편 로그인 계정" : "일반 회원가입 계정"}
             </span>
           </div>
+          */}
         </div>
       </div>
 
       {/* 2. 멤버십 상태 및 프리미엄 가입/해지 카드 */}
-      <div className="profile-card">
-        <h4>나의 멤버십 혜택</h4>
-        {profile.grade === "PREMIUM" ? (
+      {profile.grade === "PREMIUM" ? (
+        <div className="profile-card">
+          <h4>나의 멤버십 혜택</h4>
           <div className="membership-banner premium">
             <div style={{ fontSize: "28px" }}>👑</div>
             <span className="membership-status-text">프리미엄 멤버십 회원</span>
@@ -409,24 +411,17 @@ export default function ProfilePage() {
               {submittingCancel ? "해지 처리 중..." : "멤버십 해지하기"}
             </button>
           </div>
-        ) : (
-          <div className="membership-banner">
-            <div style={{ fontSize: "28px" }}>🌱</div>
-            <span className="membership-status-text">일반(BASIC) 멤버십 회원</span>
-            <p className="membership-desc">
-              프리미엄 멤버십에 가입하시면 최신의 조건 검색 및 한층 세분화된 전략적 자산 매매 통계를 자유롭게 활용할 수 있는 자격이 부여됩니다.
-            </p>
-            <button
-              type="button"
-              className="membership-join-btn"
-              disabled={submittingMembership}
-              onClick={handleJoinMembership}
-            >
-              {submittingMembership ? "가입 처리 중..." : "프리미엄 가입하기"}
-            </button>
-          </div>
-        )}
-      </div>
+        </div>
+      ) : (
+        /* 일반 회원일 때는 미사용 변수(TypeScript 에러) 방지를 위해 보이지 않는 바인딩 노드만 렌더링 */
+        <div style={{ display: "none" }}>
+          <button
+            type="button"
+            disabled={submittingMembership}
+            onClick={handleJoinMembership}
+          />
+        </div>
+      )}
 
       {/* 3. 이메일 주소 변경 카드 (신설 및 중복 확인 버튼 탑재) */}
       <div className="profile-card">
