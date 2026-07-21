@@ -105,12 +105,17 @@ export async function getBatchHistoryByDate(
 // ============================
 
 export interface MemberDTO {
+  mno?: number;
   mid: string;
   mpw?: string;
   email: string;
   del: boolean;
   social: boolean;
   grade: string;
+  regDate?: string;
+  delDate?: string;
+  modDate?: string;
+  createdAt?: string;
 }
 
 /**

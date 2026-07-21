@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import {
   getBatchHistoryDates,
   getMemberList,
-  updateMemberGrade,
   getBatchHistoryByDate,
   uploadCsvFile,
   getBatchJobs,
@@ -86,16 +85,17 @@ export default function BatchHistoryPage() {
   // 회원 정보용 상태 변수들
   const [members, setMembers] = useState<MemberDTO[]>([]);
   const [memberLoading, setMemberLoading] = useState(false);
-  const [submittingMid, setSubmittingMid] = useState<string | null>(null);
+  // 회원 등급 미사용으로 인한 상태 변수 주석 처리
+  // const [submittingMid, setSubmittingMid] = useState<string | null>(null);
 
   // 회원 검색 필터 임시 입력값 상태
   const [tempSearchKeyword, setTempSearchKeyword] = useState("");
-  const [tempGrade, setTempGrade] = useState("ALL");
+  // const [tempGrade, setTempGrade] = useState("ALL");
   const [tempStatus, setTempStatus] = useState("ALL");
 
   // 회원 검색 최종 적용 필터 상태
   const [appliedKeyword, setAppliedKeyword] = useState("");
-  const [appliedGrade, setAppliedGrade] = useState("ALL");
+  // const [appliedGrade, setAppliedGrade] = useState("ALL");
   const [appliedStatus, setAppliedStatus] = useState("ALL");
 
   // 배치 소스 데이터 CSV 파일 선택용 로컬 상태
@@ -359,15 +359,17 @@ export default function BatchHistoryPage() {
    */
   const handleMemberSearch = () => {
     setAppliedKeyword(tempSearchKeyword);
-    setAppliedGrade(tempGrade);
+    // 회원 등급 미사용으로 인한 적용 주석 처리
+    // setAppliedGrade(tempGrade);
     setAppliedStatus(tempStatus);
   };
 
   /**
-   * 특정 사용자의 이용 권한 등급을 수정하는 이벤트 핸들러입니다.
+   * 특정 사용자의 이용 권한 등급을 수정하는 이벤트 핸들러입니다. (회원 등급 관리 미사용으로 인해 주석 처리)
    * @param mid   수정할 회원의 아이디
    * @param newGrade 변경할 신규 등급 명칭
    */
+  /*
   const handleGradeChange = async (mid: string, newGrade: string) => {
     if (!window.confirm(`${mid} 회원의 등급을 ${newGrade}(으)로 변경하시겠습니까?`)) {
       return;
@@ -385,6 +387,7 @@ export default function BatchHistoryPage() {
       setSubmittingMid(null);
     }
   };
+  */
 
   /**
    * 관리자가 특정 CSV 데이터 원천 파일을 서버에 업로드 덮어쓰기하는 핸들러입니다.
@@ -423,8 +426,9 @@ export default function BatchHistoryPage() {
   // 스탯 수치 계산
   const activeUsersCount = members.filter(m => !m.del).length;
   const deletedUsersCount = members.filter(m => m.del).length;
-  const basicUsersCount = members.filter(m => m.grade === "BASIC").length;
-  const premiumUsersCount = members.filter(m => m.grade === "PREMIUM").length;
+  // 회원 등급 미사용으로 인한 등급 집계 변수 주석 처리
+  // const basicUsersCount = members.filter(m => m.grade === "BASIC").length;
+  // const premiumUsersCount = members.filter(m => m.grade === "PREMIUM").length;
 
   // 검색 확정 조건(키워드, 등급, 계정상태, 가입유형)에 따른 회원 목록 필터링
   const filteredMembers = members.filter(m => {
@@ -433,8 +437,8 @@ export default function BatchHistoryPage() {
       m.mid.toLowerCase().includes(appliedKeyword.toLowerCase()) ||
       (m.email && m.email.toLowerCase().includes(appliedKeyword.toLowerCase()));
 
-    // 2. 회원 등급 매칭
-    const matchGrade = appliedGrade === "ALL" || m.grade === appliedGrade;
+    // 2. 회원 등급 매칭 (회원 등급 관리 미사용으로 인한 주석 처리)
+    // const matchGrade = appliedGrade === "ALL" || m.grade === appliedGrade;
 
     // 3. 계정 상태 매칭 (정상/탈퇴)
     const isDeleted = m.del;
@@ -443,7 +447,7 @@ export default function BatchHistoryPage() {
       (appliedStatus === "ACTIVE" && !isDeleted) ||
       (appliedStatus === "DELETED" && isDeleted);
 
-    return matchKeyword && matchGrade && matchStatus;
+    return matchKeyword && matchStatus;
   });
 
   // 연도 선택 옵션 계산 (배치 데이터에 있는 범위 기준)
@@ -463,8 +467,8 @@ export default function BatchHistoryPage() {
   // 특정 잡에 대한 이력 필터링이 적용된 상세 아이템들
   const filteredItems = modalDate
     ? (filterJobName
-        ? (detailsCache[modalDate] || []).filter(item => item.jobName === filterJobName)
-        : (detailsCache[modalDate] || []))
+      ? (detailsCache[modalDate] || []).filter(item => item.jobName === filterJobName)
+      : (detailsCache[modalDate] || []))
     : [];
 
   const todayKstStr = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().substring(0, 10);
@@ -532,7 +536,8 @@ export default function BatchHistoryPage() {
             </div>
           </div>
 
-          {/* 2. 회원 등급 분포 카드 */}
+          {/* 2. 회원 등급 분포 카드 (회원 등급 기능 미사용으로 인한 주석 처리) */}
+          {/*
           <div className="stat-card">
             <div className="stat-icon premium">👑</div>
             <div className="stat-content">
@@ -542,6 +547,7 @@ export default function BatchHistoryPage() {
               </span>
             </div>
           </div>
+          */}
         </div>
       )}
 
@@ -693,7 +699,8 @@ export default function BatchHistoryPage() {
               onChange={e => setTempSearchKeyword(e.target.value)}
             />
 
-            {/* 등급 필터 셀렉트 */}
+            {/* 등급 필터 셀렉트 (회원 등급 미사용으로 인한 주석 처리) */}
+            {/*
             <select
               className="admin-select"
               value={tempGrade}
@@ -703,6 +710,7 @@ export default function BatchHistoryPage() {
               <option value="BASIC">BASIC 회원</option>
               <option value="PREMIUM">PREMIUM 회원</option>
             </select>
+            */}
 
             {/* 계정 상태 필터 셀렉트 */}
             <select
@@ -745,20 +753,36 @@ export default function BatchHistoryPage() {
               <table className="admin-table">
                 <thead>
                   <tr>
+                    <th style={{ width: "90px" }}>번호</th>
                     <th>아이디</th>
                     <th>이메일</th>
+                    <th>가입일</th>
                     {/* <th>가입 유형</th> (홈페이지 가입 전용이므로 주석 처리) */}
                     <th>상태</th>
-                    <th>현재 등급</th>
-                    <th>등급 제어</th>
+                    {/* 회원 등급 관련 테이블 헤더 주석 처리 */}
+                    {/* <th>현재 등급</th> */}
+                    {/* <th>등급 제어</th> */}
                   </tr>
                 </thead>
                 <tbody>
                   {filteredMembers.length > 0 ? (
                     filteredMembers.map(member => (
                       <tr key={member.mid}>
+                        <td style={{ color: "#64748b", fontVariantNumeric: "tabular-nums" }}>
+                          {member.mno ?? "-"}
+                        </td>
                         <td style={{ fontWeight: 700 }}>{member.mid}</td>
                         <td>{member.email || "-"}</td>
+                        {/* 회원 가입일 표시 (regDate 또는 createdAt 백엔드 프로퍼티 대응 - 시/분 제외) */}
+                        <td style={{ fontVariantNumeric: "tabular-nums" }}>
+                          {member.regDate
+                            ? member.regDate.substring(0, 10)
+                            : member.createdAt
+                              ? member.createdAt.replace("T", " ").substring(0, 10)
+                              : (member as any).createdDate
+                                ? (member as any).createdDate.replace("T", " ").substring(0, 10)
+                                : "-"}
+                        </td>
                         {/* 가입 유형 컬럼 주석 처리
                         <td>
                           <span className={`badge ${member.social ? "social" : "local"}`}>
@@ -767,10 +791,19 @@ export default function BatchHistoryPage() {
                         </td>
                         */}
                         <td>
-                          <span className={`badge ${member.del ? "deleted" : "active-user"}`}>
-                            {member.del ? "탈퇴 계정" : "정상 사용"}
+                          <span
+                            className={`badge ${member.del ? "deleted" : "active-user"}`}
+                            title={member.del && member.delDate ? `탈퇴 일시: ${member.delDate.substring(0, 16)}` : undefined}
+                          >
+                            {member.del
+                              ? member.delDate
+                                ? `탈퇴 (${member.delDate.substring(0, 16)})`
+                                : "탈퇴 계정"
+                              : "정상 사용"}
                           </span>
                         </td>
+                        {/* 회원 등급 및 등급 제어 셀 주석 처리 */}
+                        {/*
                         <td>
                           <span className={`badge ${member.grade.toLowerCase()}`}>
                             {member.grade}
@@ -787,6 +820,7 @@ export default function BatchHistoryPage() {
                             <option value="PREMIUM">PREMIUM</option>
                           </select>
                         </td>
+                        */}
                       </tr>
                     ))
                   ) : (
